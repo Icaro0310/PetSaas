@@ -1,0 +1,7 @@
+name = "petsaas"
+compatibility_date = "2024-11-01"
+
+# Deploy do Flutter Web (pagina publica do pet + app completo)
+# Build local:  flutter build web --release
+# Deploy:       wrangler pages deploy build/web --project-name petsaas
+pages_build_output_dir = "build/web"
