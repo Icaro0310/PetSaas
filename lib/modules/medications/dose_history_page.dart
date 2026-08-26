@@ -40,12 +40,36 @@ class _DoseHistoryPageState extends ConsumerState<DoseHistoryPage> {
     }
     final data = await SupabaseService.client
         .from('dose_logs')
-        .select()
+        .select('id, scheduled_time, given_at, given_by, status, notes, '
+            'medications(name)')
         .eq('pet_id', widget.petId)
         .lt('scheduled_time', DateTime.now().toUtc().toIso8601String())
         .gte('scheduled_time', start.toUtc().toIso8601String())
         .order('scheduled_time', ascending: false);
-    return (data as List).cast<Map<String, dynamic>>();
+
+    // Resolver nomes de quem deu (given_by -> profiles.full_name)
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    final givenByIds = rows
+        .map((r) => r['given_by'] as String?)
+        .whereType<String>()
+        .toSet()
+        .toList();
+    Map<String, String> names = {};
+    if (givenByIds.isNotEmpty) {
+      final profs = await SupabaseService.client
+          .from('profiles')
+          .select('id, full_name')
+          .inFilter('id', givenByIds);
+      for (final p in (profs as List)) {
+        names[p['id'] as String] = (p['full_name'] as String?) ?? 'Utilizador';
+      }
+    }
+    // Anexa o nome resolvido a cada linha
+    for (final r in rows) {
+      final gid = r['given_by'] as String?;
+      r['_given_by_name'] = gid == null ? null : (names[gid] ?? 'Utilizador');
+    }
+    return rows;
   }
 
   Color _statusColor(DoseStatus s) {
@@ -96,19 +120,37 @@ class _DoseHistoryPageState extends ConsumerState<DoseHistoryPage> {
                   itemCount: rows.length,
                   itemBuilder: (_, i) {
                     final r = rows[i];
-                    final status = DoseStatus.values.byName(r['status'] as String? ?? 'pending');
+                    final status = DoseStatus.values.byName(
+                        r['status'] as String? ?? 'pending');
                     final givenAt = r['given_at'] != null
                         ? DateTime.parse(r['given_at'] as String).toLocal()
                         : null;
+                    final med = r['medications'] as Map<String, dynamic>?;
+                    final givenByName = r['_given_by_name'] as String?;
+                    String subtitle;
+                    if (status == DoseStatus.given && givenAt != null) {
+                      subtitle = givenByName != null
+                          ? 'Dada por $givenByName em ${Formatters.dateTime(givenAt)}'
+                          : 'Dada em ${Formatters.dateTime(givenAt)}';
+                    } else {
+                      subtitle = status.name.capitalize();
+                    }
                     return ListTile(
-                      leading: Icon(Icons.circle, color: _statusColor(status), size: 14),
-                      title: Text(Formatters.dateTime(
-                          DateTime.parse(r['scheduled_time'] as String).toLocal())),
-                      subtitle: Text(
-                        status == DoseStatus.given && givenAt != null
-                            ? 'Dada em ${Formatters.dateTime(givenAt)}'
-                            : status.name.capitalize(),
+                      leading: Icon(Icons.circle,
+                          color: _statusColor(status), size: 14),
+                      title: Text(med?['name'] as String? ?? 'Remedio'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(Formatters.dateTime(DateTime.parse(
+                                  r['scheduled_time'] as String)
+                              .toLocal())),
+                          const SizedBox(height: 2),
+                          Text(subtitle,
+                              style: const TextStyle(fontSize: 13)),
+                        ],
                       ),
+                      isThreeLine: true,
                     );
                   },
                 );

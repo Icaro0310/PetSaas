@@ -85,6 +85,26 @@ final selectedPetProvider =
   return pets.where((p) => p.id == id).firstOrNull;
 });
 
+/// Indica se o utilizador atual e DONO do pet selecionado.
+/// Cuidadores veem apenas visualizacao + marcar doses.
+final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) async {
+  final pet = ref.watch(selectedPetProvider);
+  final user = SupabaseService.currentUser;
+  if (pet == null || user == null) return false;
+  // Se o pet esta na lista de pets do dono, e dono.
+  final pets = ref.watch(petsProvider).valueOrNull ?? [];
+  if (pets.any((p) => p.id == pet.id)) return true;
+  // Caso contrario, verifica se e cuidador ativo deste pet.
+  final cg = await SupabaseService.client
+      .from('caregivers')
+      .select('id')
+      .eq('pet_id', pet.id)
+      .eq('caregiver_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle();
+  return cg == null; // se nao e cuidador, assume dono (fallback)
+});
+
 // ---------- Medications ----------
 
 final medicationsForPetProvider =

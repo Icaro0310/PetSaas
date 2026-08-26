@@ -17,15 +17,17 @@ class PetDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     ref.watch(selectedPetIdProvider.notifier).state = petId;
     final pet = ref.watch(selectedPetProvider);
+    final isOwner = ref.watch(isOwnerOfSelectedPetProvider).valueOrNull ?? true;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(pet?.name ?? 'Pet'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => context.push('${AppRoutes.petEdit}/$petId'),
-          ),
+          if (isOwner)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => context.push('${AppRoutes.petEdit}/$petId'),
+            ),
         ],
       ),
       body: pet == null
@@ -53,6 +55,17 @@ class PetDetailPage extends ConsumerWidget {
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
+                  if (!isOwner)
+                    Container(
+                      width: double.infinity,
+                      color: AppTheme.secondary.withValues(alpha: 0.12),
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'Voce cuida do ${pet.name}. Pode ver e marcar doses.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppTheme.secondary),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -69,7 +82,7 @@ class PetDetailPage extends ConsumerWidget {
                           style: const TextStyle(color: AppTheme.textMuted),
                         ),
                         const SizedBox(height: 20),
-                        _ActionGrid(pet: pet),
+                        _ActionGrid(pet: pet, isOwner: isOwner),
                         const SizedBox(height: 24),
                         _InfoSection(pet: pet),
                       ],
@@ -84,10 +97,41 @@ class PetDetailPage extends ConsumerWidget {
 
 class _ActionGrid extends StatelessWidget {
   final PetModel pet;
-  const _ActionGrid({required this.pet});
+  final bool isOwner;
+  const _ActionGrid({required this.pet, required this.isOwner});
 
   @override
   Widget build(BuildContext context) {
+    final actions = <Widget>[
+      _ActionCard(
+        icon: Icons.medication,
+        label: 'Medicamentos',
+        onTap: () => context.push('${AppRoutes.medications}/${pet.id}'),
+      ),
+      _ActionCard(
+        icon: Icons.history,
+        label: 'Historico',
+        onTap: () => context.push('${AppRoutes.history}/${pet.id}'),
+      ),
+    ];
+    // Apenas dono ve QR Code e Cuidadores
+    if (isOwner) {
+      actions.insert(
+        1,
+        _ActionCard(
+          icon: Icons.qr_code_2,
+          label: 'QR Code',
+          onTap: () => context.push('${AppRoutes.qr}/${pet.id}'),
+        ),
+      );
+      actions.add(
+        _ActionCard(
+          icon: Icons.people_alt_outlined,
+          label: 'Cuidadores',
+          onTap: () => context.push('${AppRoutes.caregivers}/${pet.id}'),
+        ),
+      );
+    }
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -95,30 +139,7 @@ class _ActionGrid extends StatelessWidget {
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
       childAspectRatio: 2.2,
-      children: [
-        _ActionCard(
-          icon: Icons.medication,
-          label: 'Medicamentos',
-          onTap: () =>
-              context.push('${AppRoutes.medications}/${pet.id}'),
-        ),
-        _ActionCard(
-          icon: Icons.qr_code_2,
-          label: 'QR Code',
-          onTap: () => context.push('${AppRoutes.qr}/${pet.id}'),
-        ),
-        _ActionCard(
-          icon: Icons.people_alt_outlined,
-          label: 'Cuidadores',
-          onTap: () =>
-              context.push('${AppRoutes.caregivers}/${pet.id}'),
-        ),
-        _ActionCard(
-          icon: Icons.history,
-          label: 'Historico',
-          onTap: () => context.push('${AppRoutes.history}/${pet.id}'),
-        ),
-      ],
+      children: actions,
     );
   }
 }

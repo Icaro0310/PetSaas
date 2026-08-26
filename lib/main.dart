@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'app.dart';
+import 'core/services/fcm_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/supabase_service.dart';
 
@@ -47,6 +48,13 @@ Future<void> main() async {
 
   // Notificacoes locais + timezone
   await NotificationService.initialize();
+
+  // FCM (push remoto) - registra token no Supabase
+  try {
+    await FcmService.initialize();
+  } catch (e) {
+    debugPrint('FCM skipped: $e');
+  }
 
   runApp(const ProviderScope(child: PetCareApp()));
 }

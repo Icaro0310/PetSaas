@@ -10,6 +10,7 @@ import '../../core/services/notification_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../providers/app_providers.dart';
+import '../../shared/widgets/photo_picker.dart';
 
 class TodayDosesPage extends ConsumerStatefulWidget {
   const TodayDosesPage({super.key});
@@ -246,11 +247,36 @@ class _ConfirmDoseSheet extends ConsumerStatefulWidget {
 class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
   final _notes = TextEditingController();
   bool _saving = false;
+  String? _photoPath;
+  bool _hasPremium = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPremium();
+  }
+
+  Future<void> _checkPremium() async {
+    final premium = await ref.read(hasPremiumProvider.future);
+    if (mounted) setState(() => _hasPremium = premium);
+  }
 
   Future<void> _confirm() async {
     setState(() => _saving = true);
     try {
-      await widget.onConfirm(notes: _notes.text.trim().isEmpty ? null : _notes.text.trim());
+      String? photoUrl;
+      if (_photoPath != null && _hasPremium) {
+        final ext = _photoPath!.split('.').last.toLowerCase();
+        photoUrl = await SupabaseService.uploadPetPhoto(
+          petId: widget.dose.petId,
+          filePath: _photoPath!,
+          fileExt: ext,
+        );
+      }
+      await widget.onConfirm(
+        photoUrl: photoUrl,
+        notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
+      );
       if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
@@ -261,6 +287,12 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  @override
+  void dispose() {
+    _notes.dispose();
+    super.dispose();
   }
 
   @override
@@ -281,14 +313,33 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
           const SizedBox(height: 8),
           Text(widget.medName),
           const SizedBox(height: 16),
+          if (_hasPremium) ...[
+            PhotoPicker(
+              localPath: _photoPath,
+              onChanged: (p) => setState(() => _photoPath = p),
+              size: 100,
+            ),
+            const SizedBox(height: 12),
+          ] else ...[
+            Row(
+              children: [
+                const Icon(Icons.lock_outline, size: 18, color: AppTheme.accent),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Foto na dose e Premium',
+                    style: TextStyle(color: AppTheme.textMuted, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
           TextField(
             controller: _notes,
             decoration: const InputDecoration(labelText: 'Notas (opcional)'),
             maxLines: 2,
           ),
-          const SizedBox(height: 8),
-          const Text('Foto: funcionalidade Premium (na proxima iteracao)',
-              style: TextStyle(color: AppTheme.textMuted, fontSize: 12)),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,

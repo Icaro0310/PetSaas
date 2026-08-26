@@ -13,11 +13,13 @@ import '../modules/medications/medication_form_page.dart';
 import '../modules/medications/today_doses_page.dart';
 import '../modules/medications/dose_history_page.dart';
 import '../modules/qr_code/qr_code_page.dart';
+import '../modules/qr_code/qr_scanner_page.dart';
 import '../modules/caregivers/caregivers_list_page.dart';
 import '../modules/caregivers/invite_caregiver_page.dart';
 import '../modules/caregivers/caregiver_dashboard_page.dart';
 import '../modules/profile/profile_page.dart';
 import '../modules/profile/subscription_page.dart';
+import '../modules/notifications/notifications_page.dart';
 import '../modules/qr_code/public_pet_page.dart';
 import '../modules/caregivers/join_page.dart';
 
@@ -41,8 +43,10 @@ class AppRoutes {
   static const String caregiverDashboard = '/caregiver-dashboard';
   static const String profile = '/profile';
   static const String subscription = '/subscription';
+  static const String notifications = '/notifications';
   static const String publicPet = '/p'; // rota pública curta
   static const String join = '/join';
+  static const String scan = '/scan';
 
   static Future<bool> _hasSeenOnboarding() async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,7 +58,7 @@ class AppRoutes {
       initialLocation: pets,
       redirect: (context, state) async {
         final path = state.uri.path;
-        final isPublic = path == publicPet || path == join;
+        final isPublic = path == publicPet || path == join || path == scan;
         final authed = SupabaseService.isAuthenticated;
 
         if (isPublic) return null;
@@ -126,6 +130,10 @@ class AppRoutes {
         GoRoute(
             path: subscription, builder: (_, __) => const SubscriptionPage()),
         GoRoute(
+          path: notifications,
+          builder: (_, __) => const NotificationsPage(),
+        ),
+        GoRoute(
           path: '$publicPet/:uuid',
           builder: (_, state) =>
               PublicPetPage(uuid: state.pathParameters['uuid']!),
@@ -134,6 +142,10 @@ class AppRoutes {
           path: join,
           builder: (_, state) =>
               JoinPage(token: state.uri.queryParameters['token']),
+        ),
+        GoRoute(
+          path: scan,
+          builder: (_, __) => const QrScannerPage(),
         ),
       ],
     );

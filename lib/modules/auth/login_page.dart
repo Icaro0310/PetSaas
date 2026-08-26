@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../config/routes.dart';
 import '../../config/theme.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
@@ -71,6 +73,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     style: TextStyle(color: AppTheme.textMuted),
                   ),
                   const SizedBox(height: 32),
+                  TextButton.icon(
+                    onPressed: () => context.push(AppRoutes.scan),
+                    icon: const Icon(Icons.qr_code_scanner),
+                    label: const Text('Encontrei um pet - escanear QR'),
+                  ),
+                  const SizedBox(height: 16),
                   if (!_sent) ...[
                     Form(
                       key: _formKey,

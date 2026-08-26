@@ -77,6 +77,16 @@ class ProfilePage extends ConsumerWidget {
               onTap: () => context.push(AppRoutes.today),
             ),
           ),
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.notifications_none,
+                  color: AppTheme.secondary),
+              title: const Text('Notificacoes'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push(AppRoutes.notifications),
+            ),
+          ),
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () async {
