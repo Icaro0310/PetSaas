@@ -1,4 +1,4 @@
--- PetCare Micro-SaaS - Esquema inicial
+-- PetCare Micro-SaaS - Esquema inicial (idempotente)
 -- RODE NO SUPABASE SQL EDITOR EM ORDEM.
 -- Todas as tabelas com RLS ativo.
 
@@ -27,7 +27,9 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 alter table profiles enable row level security;
+drop policy if exists "Users can view own profile" on profiles;
 create policy "Users can view own profile" on profiles for select using (auth.uid() = id);
+drop policy if exists "Users can update own profile" on profiles;
 create policy "Users can update own profile" on profiles for update using (auth.uid() = id);
 
 -- TABELA 2: pets
@@ -57,12 +59,11 @@ create table if not exists pets (
 );
 
 alter table pets enable row level security;
+drop policy if exists "Owners can CRUD own pets" on pets;
 create policy "Owners can CRUD own pets" on pets for all using (auth.uid() = owner_id);
 create index if not exists idx_pets_qr on pets(qr_code_uuid);
 
--- Politica publica: permitir SELECT por qr_code_uuid (pagina publica)
--- Necessario para a pagina publica sem login. Usa uma funcao que permite leitura
--- apenas dos campos publicos via RPC separada (ver funcao get_public_pet).
+-- Funcao publica: leitura de dados publicos do pet por QR (sem login)
 create or replace function public.get_public_pet(p_uuid uuid)
 returns table (
   name text, species text, breed text, photo_url text, description text,
@@ -93,11 +94,9 @@ create table if not exists medications (
 );
 
 alter table medications enable row level security;
+drop policy if exists "Owners can manage medications" on medications;
 create policy "Owners can manage medications" on medications for all using (
   auth.uid() in (select owner_id from pets where id = medications.pet_id)
-);
-create policy "Caregivers can view medications" on medications for select using (
-  auth.uid() in (select caregiver_id from caregivers where pet_id = medications.pet_id and status = 'active')
 );
 
 -- TABELA 4: dose_logs
@@ -115,13 +114,6 @@ create table if not exists dose_logs (
 );
 
 alter table dose_logs enable row level security;
-create policy "Owners and caregivers can manage dose_logs" on dose_logs for all using (
-  auth.uid() in (
-    select owner_id from pets where id = dose_logs.pet_id
-    union
-    select caregiver_id from caregivers where pet_id = dose_logs.pet_id and status = 'active'
-  )
-);
 create index if not exists idx_dose_logs_pending on dose_logs(pet_id, status) where status = 'pending';
 create index if not exists idx_dose_logs_scheduled on dose_logs(medication_id, scheduled_time);
 
@@ -150,8 +142,10 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- TABELA 5: caregivers
-create type caregiver_status as enum ('pending', 'active', 'removed');
+-- TABELA 5: caregivers (deve vir ANTES das policies que a referenciam)
+do $$ begin
+  create type caregiver_status as enum ('pending', 'active', 'removed');
+exception when duplicate_object then null; end $$;
 
 create table if not exists caregivers (
   id uuid default gen_random_uuid() primary key,
@@ -168,8 +162,25 @@ create table if not exists caregivers (
 );
 
 alter table caregivers enable row level security;
+drop policy if exists "Owners can manage caregivers" on caregivers;
 create policy "Owners can manage caregivers" on caregivers for all using (auth.uid() = owner_id);
+drop policy if exists "Caregivers can view their assignments" on caregivers;
 create policy "Caregivers can view their assignments" on caregivers for select using (auth.uid() = caregiver_id);
+
+-- Policies tardias: dependem de caregivers existir
+drop policy if exists "Caregivers can view medications" on medications;
+create policy "Caregivers can view medications" on medications for select using (
+  auth.uid() in (select caregiver_id from caregivers where pet_id = medications.pet_id and status = 'active')
+);
+
+drop policy if exists "Owners and caregivers can manage dose_logs" on dose_logs;
+create policy "Owners and caregivers can manage dose_logs" on dose_logs for all using (
+  auth.uid() in (
+    select owner_id from pets where id = dose_logs.pet_id
+    union
+    select caregiver_id from caregivers where pet_id = dose_logs.pet_id and status = 'active'
+  )
+);
 
 -- FUNCAO: aceitar convite
 create or replace function accept_invite(p_token uuid)
@@ -200,6 +211,7 @@ create table if not exists pet_found_messages (
 );
 
 alter table pet_found_messages enable row level security;
+drop policy if exists "Owners can view messages for their pets" on pet_found_messages;
 create policy "Owners can view messages for their pets" on pet_found_messages for select using (
   auth.uid() in (select owner_id from pets where id = pet_found_messages.pet_id)
 );
@@ -218,8 +230,11 @@ create table if not exists subscriptions (
 );
 
 alter table subscriptions enable row level security;
+drop policy if exists "Users can view own subscription" on subscriptions;
 create policy "Users can view own subscription" on subscriptions for select using (auth.uid() = user_id);
+drop policy if exists "Users can upsert own subscription" on subscriptions;
 create policy "Users can upsert own subscription" on subscriptions for insert with check (auth.uid() = user_id);
+drop policy if exists "Users can update own subscription" on subscriptions;
 create policy "Users can update own subscription" on subscriptions for update using (auth.uid() = user_id);
 
 -- TABELA 8: notifications_log
@@ -235,6 +250,7 @@ create table if not exists notifications_log (
 );
 
 alter table notifications_log enable row level security;
+drop policy if exists "Users can view own notifications" on notifications_log;
 create policy "Users can view own notifications" on notifications_log for select using (auth.uid() = user_id);
 
 -- TABELA 9: user_devices (tokens FCM)
@@ -248,6 +264,7 @@ create table if not exists user_devices (
 );
 
 alter table user_devices enable row level security;
+drop policy if exists "Users can manage own devices" on user_devices;
 create policy "Users can manage own devices" on user_devices for all using (auth.uid() = user_id);
 
 -- STORAGE BUCKET: pet_photos
@@ -256,11 +273,13 @@ values ('pet_photos', 'pet_photos', true)
 on conflict (id) do nothing;
 
 -- Policy: donos podem fazer upload nas proprias fotos
+drop policy if exists "Owners can upload pet photos" on storage.objects;
 create policy "Owners can upload pet photos" on storage.objects
   for insert with check (
     bucket_id = 'pet_photos' and
     auth.uid() in (select owner_id from public.pets)
   );
 
+drop policy if exists "Public can read pet photos" on storage.objects;
 create policy "Public can read pet photos" on storage.objects
   for select using (bucket_id = 'pet_photos');
