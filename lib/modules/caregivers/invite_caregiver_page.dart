@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/constants.dart';
 import '../../config/theme.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
@@ -66,6 +67,7 @@ class _InviteCaregiverPageState extends ConsumerState<InviteCaregiverPage> {
       final token = res['invite_token'] as String?;
       if (token != null) {
         setState(() => _inviteUrl = DeepLinkService.inviteUrl(token));
+        await AnalyticsService.caregiverInvited();
       }
     } catch (e) {
       if (mounted) {

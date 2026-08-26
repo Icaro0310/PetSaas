@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/models/pet_model.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
 import '../../shared/widgets/loading_button.dart';
@@ -150,6 +151,7 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
             .eq('id', widget.petId!);
       } else {
         await SupabaseService.client.from('pets').insert(payload);
+        await AnalyticsService.petCreated();
       }
 
       if (!mounted) return;

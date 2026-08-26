@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../config/theme.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../shared/widgets/loading_button.dart';
 
@@ -100,6 +101,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
         },
       );
       setState(() => _submitted = true);
+      await AnalyticsService.petFoundMessageSent();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)

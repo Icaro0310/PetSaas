@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/routes.dart';
 import '../../config/theme.dart';
 import '../../core/models/dose_log_model.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/formatters.dart';
@@ -220,6 +221,7 @@ class _DoseCard extends ConsumerWidget {
             'p_notes': notes,
           });
           await NotificationService.cancelReminder(dose.id.hashCode);
+          await AnalyticsService.doseMarkedGiven();
           ref.invalidate(todayDosesProvider);
         },
       ),

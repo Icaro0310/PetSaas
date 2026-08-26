@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/constants.dart';
 import '../../config/theme.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../providers/app_providers.dart';
@@ -34,6 +35,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
             .toIso8601String(),
       });
       ref.invalidate(subscriptionProvider);
+      await AnalyticsService.subscriptionStarted();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Premium ativado! (demo)')),

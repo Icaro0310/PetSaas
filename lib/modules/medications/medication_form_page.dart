@@ -6,6 +6,7 @@ import '../../config/constants.dart';
 import '../../config/routes.dart';
 import '../../config/theme.dart';
 import '../../core/models/medication_model.dart';
+import '../../core/services/analytics_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
@@ -134,6 +135,8 @@ class _MedicationFormPageState extends ConsumerState<MedicationFormPage> {
 
       // Gerar dose_logs para os proximos 30 dias
       await _generateDoseLogs(medId);
+
+      await AnalyticsService.medicationCreated();
 
       if (!mounted) return;
       context.pop();
