@@ -54,3 +54,6 @@ android/app/google-services.json
 .env.*
 !.env.example
 
+# Supabase CLI artifacts
+supabase/.temp/
+
