@@ -125,10 +125,12 @@ supabase functions deploy
 - Ficheiro `android/app/google-services.json` (não commitado).
 - `Firebase.initializeApp()` no arranque.
 
-### Web
+### Web e Android
 
-- Configuração inline em `lib/main.dart` com as opções web da app `PetCare Web`.
-- Inclui `apiKey`, `appId`, `measurementId`, `messagingSenderId`, `projectId`, `authDomain`, `storageBucket`.
+- `lib/firebase_options.dart` gerado com as configurações Android e Web.
+- `lib/main.dart` chama `Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)`.
+- Web: app `PetCare Web` (appId `1:401594264567:web:150c29e4949b1d52701cf2`).
+- Android: `google-services.json` em `android/app/` (não commitado).
 
 ## 7. Autenticação
 
@@ -245,7 +247,7 @@ Adicionar ao `PATH`:
 ## 12. Limitações conhecidas
 
 - Emulador Android não testado por falta de HAXM/Hyper-V.
-- Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.
+- ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
 - Cloudflare Pages ainda não configurado (falta token).
 - Notificações locais e paywall só testáveis em dispositivo real.
 - Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).
