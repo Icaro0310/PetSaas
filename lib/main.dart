@@ -21,12 +21,13 @@ Future<void> main() async {
       // Web: requer firebaseOptions reais (flutterfire configure). Pula se ausente.
       await Firebase.initializeApp(
         options: const FirebaseOptions(
-          apiKey: 'AIzaSyBlsoSL-rmuepF2GFcMFpp5_bErc1Z3M4A',
+          apiKey: 'AIzaSyA2v_Z4wV4v4Q9zfRFTf20ueDv7B8_-ypU',
           authDomain: 'saaspet-3386c.firebaseapp.com',
           projectId: 'saaspet-3386c',
           storageBucket: 'saaspet-3386c.firebasestorage.app',
           messagingSenderId: '401594264567',
-          appId: '1:401594264567:web:0000000000000000000000',
+          appId: '1:401594264567:web:150c29e4949b1d52701cf2',
+          measurementId: 'G-8CKVV4T99C',
         ),
       );
     } else {
