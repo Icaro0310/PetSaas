@@ -8,6 +8,7 @@ import 'app.dart';
 import 'core/services/fcm_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/supabase_service.dart';
+import 'package:flutter_web_plugins/url_strategy.dart' as url_strategy;
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -50,6 +51,9 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('FCM skipped: $e');
   }
+
+  // URLs limpas na Web (sem /#/)
+  url_strategy.usePathUrlStrategy();
 
   runApp(const ProviderScope(child: PetCareApp()));
 }

@@ -1,7 +1,10 @@
 name = "petsaas"
-compatibility_date = "2024-11-01"
+compatibility_date = "2025-01-01"
+# Substitui o account_id abaixo pelo da tua conta Cloudflare quando tiveres acesso.
+# Para saber: wrangler whoami ou painel Cloudflare (Account ID no menu direito).
+# account_id = "SEU_ACCOUNT_ID_AQUI"
 
 # Deploy do Flutter Web (pagina publica do pet + app completo)
 # Build local:  flutter build web --release
-# Deploy:       wrangler pages deploy build/web --project-name petsaas
+# Deploy:       npx wrangler pages deploy build/web --project-name petsaas
 pages_build_output_dir = "build/web"
