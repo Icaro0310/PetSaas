@@ -17,21 +17,29 @@ Future<void> main() async {
   await SupabaseService.initialize();
 
   // Firebase (Android usa google-services.json; Web usa firebase_options.dart)
+  var firebaseInitialized = false;
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    firebaseInitialized = true;
   } catch (e) {
     debugPrint('Firebase init skipped: $e');
   }
 
-  // Crashlytics (apenas se Firebase inicializou)
-  try {
-    FlutterError.onError =
-        FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-  } catch (_) {}
+  // Crashlytics (apenas se Firebase inicializou corretamente)
+  if (firebaseInitialized) {
+    try {
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        try {
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        } catch (_) {
+          // Crashlytics indisponivel; evita loop
+        }
+        return true;
+      };
+    } catch (_) {}
+  }
 
   // Notificacoes locais + timezone
   await NotificationService.initialize();
