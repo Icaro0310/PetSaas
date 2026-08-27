@@ -58,7 +58,8 @@ class AppRoutes {
       initialLocation: pets,
       redirect: (context, state) async {
         final path = state.uri.path;
-        final isPublic = path == publicPet || path == join || path == scan;
+        final isPublic =
+            path.startsWith(publicPet + '/') || path == join || path == scan;
         final authed = SupabaseService.isAuthenticated;
 
         if (isPublic) return null;
