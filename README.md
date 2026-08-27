@@ -225,7 +225,9 @@ Guarda em `screenshots/`. Pasta gitignored.
    - `CLOUDFLARE_ACCOUNT_ID`
    - `CLOUDFLARE_API_TOKEN`
    - `GITHUB_TOKEN`
-5. Configurar domínio definitivo para que os QR Codes apontem para a URL correta.
+5. **Vercel (token fornecido):** deploy direto da pasta `build/web` via CLI ainda não funciona com `@vercel/static` / build remoto vazio. A alternativa imediata e subir `build/web` zipado pelo painel Vercel (Upload Directory) ou usar `vercel --prod` a partir de `build/web` com o `vercel.json` ja na pasta.
+6. **Teste rapido sem conta:** `python tool/serve_spa.py 8080` + `npx localtunnel --port 8080`.
+7. Configurar dominio definitivo para que os QR Codes apontem para a URL correta.
 
 ### CI/CD
 
@@ -259,6 +261,7 @@ Adicionar ao `PATH`:
 - Emulador Android não testado por falta de HAXM/Hyper-V; AVD AOSP `PetCare_API_34_AOSP` criado e arranca, mas o host não tem recursos para correr a UI de forma fluída.
 - ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
 - Cloudflare Pages configurado, mas **deploy depende do `account_id` e `CLOUDFLARE_API_TOKEN`**.
+- Vercel CLI build remoto para Flutter Web ainda não funciona automaticamente; a app fica com 404. Funciona com `localtunnel` e Cloudflare Pages.
 - Notificações locais e paywall só testáveis em dispositivo real.
 - ~~Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).~~ ✅ Resolvido em `web/privacy.html` e `web/terms.html`.
 
@@ -266,8 +269,9 @@ Adicionar ao `PATH`:
 
 1. ~~Gerar Termos de Uso e Política de Privacidade.~~ ✅
 2. ~~Criar páginas estáticas `/privacy` e `/terms` no web.~~ ✅
-3. Configurar `account_id` e `CLOUDFLARE_API_TOKEN`; fazer deploy web.
-4. Testar em dispositivo físico via `flutter run`.
-5. Capturar screenshots de cada módulo.
-6. Criar keystore de produção e gerar `.aab`.
-7. Submeter APK para Google Play Console.
+3. **Fazer deploy web permanente** (Cloudflare/Vercel via painel/GitHub Pages).
+4. Testar QR e pagina publica com o URL do localtunnel.
+5. Testar em dispositivo físico via `flutter run`.
+6. Capturar screenshots de cada módulo.
+7. Criar keystore de produção e gerar `.aab`.
+8. Submeter APK para Google Play Console.
