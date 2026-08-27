@@ -8,6 +8,7 @@ import 'app.dart';
 import 'core/services/fcm_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/supabase_service.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,24 +16,9 @@ Future<void> main() async {
   // Supabase
   await SupabaseService.initialize();
 
-  // Firebase (defensivo: web precisa de config separada; Android usa google-services.json)
+  // Firebase (Android usa google-services.json; Web usa firebase_options.dart)
   try {
-    if (kIsWeb) {
-      // Web: requer firebaseOptions reais (flutterfire configure). Pula se ausente.
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: 'AIzaSyA2v_Z4wV4v4Q9zfRFTf20ueDv7B8_-ypU',
-          authDomain: 'saaspet-3386c.firebaseapp.com',
-          projectId: 'saaspet-3386c',
-          storageBucket: 'saaspet-3386c.firebasestorage.app',
-          messagingSenderId: '401594264567',
-          appId: '1:401594264567:web:150c29e4949b1d52701cf2',
-          measurementId: 'G-8CKVV4T99C',
-        ),
-      );
-    } else {
-      await Firebase.initializeApp();
-    }
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   } catch (e) {
     debugPrint('Firebase init skipped: $e');
   }
