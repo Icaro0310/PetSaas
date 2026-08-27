@@ -34,7 +34,19 @@ class _PublicPetPageState extends State<PublicPetPage> {
     _loadPet();
   }
 
+  bool _isValidUuid(String s) {
+    return RegExp(
+            r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\$')
+        .hasMatch(s);
+  }
+
   Future<void> _loadPet() async {
+    if (!_isValidUuid(widget.uuid)) {
+      _error = 'QR Code invalido.\nFormato esperado: 8-4-4-4-12';
+      _loading = false;
+      if (mounted) setState(() {});
+      return;
+    }
     try {
       final data = await SupabaseService.client
           .from('pets')
@@ -47,7 +59,14 @@ class _PublicPetPageState extends State<PublicPetPage> {
         _pet = data;
       }
     } catch (e) {
-      _error = 'Erro: $e';
+      final msg = e.toString().toLowerCase();
+      if (msg.contains('invalid input syntax for type uuid')) {
+        _error = 'QR Code invalido.';
+      } else if (msg.contains('not found')) {
+        _error = 'Pet nao encontrado.';
+      } else {
+        _error = 'Erro ao carregar o pet: $e';
+      }
     } finally {
       setState(() => _loading = false);
     }
