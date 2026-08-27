@@ -170,7 +170,9 @@ cd build/web
 python -m http.server 8080
 ```
 
-O ficheiro `web/_redirects` garante SPA fallback para `/p/<uuid>` e `/#/...`.
+O ficheiro `web/_redirects` garante SPA fallback para `/p/<uuid>` e serve as páginas estáticas `/privacy` e `/terms`.
+
+A app Web agora usa **path URL strategy** (`/p/<uuid>` em vez de `/#/p/<uuid>`), graças a `usePathUrlStrategy()`.
 
 ## 9. Testes e QA
 
@@ -211,13 +213,19 @@ Guarda em `screenshots/`. Pasta gitignored.
 
 1. Gerar release: `flutter build apk --release`
 2. Testar APK no celular real.
-3. Submeter para Google Play Console (exige Termos de Uso e Política de Privacidade).
+3. As páginas `/privacy` e `/terms` estão em `web/privacy.html` e `web/terms.html`; fazem deploy com a app web.
+4. Submeter para Google Play Console (exige Termos de Uso e Política de Privacidade com URL pública).
 
 ### Web
 
 1. `flutter build web --release`
-2. Deploy no Cloudflare Pages via Wrangler (`wrangler pages deploy build/web`) ou Firebase/Vercel.
-3. Configurar domínio definitivo para que os QR Codes apontem para a URL correta.
+2. Preencher `account_id` no `wrangler.toml`.
+3. Correr `npx wrangler pages deploy build/web --project-name petsaas`.
+4. Ou usar o GitHub Actions `.github/workflows/cloudflare-deploy.yml` com os secrets:
+   - `CLOUDFLARE_ACCOUNT_ID`
+   - `CLOUDFLARE_API_TOKEN`
+   - `GITHUB_TOKEN`
+5. Configurar domínio definitivo para que os QR Codes apontem para a URL correta.
 
 ### CI/CD
 
@@ -226,6 +234,8 @@ Guarda em `screenshots/`. Pasta gitignored.
 Secrets do GitHub:
 - `SUPABASE_ACCESS_TOKEN`
 - `SUPABASE_PROJECT_REF`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
 
 ## 11. Configuração do ambiente
 
@@ -246,17 +256,18 @@ Adicionar ao `PATH`:
 
 ## 12. Limitações conhecidas
 
-- Emulador Android não testado por falta de HAXM/Hyper-V.
+- Emulador Android não testado por falta de HAXM/Hyper-V; AVD AOSP `PetCare_API_34_AOSP` criado e arranca, mas o host não tem recursos para correr a UI de forma fluída.
 - ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
-- Cloudflare Pages ainda não configurado (falta token).
+- Cloudflare Pages configurado, mas **deploy depende do `account_id` e `CLOUDFLARE_API_TOKEN`**.
 - Notificações locais e paywall só testáveis em dispositivo real.
-- Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).
+- ~~Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).~~ ✅ Resolvido em `web/privacy.html` e `web/terms.html`.
 
 ## 13. Próximos passos
 
-1. Gerar Termos de Uso e Política de Privacidade.
-2. Criar páginas estáticas `/privacy` e `/terms` no web.
-3. Testar em dispositivo físico via `flutter run`.
-4. Capturar screenshots de cada módulo.
-5. Deploy web permanente (Cloudflare/Vercel).
-6. Submeter APK para Google Play Console.
+1. ~~Gerar Termos de Uso e Política de Privacidade.~~ ✅
+2. ~~Criar páginas estáticas `/privacy` e `/terms` no web.~~ ✅
+3. Configurar `account_id` e `CLOUDFLARE_API_TOKEN`; fazer deploy web.
+4. Testar em dispositivo físico via `flutter run`.
+5. Capturar screenshots de cada módulo.
+6. Criar keystore de produção e gerar `.aab`.
+7. Submeter APK para Google Play Console.
