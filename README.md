@@ -1,62 +1,260 @@
 # PetCare Micro-SaaS
 
-Saber exatamente quem deu cada medicamento ao seu pet e permitir que qualquer pessoa que o encontre te avise instantaneamente através de um QR Code único.
+> Saber exatamente quem deu cada medicamento ao seu pet e permitir que qualquer pessoa que o encontre te avise instantaneamente através de um QR Code único.
 
-## Stack
-- Flutter (Android + Web)
-- Supabase (Auth, DB, Storage, Edge Functions)
-- Firebase (Messaging, Analytics, Crashlytics)
-- Riverpod + go_router + freezed
+## 1. Visão geral
 
-## Setup local
+Aplicação Flutter para Android e Web que ajuda donos de animais de estimação a gerir medicações, cuidadores, QR Codes de identificação e notificações. O objetivo central é rastrear **quem administrou cada dose** de medicação e permitir que terceiros avisem o dono se encontrarem o pet perdido, sem expor dados privados.
 
-1. Flutter SDK instalado (stable).
-2. `flutter pub get`
-3. `dart run build_runner build` (gera arquivos freezed/json)
-4. `flutter run` (Android) ou `flutter build web`
+## 2. Stack técnica
 
-## Passos manuais no Supabase (OBRIGATÓRIO)
+| Camada | Tecnologia |
+|--------|------------|
+| Mobile / Web | Flutter 3.47.1 + Dart 3.13.1 |
+| Estado | flutter_riverpod |
+| Routing | go_router |
+| Modelos | freezed + json_serializable |
+| Backend | Supabase (Auth, Postgres, Storage, Edge Functions, Realtime, Cron) |
+| Push / Analytics | Firebase Core, Cloud Messaging, Analytics, Crashlytics |
+| QR | qr_flutter, mobile_scanner |
+| Notificações locais | flutter_local_notifications |
+| Local storage | shared_preferences |
+| Build web | wrangler (Cloudflare Pages) |
+| CI/CD | GitHub Actions |
 
-1. **Rodar a migração SQL**: abra o SQL Editor do Supabase e execute o conteúdo de
-   `supabase/migrations/0001_init.sql`. Cria todas as tabelas, RLS, funções e o bucket de Storage.
+## 3. Arquitetura
 
-2. **Bucket Storage**: a migração já cria o bucket `pet_photos` (público para leitura).
-   Confirme em Storage que ele existe.
+```
+lib/
+├── app.dart                  # MaterialApp + ProviderScope
+├── main.dart                 # Inicialização Supabase, Firebase, Crashlytics
+├── config/
+│   ├── constants.dart        # Chaves públicas, limites Free/Premium
+│   ├── routes.dart           # GoRouter + redirect auth
+│   └── theme.dart            # Tema verde pet-friendly
+├── core/
+│   ├── models/               # Modelos Freezed
+│   ├── services/             # Supabase, FCM, Notificações, Analytics, Deep Links
+│   └── utils/                # Validators, formatters, extensions
+└── modules/
+    ├── auth/                 # Login, onboarding, perfil
+    ├── pets/                 # CRUD de pets
+    ├── medications/          # Medicações, doses de hoje, histórico
+    ├── qr_code/              # Geração, partilha, scan e página pública
+    ├── caregivers/           # Convites, dashboard, permissões
+    ├── notifications/        # Log de notificações
+    └── profile/              # Subscrição / paywall
+```
 
-3. **Edge Functions**:
-   ```
-   supabase functions deploy notify-pet-found
-   supabase functions deploy notify-dose-missed
-   ```
-   Defina as secrets:
-   ```
-   supabase secrets set SUPABASE_URL=https://dotplnbakltelacsxvjz.supabase.co
-   supabase secrets set SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
-   ```
+## 4. Módulos e funcionalidades
 
-4. **Cron (doses perdidas)**: no SQL Editor, agende a cada 15 min:
-   ```sql
-   select cron.schedule(
-     'notify-dose-missed',
-     '*/15 * * * *',
-     $$ select net.http_post(
-       'https://dotplnbakltelacsxvjz.supabase.co/functions/v1/notify-dose-missed',
-           '{}'::jsonb,
-           '{"Authorization":"Bearer <ANON_KEY>"}'::jsonb
-     ) $$
-   );
-   ```
+| Módulo | O que faz |
+|--------|-----------|
+| 1 — Auth | Magic link, onboarding, perfil |
+| 2 — Pets | Criar, editar, listar, foto no Storage |
+| 3 — Medicação | Tipos diário/semanal/intervalo/PRN, doses, histórico, quem deu a dose |
+| 4 — QR Code | QR único por pet, partilha, scan, página pública sem leak de dados |
+| 5 — Cuidadores | Convite por token, dashboard, marcação de doses, sem edição |
+| 6 — Notificações | Locais para doses pendentes, push para encontro e doses perdidas |
+| 7 — Monetização | Trial 14 dias, paywall Free vs Premium 1,99€/mês |
+| 8 — Fundação | Analytics, Crashlytics, tema, empty states, validadores |
 
-5. **Auth**: no Supabase Auth, habilite Email (magic link / OTP).
+## 5. Supabase
 
-6. **Firebase**: coloque `google-services.json` em `android/app/` (não commitado).
-   Para web, rode `flutterfire configure` para gerar `firebase_options.dart`.
+### 5.1 Tabelas (RLS ativo em todas)
 
-## Variáveis no app
-As credenciais Supabase (publishable key) estão em `lib/config/constants.dart`
-(são chaves públicas protegidas por RLS). A secret key NUNCA vai no app.
+- `profiles`
+- `pets`
+- `medications`
+- `dose_logs`
+- `caregivers`
+- `pet_found_messages`
+- `subscriptions`
+- `notification_log`
+- `user_devices`
 
-## Planos
-- Free: 1 pet, 1 cuidador, histórico de 7 dias, sem foto na dose.
-- Premium (1,99 EUR/mês): ilimitado + foto na dose + histórico completo.
-- Trial: 14 dias automáticos ao criar a primeira medicação.
+### 5.2 Funções do banco
+
+- `handle_new_user()` — cria perfil no primeiro registo.
+- `mark_dose_given(p_dose_id, p_user_id, ...)` — marca uma dose como dada.
+- `check_missed_doses()` — passa doses pendentes com >2h para `missed`.
+- `get_public_pet(p_uuid)` — lookup público por QR Code.
+- `accept_caregiver_invite(p_token)` — aceita convite de cuidador.
+
+### 5.3 Storage
+
+- Bucket `pet_photos`: fotos públicas dos pets.
+- Políticas: dono pode fazer upload; qualquer um pode ler.
+
+### 5.4 Edge Functions
+
+- `notify-pet-found` — recebe mensagem de quem encontrou o pet, insere registo e notificação.
+- `notify-dose-missed` — chamada pelo cron para verificar doses perdidas.
+
+Ambas usam `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` fornecidos automaticamente pelo runtime, não precisam de secrets manuais.
+
+### 5.5 Cron
+
+Agendado em `supabase/migrations/0002_cron_dose_missed.sql`:
+
+```sql
+select cron.schedule('notify-dose-missed', '*/15 * * * *', ...);
+```
+
+Executa `notify-dose-missed` a cada 15 minutos.
+
+### 5.6 Migrações
+
+| Ficheiro | Descrição |
+|----------|-----------|
+| `0001_init.sql` | Tabelas, RLS, funções, Storage |
+| `0002_cron_dose_missed.sql` | Cron de doses perdidas |
+| `0003_caregiver_pets_rls.sql` | Permite cuidadores verem pets atribuídos |
+
+Deploy via CI/CD ou Supabase CLI:
+
+```bash
+supabase db push
+supabase functions deploy
+```
+
+## 6. Firebase
+
+### Android
+
+- Ficheiro `android/app/google-services.json` (não commitado).
+- `Firebase.initializeApp()` no arranque.
+
+### Web
+
+- Configuração inline em `lib/main.dart` com as opções web da app `PetCare Web`.
+- Inclui `apiKey`, `appId`, `measurementId`, `messagingSenderId`, `projectId`, `authDomain`, `storageBucket`.
+
+## 7. Autenticação
+
+- **Magic link** via Supabase Auth.
+- `emailRedirectTo` configurado para os ambientes:
+  - `http://127.0.0.1:8080/**`
+  - `http://localhost:8080/**`
+  - `https://*.lhr.life/**`
+  - `https://petsaas.pages.dev/**`
+
+## 8. Build e desenvolvimento
+
+### Dependências
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+```
+
+### Android
+
+```bash
+flutter build apk --release
+flutter install
+```
+
+### Web
+
+```bash
+flutter build web --release
+```
+
+Servir localmente:
+
+```bash
+cd build/web
+python -m http.server 8080
+```
+
+O ficheiro `web/_redirects` garante SPA fallback para `/p/<uuid>` e `/#/...`.
+
+## 9. Testes e QA
+
+### Ritual de screenshots
+
+A cada módulo concluído, executar `tool/screenshot.ps1` num emulador/dispositivo com ADB:
+
+```powershell
+tool\screenshot.ps1
+```
+
+Guarda em `screenshots/`. Pasta gitignored.
+
+### Checklist de verificação
+
+- [ ] RLS ativo nas 9 tabelas
+- [ ] Storage `pet_photos` acessível
+- [ ] Edge Functions `notify-pet-found` e `notify-dose-missed` ativas
+- [ ] Notificações locais disparam no Android
+- [ ] QR Code gera, partilha e abre página pública
+- [ ] Página pública carrega em <3s
+- [ ] Paywall bloqueia 2º pet, medicação extra e cuidador extra no Free
+- [ ] Trial 14 dias inicia com a primeira medicação
+- [ ] Cuidador vê pets, medicações e pode marcar doses, mas não edita nada
+- [ ] Dose `pending` passa a `missed` após 2h
+- [ ] GitHub Actions faz deploy automático de migrations e Edge Functions
+- [ ] Screenshots de todas as telas principais
+
+### Verificação técnica em andamento
+
+- APK release compilado com sucesso: `build/app/outputs/flutter-apk/app-release.apk`.
+- End-to-end API realizado com sucesso: criação de dose, marcação, lookup público e notificação de encontro.
+- Emulador não arranca neste ambiente por falta de aceleração de virtualização; testes de UI precisam de dispositivo físico.
+
+## 10. Deploy
+
+### Android
+
+1. Gerar release: `flutter build apk --release`
+2. Testar APK no celular real.
+3. Submeter para Google Play Console (exige Termos de Uso e Política de Privacidade).
+
+### Web
+
+1. `flutter build web --release`
+2. Deploy no Cloudflare Pages via Wrangler (`wrangler pages deploy build/web`) ou Firebase/Vercel.
+3. Configurar domínio definitivo para que os QR Codes apontem para a URL correta.
+
+### CI/CD
+
+`.github/workflows/supabase-deploy.yml` faz deploy automático das migrations e Edge Functions em push para `main`.
+
+Secrets do GitHub:
+- `SUPABASE_ACCESS_TOKEN`
+- `SUPABASE_PROJECT_REF`
+
+## 11. Configuração do ambiente
+
+### Variáveis do Windows
+
+```powershell
+$env:FLUTTER_HOME = "C:\flutter"
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:ANDROID_SDK_ROOT = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+```
+
+Adicionar ao `PATH`:
+- `C:\flutter\bin`
+- `%LOCALAPPDATA%\Android\Sdk\platform-tools`
+- `%LOCALAPPDATA%\Android\Sdk\emulator`
+- `%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest\bin`
+
+## 12. Limitações conhecidas
+
+- Emulador Android não testado por falta de HAXM/Hyper-V.
+- Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.
+- Cloudflare Pages ainda não configurado (falta token).
+- Notificações locais e paywall só testáveis em dispositivo real.
+- Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).
+
+## 13. Próximos passos
+
+1. Gerar Termos de Uso e Política de Privacidade.
+2. Criar páginas estáticas `/privacy` e `/terms` no web.
+3. Testar em dispositivo físico via `flutter run`.
+4. Capturar screenshots de cada módulo.
+5. Deploy web permanente (Cloudflare/Vercel).
+6. Submeter APK para Google Play Console.
