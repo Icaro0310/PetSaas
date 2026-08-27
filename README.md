@@ -19,7 +19,7 @@ Aplicação Flutter para Android e Web que ajuda donos de animais de estimação
 | QR | qr_flutter, mobile_scanner |
 | Notificações locais | flutter_local_notifications |
 | Local storage | shared_preferences |
-| Build web | Vercel CLI / Vercel Dashboard |
+| Build web | Netlify CLI / Netlify Dashboard |
 | CI/CD | GitHub Actions |
 
 ## 3. Arquitetura
@@ -219,13 +219,15 @@ Guarda em `screenshots/`. Pasta gitignored.
 ### Web
 
 1. `flutter build web --release`
-2. O `web/vercel.json` e copiado para `build/web/vercel.json` no build.
-3. Deploy em Vercel:
-   - Opcao CLI: `cd build/web` e `vercel --prod --token <TOKEN>`
-   - Ou fazer upload do conteudo de `build/web` no painel Vercel (Upload Directory).
-   - O token fornecido `vcp_...` esta vinculado a conta `icarogalvao5-1055s-projects/web`.
-4. **Teste rapido sem conta:** `python tool/serve_spa.py 8080` + `npx localtunnel --port 8080`.
-5. Configurar dominio definitivo para que os QR Codes apontem para a URL correta.
+2. O `web/_redirects` e copiado para `build/web/_redirects` e faz o SPA routing no Netlify.
+3. Deploy em Netlify:
+   ```bash
+   cd build/web
+   netlify deploy --prod --dir=. --auth nfp_RtBmwE8HDnuCvVYN7c4VAz6PQyYMhZow9c67
+   ```
+4. URL de producao atual: `https://moonlit-pothos-c56cd4.netlify.app`
+5. **Teste rapido sem conta:** `python tool/serve_spa.py 8080` + `npx localtunnel --port 8080`.
+6. Configurar dominio definitivo para que os QR Codes apontem para a URL correta.
 
 ### CI/CD
 
@@ -234,7 +236,7 @@ Guarda em `screenshots/`. Pasta gitignored.
 Secrets do GitHub:
 - `SUPABASE_ACCESS_TOKEN`
 - `SUPABASE_PROJECT_REF`
-- `VERCEL_TOKEN` (para deploy manual ou Actions no futuro)
+- `NETLIFY_TOKEN` (para deploy web no futuro)
 
 ## 11. Configuração do ambiente
 
@@ -268,7 +270,7 @@ Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o *
 
 - Emulador Android não testado por falta de HAXM/Hyper-V; AVD AOSP `PetCare_API_34_AOSP` criado e arranca, mas o host não tem recursos para correr a UI de forma fluída.
 - ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
-- Vercel CLI build remoto para Flutter Web ainda não funciona automaticamente; a app fica com 404. Funciona com `localtunnel` e com upload manual pelo painel Vercel.
+- ~~Vercel CLI build remoto para Flutter Web ainda não funciona automaticamente; a app fica com 404. Funciona com `localtunnel` e com upload manual pelo painel Vercel.~~ ✅ Resolvido com Netlify.
 - Notificações locais e paywall só testáveis em dispositivo real.
 - ~~Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).~~ ✅ Resolvido em `web/privacy.html` e `web/terms.html`.
 
@@ -276,8 +278,8 @@ Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o *
 
 1. ~~Gerar Termos de Uso e Política de Privacidade.~~ ✅
 2. ~~Criar páginas estáticas `/privacy` e `/terms` no web.~~ ✅
-3. **Fazer deploy web permanente** no Vercel (Upload Directory do conteudo de `build/web`).
-4. Testar QR e pagina publica com o URL do localtunnel.
+3. ~~Fazer deploy web permanente no Vercel.~~ ✅ Resolvido com Netlify: `https://moonlit-pothos-c56cd4.netlify.app`.
+4. Testar QR e pagina publica com o URL do Netlify.
 5. Testar em dispositivo físico via `flutter run`.
 6. Capturar screenshots de cada módulo.
 7. Criar keystore de produção e gerar `.aab`.

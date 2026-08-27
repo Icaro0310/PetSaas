@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
+import 'package:flutter_web_plugins/url_strategy.dart';
+
 import 'app.dart';
 import 'core/services/fcm_service.dart';
 import 'core/services/notification_service.dart';
@@ -51,6 +53,9 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('FCM skipped: $e');
   }
+
+  // URLs limpas na Web para /p/<uuid> funcionar em hosts estaticos
+  usePathUrlStrategy();
 
   runApp(const ProviderScope(child: PetCareApp()));
 }
