@@ -19,7 +19,7 @@ Aplicação Flutter para Android e Web que ajuda donos de animais de estimação
 | QR | qr_flutter, mobile_scanner |
 | Notificações locais | flutter_local_notifications |
 | Local storage | shared_preferences |
-| Build web | wrangler (Cloudflare Pages) |
+| Build web | Vercel CLI / Vercel Dashboard |
 | CI/CD | GitHub Actions |
 
 ## 3. Arquitetura
@@ -219,15 +219,13 @@ Guarda em `screenshots/`. Pasta gitignored.
 ### Web
 
 1. `flutter build web --release`
-2. Preencher `account_id` no `wrangler.toml`.
-3. Correr `npx wrangler pages deploy build/web --project-name petsaas`.
-4. Ou usar o GitHub Actions `.github/workflows/cloudflare-deploy.yml` com os secrets:
-   - `CLOUDFLARE_ACCOUNT_ID`
-   - `CLOUDFLARE_API_TOKEN`
-   - `GITHUB_TOKEN`
-5. **Vercel (token fornecido):** deploy direto da pasta `build/web` via CLI ainda não funciona com `@vercel/static` / build remoto vazio. A alternativa imediata e subir `build/web` zipado pelo painel Vercel (Upload Directory) ou usar `vercel --prod` a partir de `build/web` com o `vercel.json` ja na pasta.
-6. **Teste rapido sem conta:** `python tool/serve_spa.py 8080` + `npx localtunnel --port 8080`.
-7. Configurar dominio definitivo para que os QR Codes apontem para a URL correta.
+2. O `web/vercel.json` e copiado para `build/web/vercel.json` no build.
+3. Deploy em Vercel:
+   - Opcao CLI: `cd build/web` e `vercel --prod --token <TOKEN>`
+   - Ou fazer upload do conteudo de `build/web` no painel Vercel (Upload Directory).
+   - O token fornecido `vcp_...` esta vinculado a conta `icarogalvao5-1055s-projects/web`.
+4. **Teste rapido sem conta:** `python tool/serve_spa.py 8080` + `npx localtunnel --port 8080`.
+5. Configurar dominio definitivo para que os QR Codes apontem para a URL correta.
 
 ### CI/CD
 
@@ -236,8 +234,7 @@ Guarda em `screenshots/`. Pasta gitignored.
 Secrets do GitHub:
 - `SUPABASE_ACCESS_TOKEN`
 - `SUPABASE_PROJECT_REF`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN`
+- `VERCEL_TOKEN` (para deploy manual ou Actions no futuro)
 
 ## 11. Configuração do ambiente
 
@@ -256,12 +253,22 @@ Adicionar ao `PATH`:
 - `%LOCALAPPDATA%\Android\Sdk\emulator`
 - `%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest\bin`
 
+### Testar Android no Windows sem telemovel
+
+Opcoes para quem nao tem um dispositivo Android real:
+
+1. **Emulador Android Studio (AVD)** — ja configurado (`PetCare_API_34_AOSP`), mas exige aceleracao (WHPX/HAXM). Neste PC o gargalo e RAM/CPU; desativar apps e usar uma imagem API 28/30 mais pequena pode ajudar.
+2. **BlueStacks / LDPlayer / NoxPlayer** — emuladores de consumidor para Windows. Nao precisam do AVD do Android Studio, mas consomem recursos. Permitem sideload do APK (`adb install app-release.apk`).
+3. **Cloud emulators** — Firebase Test Lab, AWS Device Farm, BrowserStack. Requerem conta Google/AWS e, na maior parte, sao pagos.
+4. **Web como proxy de testes** — a maior parte das telas (pets, QR, pagina publica) funciona na versao web. Notificacoes push e FCM so no Android real.
+
+Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o **BlueStacks (Lite)** ou um dispositivo Android real para testes finais.
+
 ## 12. Limitações conhecidas
 
 - Emulador Android não testado por falta de HAXM/Hyper-V; AVD AOSP `PetCare_API_34_AOSP` criado e arranca, mas o host não tem recursos para correr a UI de forma fluída.
 - ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
-- Cloudflare Pages configurado, mas **deploy depende do `account_id` e `CLOUDFLARE_API_TOKEN`**.
-- Vercel CLI build remoto para Flutter Web ainda não funciona automaticamente; a app fica com 404. Funciona com `localtunnel` e Cloudflare Pages.
+- Vercel CLI build remoto para Flutter Web ainda não funciona automaticamente; a app fica com 404. Funciona com `localtunnel` e com upload manual pelo painel Vercel.
 - Notificações locais e paywall só testáveis em dispositivo real.
 - ~~Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).~~ ✅ Resolvido em `web/privacy.html` e `web/terms.html`.
 
@@ -269,7 +276,7 @@ Adicionar ao `PATH`:
 
 1. ~~Gerar Termos de Uso e Política de Privacidade.~~ ✅
 2. ~~Criar páginas estáticas `/privacy` e `/terms` no web.~~ ✅
-3. **Fazer deploy web permanente** (Cloudflare/Vercel via painel/GitHub Pages).
+3. **Fazer deploy web permanente** no Vercel (Upload Directory do conteudo de `build/web`).
 4. Testar QR e pagina publica com o URL do localtunnel.
 5. Testar em dispositivo físico via `flutter run`.
 6. Capturar screenshots de cada módulo.
