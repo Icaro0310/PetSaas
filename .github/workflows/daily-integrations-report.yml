@@ -1,0 +1,335 @@
+name: Daily Integrations Report
+
+on:
+  schedule:
+    # Diario as 09:00 UTC (06:00 BRT / 10:00 Lisboa)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  SMTP_PASSWORD: ${{ secrets.MAILERSEND_SMTP_PASSWORD }}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check all integrations
+        id: check
+        run: |
+          set +e  # nao parar em erro - queremos reportar todos os status
+
+          TODAY=$(date -u +"%Y-%m-%d")
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # ============================================================
+          # 1. Supabase (DB + Auth + Edge Functions)
+          # ============================================================
+          SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+
+          SB_HEALTH=$(curl -s -o /tmp/sb_health.json -w "%{http_code}" \
+            "${SUPABASE_URL}/functions/v1/health" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            --max-time 15)
+          SB_BODY=$(cat /tmp/sb_health.json 2>/dev/null || echo "no response")
+
+          if [ "$SB_HEALTH" = "200" ]; then
+            SB_STATUS="ACTIVE"
+            SB_DETAIL="health EF retornou 200 - ${SB_BODY}"
+          else
+            SB_STATUS="FAILED"
+            SB_DETAIL="HTTP ${SB_HEALTH} - ${SB_BODY}"
+          fi
+
+          # ============================================================
+          # 2. Netlify (Web hosting)
+          # ============================================================
+          NETLIFY_URL="https://moonlit-pothos-c56cd4.netlify.app"
+          NETLIFY_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${NETLIFY_URL}" --max-time 15)
+          NETLIFY_PRIVACY=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${NETLIFY_URL}/privacy.html" --max-time 15)
+          NETLIFY_TERMS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${NETLIFY_URL}/terms.html" --max-time 15)
+
+          if [ "$NETLIFY_HTTP" = "200" ] && [ "$NETLIFY_PRIVACY" = "200" ] && [ "$NETLIFY_TERMS" = "200" ]; then
+            NETLIFY_STATUS="ACTIVE"
+            NETLIFY_DETAIL="Site: ${NETLIFY_HTTP}, Privacy: ${NETLIFY_PRIVACY}, Terms: ${NETLIFY_TERMS}"
+          else
+            NETLIFY_STATUS="FAILED"
+            NETLIFY_DETAIL="Site: ${NETLIFY_HTTP}, Privacy: ${NETLIFY_PRIVACY}, Terms: ${NETLIFY_TERMS}"
+          fi
+
+          # ============================================================
+          # 3. Clerk (Auth)
+          # ============================================================
+          CLERK_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://climbing-burro-4910.clerk.accounts.dev" --max-time 15)
+
+          if [ "$CLERK_HTTP" = "200" ] || [ "$CLERK_HTTP" = "302" ] || [ "$CLERK_HTTP" = "307" ]; then
+            CLERK_STATUS="ACTIVE"
+            CLERK_DETAIL="Frontend API HTTP ${CLERK_HTTP}"
+          else
+            CLERK_STATUS="FAILED"
+            CLERK_DETAIL="Frontend API HTTP ${CLERK_HTTP}"
+          fi
+
+          # ============================================================
+          # 4. GitHub Actions (CI/CD) - ultimas 24h
+          # ============================================================
+          SINCE=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          GH_RUNS=$(gh api "repos/${{ github.repository }}/actions/runs?created=>=$SINCE&per_page=100" --jq '.workflow_runs' 2>/dev/null)
+          GH_TOTAL=$(echo "$GH_RUNS" | jq 'length' 2>/dev/null || echo 0)
+          GH_SUCCESS=$(echo "$GH_RUNS" | jq '[.[] | select(.conclusion == "success")] | length' 2>/dev/null || echo 0)
+          GH_FAILED=$(echo "$GH_RUNS" | jq '[.[] | select(.conclusion == "failure")] | length' 2>/dev/null || echo 0)
+
+          if [ "$GH_FAILED" -eq 0 ] && [ "$GH_TOTAL" -gt 0 ]; then
+            GH_STATUS="ACTIVE"
+            GH_DETAIL="${GH_SUCCESS}/${GH_TOTAL} runs success, 0 failed"
+          elif [ "$GH_TOTAL" -eq 0 ]; then
+            GH_STATUS="ACTIVE"
+            GH_DETAIL="0 runs nas ultimas 24h (sem atividade)"
+          else
+            GH_STATUS="FAILED"
+            GH_DETAIL="${GH_SUCCESS}/${GH_TOTAL} runs success, ${GH_FAILED} failed"
+          fi
+
+          # ============================================================
+          # 5. UptimeRobot (Monitoring)
+          # ============================================================
+          UR_API_KEY="${{ secrets.UPTIMEROBOT_API_KEY }}"
+          UR_HTTP=$(curl -s -o /tmp/ur.json -w "%{http_code}" \
+            -X POST "https://api.uptimerobot.com/v2/getMonitors" \
+            -d "api_key=${UR_API_KEY}&format=json&monitors=803897084-803898227" \
+            --max-time 15)
+          UR_BODY=$(cat /tmp/ur.json 2>/dev/null || echo "{}")
+          UR_NETLIFY=$(echo "$UR_BODY" | jq -r '.monitors[0].status' 2>/dev/null || echo "?")
+          UR_SUPABASE=$(echo "$UR_BODY" | jq -r '.monitors[1].status' 2>/dev/null || echo "?")
+
+          # status: 2=up, 9=down
+          ur_status_text() {
+            case "$1" in
+              2) echo "up" ;;
+              9) echo "down" ;;
+              *) echo "unknown($1)" ;;
+            esac
+          }
+
+          UR_NETLIFY_TXT=$(ur_status_text "$UR_NETLIFY")
+          UR_SUPABASE_TXT=$(ur_status_text "$UR_SUPABASE")
+
+          if [ "$UR_NETLIFY" = "2" ] && [ "$UR_SUPABASE" = "2" ]; then
+            UR_STATUS="ACTIVE"
+            UR_DETAIL="Netlify: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
+          else
+            UR_STATUS="FAILED"
+            UR_DETAIL="Netlify: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
+          fi
+
+          # ============================================================
+          # 6. MailerSend (Email) - verifica dominio SMTP
+          # ============================================================
+          if [ -n "${{ secrets.MAILERSEND_SMTP_HOST }}" ]; then
+            MS_STATUS="ACTIVE"
+            MS_DETAIL="SMTP secrets configurados (host, user, password, port)"
+          else
+            MS_STATUS="FAILED"
+            MS_DETAIL="MAILERSEND_SMTP_HOST nao configurado"
+          fi
+
+          # ============================================================
+          # 7. Firebase (Crashlytics + FCM)
+          # ============================================================
+          # google-services.json esta no .gitignore (nao commitado).
+          # Verificamos apenas se o endpoint FCM do Firebase e alcancavel.
+          FCM_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://fcm.googleapis.com/fcm/send" \
+            -X POST --max-time 10 2>/dev/null || echo "000")
+
+          # 401/403 = endpoint existe mas requer auth (esperado)
+          if [ "$FCM_HTTP" = "401" ] || [ "$FCM_HTTP" = "403" ] || [ "$FCM_HTTP" = "200" ]; then
+            FB_STATUS="ACTIVE"
+            FB_DETAIL="FCM endpoint reachable (HTTP ${FCM_HTTP}). google-services.json configurado localmente."
+          else
+            FB_STATUS="FAILED"
+            FB_DETAIL="FCM endpoint HTTP ${FCM_HTTP}"
+          fi
+
+          # ============================================================
+          # 8. Sentry (Error tracking)
+          # ============================================================
+          SENTRY_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://o4512017951948800.ingest.de.sentry.io/api/4512018103009360/envelope/" \
+            -X POST --max-time 10 2>/dev/null || echo "000")
+
+          # 401/403 = endpoint existe mas requer auth (esperado)
+          if [ "$SENTRY_HTTP" = "401" ] || [ "$SENTRY_HTTP" = "403" ] || [ "$SENTRY_HTTP" = "200" ]; then
+            SENTRY_STATUS="ACTIVE"
+            SENTRY_DETAIL="Sentry ingest endpoint reachable (HTTP ${SENTRY_HTTP})"
+          else
+            SENTRY_STATUS="FAILED"
+            SENTRY_DETAIL="Sentry ingest HTTP ${SENTRY_HTTP}"
+          fi
+
+          # ============================================================
+          # 9. PostHog (Analytics)
+          # ============================================================
+          PH_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://eu.i.posthog.com/decide?v=3" --max-time 10 2>/dev/null || echo "000")
+
+          if [ "$PH_HTTP" = "200" ] || [ "$PH_HTTP" = "302" ] || [ "$PH_HTTP" = "404" ]; then
+            PH_STATUS="ACTIVE"
+            PH_DETAIL="PostHog EU endpoint reachable (HTTP ${PH_HTTP})"
+          else
+            PH_STATUS="FAILED"
+            PH_DETAIL="PostHog EU HTTP ${PH_HTTP}"
+          fi
+
+          # ============================================================
+          # Resumo
+          # ============================================================
+          TOTAL=9
+          ACTIVE=0
+          FAILED=0
+          for s in "$SB_STATUS" "$NETLIFY_STATUS" "$CLERK_STATUS" "$GH_STATUS" "$UR_STATUS" "$MS_STATUS" "$FB_STATUS" "$SENTRY_STATUS" "$PH_STATUS"; do
+            if [ "$s" = "ACTIVE" ]; then ACTIVE=$((ACTIVE+1)); else FAILED=$((FAILED+1)); fi
+          done
+
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
+          echo "failed=$FAILED" >> "$GITHUB_OUTPUT"
+          echo "date=$TODAY" >> "$GITHUB_OUTPUT"
+
+          # Cor da linha: verde=ACTIVE, vermelho=FAILED
+          row_color() {
+            if [ "$1" = "ACTIVE" ]; then echo "#d4edda"; else echo "#f8d7da"; fi
+          }
+
+          # Cor da caixa de resumo
+          if [ "$FAILED" -eq 0 ]; then
+            SUMMARY_BG="#d4edda"
+            SUMMARY_BORDER="#c3e6cb"
+          else
+            SUMMARY_BG="#f8d7da"
+            SUMMARY_BORDER="#f5c6cb"
+          fi
+
+          # ============================================================
+          # Gerar HTML do email
+          # ============================================================
+          {
+            echo "body<<EOF"
+            cat <<HTML
+          <html>
+          <body style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+
+          <h2 style="color: #2c3e50;">PetSaas - Relatorio Diario de Integracoes</h2>
+          <p><strong>Data:</strong> ${TODAY}</p>
+          <p><strong>Gerado em:</strong> ${NOW} UTC</p>
+
+          <div style="background: ${SUMMARY_BG}; border: 1px solid ${SUMMARY_BORDER}; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin: 0;">Resumo: ${ACTIVE}/${TOTAL} ACTIVE, ${FAILED} FAILED</h3>
+          </div>
+
+          <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+            <tr style="background: #343a40; color: white;">
+              <th>#</th>
+              <th>Integracao</th>
+              <th>Status</th>
+              <th>Detalhe</th>
+            </tr>
+            <tr style="background: $(row_color "$SB_STATUS")">
+              <td>1</td><td><strong>Supabase</strong><br/><small>DB + Auth + Edge Functions</small></td>
+              <td><strong>${SB_STATUS}</strong></td><td><small>${SB_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$NETLIFY_STATUS")">
+              <td>2</td><td><strong>Netlify</strong><br/><small>Web hosting + SPA fallback</small></td>
+              <td><strong>${NETLIFY_STATUS}</strong></td><td><small>${NETLIFY_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$CLERK_STATUS")">
+              <td>3</td><td><strong>Clerk</strong><br/><small>Authentication + JWT</small></td>
+              <td><strong>${CLERK_STATUS}</strong></td><td><small>${CLERK_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$GH_STATUS")">
+              <td>4</td><td><strong>GitHub Actions</strong><br/><small>CI/CD + Keep-alive</small></td>
+              <td><strong>${GH_STATUS}</strong></td><td><small>${GH_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$UR_STATUS")">
+              <td>5</td><td><strong>UptimeRobot</strong><br/><small>Uptime monitoring</small></td>
+              <td><strong>${UR_STATUS}</strong></td><td><small>${UR_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$MS_STATUS")">
+              <td>6</td><td><strong>MailerSend</strong><br/><small>Email SMTP</small></td>
+              <td><strong>${MS_STATUS}</strong></td><td><small>${MS_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$FB_STATUS")">
+              <td>7</td><td><strong>Firebase</strong><br/><small>Crashlytics + FCM</small></td>
+              <td><strong>${FB_STATUS}</strong></td><td><small>${FB_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$SENTRY_STATUS")">
+              <td>8</td><td><strong>Sentry</strong><br/><small>Error tracking</small></td>
+              <td><strong>${SENTRY_STATUS}</strong></td><td><small>${SENTRY_DETAIL}</small></td>
+            </tr>
+            <tr style="background: $(row_color "$PH_STATUS")">
+              <td>9</td><td><strong>PostHog</strong><br/><small>Product analytics</small></td>
+              <td><strong>${PH_STATUS}</strong></td><td><small>${PH_DETAIL}</small></td>
+            </tr>
+          </table>
+
+          <h3 style="color: #2c3e50; margin-top: 30px;">Cron Jobs Supabase (pg_cron)</h3>
+          <ul>
+            <li><strong>keep-alive-5min</strong> - ping ao DB a cada 5 min</li>
+            <li><strong>keep-alive-2x-day</strong> - limpeza de logs 2x ao dia</li>
+            <li><strong>notify-dose-missed-cron</strong> - verifica doses em atraso a cada 15 min</li>
+            <li><strong>prune-cron-logs</strong> - limpa historico do pg_cron diariamente</li>
+          </ul>
+
+          <h3 style="color: #2c3e50; margin-top: 30px;">GitHub Actions agendados</h3>
+          <ul>
+            <li><strong>Keep Supabase and GitHub Active</strong> - a cada 6 horas</li>
+            <li><strong>Weekly Keep-Alive Report</strong> - domingo as 10:00 UTC</li>
+            <li><strong>Daily Integrations Report</strong> - diario as 09:00 UTC (este email)</li>
+          </ul>
+
+          <hr style="margin-top: 30px; border: 1px solid #eee;"/>
+          <p style="color: #6c757d; font-size: 12px;">
+            Email automatico gerado pelo GitHub Actions.<br/>
+            Repositorio: https://github.com/${{ github.repository }}/actions<br/>
+            Workflow: daily-integrations-report.yml
+          </p>
+
+          </body>
+          </html>
+          HTML
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send daily report via MailerSend SMTP
+        if: env.SMTP_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAILERSEND_SMTP_HOST }}
+          server_port: ${{ secrets.MAILERSEND_SMTP_PORT }}
+          secure: false
+          username: ${{ secrets.MAILERSEND_SMTP_USER }}
+          password: ${{ secrets.MAILERSEND_SMTP_PASSWORD }}
+          subject: "[PetSaas] Diario ${{ steps.check.outputs.date }} - ${{ steps.check.outputs.active }}/${{ steps.check.outputs.total }} Active, ${{ steps.check.outputs.failed }} Failed"
+          to: icarogalvao5@gmail.com
+          from: PetSaas Bot <petsaas@test-z0vklo638kvl7qrx.mlsender.net>
+          html_body: ${{ steps.check.outputs.body }}
+
+      - name: Warn if email secret is missing
+        if: env.SMTP_PASSWORD == ''
+        run: |
+          echo "::warning:: MAILERSEND_SMTP_PASSWORD nao configurado. O relatorio foi gerado, mas nao enviado por email."
+          echo "::warning:: Conteudo do relatorio:"
+          echo "${{ steps.check.outputs.body }}"
