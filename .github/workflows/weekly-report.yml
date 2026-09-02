@@ -83,16 +83,17 @@ jobs:
               subject: $subject,
               html: $html
             }')
-          printf '%s' "$payload" | curl -sS -X POST "https://api.mailersend.com/v1/email" \
+          http_code=$(printf '%s' "$payload" | curl -sS -X POST "https://api.mailersend.com/v1/email" \
             -H "Authorization: Bearer ${MAILERSEND_API_TOKEN}" \
             -H "Content-Type: application/json" \
             -d @- \
-            -o /tmp/mailersend-response.json -w "HTTP status: %{http_code}\n"
+            -o /tmp/mailersend-response.json -w "%{http_code}")
+          echo "HTTP status: $http_code"
           cat /tmp/mailersend-response.json
-          if [ "$(cat /tmp/mailersend-response.json)" = '""' ]; then
+          if [ "$http_code" = "202" ]; then
             echo "Email enviado com sucesso"
           else
-            echo "Erro no envio:"
+            echo "Erro no envio (HTTP $http_code):"
             exit 1
           fi
 
