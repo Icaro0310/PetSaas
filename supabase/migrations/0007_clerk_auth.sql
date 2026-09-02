@@ -15,24 +15,50 @@ as $$
 $$;
 
 -- =========================================================================
--- 2. Remover policies existentes
+-- 2. Remover TODAS as policies existentes em TODAS as tabelas
 -- =========================================================================
+-- profiles
 drop policy if exists "Users can view own profile" on profiles;
 drop policy if exists "Users can update own profile" on profiles;
+
+-- pets
 drop policy if exists "Owners can CRUD own pets" on pets;
+drop policy if exists "Caregivers can view assigned pets" on pets;
+
+-- medications
+drop policy if exists "Owners can manage medications" on medications;
+drop policy if exists "Caregivers can view medications" on medications;
+drop policy if exists "Caregivers can manage doses" on medications;
+
+-- dose_logs
+drop policy if exists "Owners and caregivers can manage dose_logs" on dose_logs;
+drop policy if exists "Owners and caregivers can view dose logs" on dose_logs;
+
+-- caregivers
 drop policy if exists "Owners can manage caregivers" on caregivers;
 drop policy if exists "Caregivers can view their assignments" on caregivers;
-drop policy if exists "Caregivers can manage doses" on medications;
-drop policy if exists "Owners and caregivers can view dose logs" on dose_logs;
+
+-- pet_found_messages
+drop policy if exists "Owners can view messages for their pets" on pet_found_messages;
 drop policy if exists "Owners can view found messages" on pet_found_messages;
+
+-- subscriptions
 drop policy if exists "Users can view own subscription" on subscriptions;
 drop policy if exists "Users can upsert own subscription" on subscriptions;
 drop policy if exists "Users can update own subscription" on subscriptions;
+
+-- notifications_log
 drop policy if exists "Users can view own notifications" on notifications_log;
+
+-- user_devices
 drop policy if exists "Users can manage own devices" on user_devices;
 
+-- storage.objects
+drop policy if exists "Owners can upload pet photos" on storage.objects;
+drop policy if exists "Public can read pet photos" on storage.objects;
+
 -- =========================================================================
--- 3. Remover TODAS as foreign key constraints primeiro
+-- 3. Remover TODAS as foreign key constraints
 -- =========================================================================
 alter table profiles drop constraint if exists profiles_id_fkey;
 alter table pets drop constraint if exists pets_owner_id_fkey;
@@ -44,21 +70,15 @@ alter table notifications_log drop constraint if exists notifications_log_user_i
 alter table user_devices drop constraint if exists user_devices_user_id_fkey;
 
 -- =========================================================================
--- 4. Alterar tipos de colunas: uuid -> text
+-- 4. Alterar tipos de colunas: uuid -> text (idempotente)
 -- =========================================================================
 alter table profiles alter column id type text using id::text;
-
 alter table pets alter column owner_id type text using owner_id::text;
-
 alter table caregivers alter column owner_id type text using owner_id::text;
 alter table caregivers alter column caregiver_id type text using caregiver_id::text;
-
 alter table dose_logs alter column given_by type text using given_by::text;
-
 alter table subscriptions alter column user_id type text using user_id::text;
-
 alter table notifications_log alter column user_id type text using user_id::text;
-
 alter table user_devices alter column user_id type text using user_id::text;
 
 -- =========================================================================
@@ -95,21 +115,28 @@ create policy "Users can update own profile" on profiles
 create policy "Owners can CRUD own pets" on pets
   for all using (clerk_user_id() = owner_id);
 
-create policy "Owners can manage caregivers" on caregivers
-  for all using (clerk_user_id() = owner_id);
-create policy "Caregivers can view their assignments" on caregivers
-  for select using (clerk_user_id() = caregiver_id);
+create policy "Caregivers can view assigned pets" on pets
+  for select using (
+    clerk_user_id() in (
+      select caregiver_id from caregivers
+      where pet_id = pets.id and status = 'active'
+    )
+  );
 
-create policy "Caregivers can manage doses" on medications
+create policy "Owners can manage medications" on medications
   for all using (
     clerk_user_id() in (select owner_id from pets where id = medications.pet_id)
-    or clerk_user_id() in (
+  );
+
+create policy "Caregivers can view medications" on medications
+  for select using (
+    clerk_user_id() in (
       select caregiver_id from caregivers
       where pet_id = medications.pet_id and status = 'active'
     )
   );
 
-create policy "Owners and caregivers can view dose logs" on dose_logs
+create policy "Owners and caregivers can manage dose_logs" on dose_logs
   for all using (
     clerk_user_id() in (select owner_id from pets where id = dose_logs.pet_id)
     or clerk_user_id() in (
@@ -117,6 +144,11 @@ create policy "Owners and caregivers can view dose logs" on dose_logs
       where pet_id = dose_logs.pet_id and status = 'active'
     )
   );
+
+create policy "Owners can manage caregivers" on caregivers
+  for all using (clerk_user_id() = owner_id);
+create policy "Caregivers can view their assignments" on caregivers
+  for select using (clerk_user_id() = caregiver_id);
 
 create policy "Owners can view found messages" on pet_found_messages
   for all using (
@@ -136,10 +168,38 @@ create policy "Users can view own notifications" on notifications_log
 create policy "Users can manage own devices" on user_devices
   for all using (clerk_user_id() = user_id);
 
+-- Storage policies
+create policy "Owners can upload pet photos" on storage.objects
+  for insert with check (
+    bucket_id = 'pet_photos' and clerk_user_id() is not null
+  );
+create policy "Public can read pet photos" on storage.objects
+  for select using (bucket_id = 'pet_photos');
+
 -- =========================================================================
--- 7. Atualizar funcoes que usavam auth.uid()
+-- 7. Atualizar funcoes que usavam auth.uid() ou uuid para user_id
 -- =========================================================================
+drop function if exists public.mark_dose_given(uuid, uuid, text, text);
+create or replace function public.mark_dose_given(
+  p_dose_id uuid,
+  p_user_id text,
+  p_photo_url text default null,
+  p_notes text default null
+)
+returns void
+language plpgsql
+security definer
+as $$
+begin
+  update dose_logs
+  set given_at = now(), given_by = p_user_id, status = 'given',
+      photo_url = coalesce(p_photo_url, photo_url), notes = coalesce(p_notes, notes)
+  where id = p_dose_id and status = 'pending';
+end;
+$$;
+
 drop function if exists public.mark_dose(uuid, uuid, text);
+drop function if exists public.mark_dose(uuid, text, text);
 create or replace function public.mark_dose(
   p_dose_id uuid,
   p_user_id text,
@@ -158,6 +218,7 @@ end;
 $$;
 
 drop function if exists public.accept_invite(uuid);
+drop function if exists public.accept_invite(text);
 create or replace function public.accept_invite(p_token text)
 returns void
 language plpgsql
