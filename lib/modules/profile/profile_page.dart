@@ -98,8 +98,61 @@ class ProfilePage extends ConsumerWidget {
             label: const Text('Sair',
                 style: TextStyle(color: AppTheme.danger)),
           ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () => _confirmDeleteAccount(context),
+            icon: const Icon(Icons.delete_forever, color: AppTheme.danger),
+            label: const Text('Excluir conta (LGPD)',
+                style: TextStyle(color: AppTheme.danger)),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Excluir conta'),
+        content: const Text(
+          'Esta acao e IRREVERSIVEL. Todos os seus dados (pets, medicacoes, '
+          'historico, cuidadores, notificacoes) serao permanentemente apagados. '
+          'Deseja continuar?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppTheme.danger),
+            child: const Text('Excluir definitivamente'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final userId = SupabaseService.currentUserId;
+    if (userId == null) return;
+
+    try {
+      await SupabaseService.client.functions.invoke(
+        'delete-user-account',
+        body: {'user_id': userId},
+      );
+      if (context.mounted) {
+        await ClerkAuth.of(context).signOut();
+        context.go(AppRoutes.login);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao excluir conta: $e')),
+        );
+      }
+    }
   }
 }

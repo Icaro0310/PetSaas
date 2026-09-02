@@ -48,15 +48,16 @@ class _PublicPetPageState extends State<PublicPetPage> {
       return;
     }
     try {
+      // Usa a funcao get_public_pet() (SECURITY DEFINER) que retorna APENAS
+      // dados seguros: name, species, breed, photo_url, description,
+      // emergency_info, allergies, critical_meds, warnings, microchip_id, is_lost.
+      // NUNCA retorna owner_id, email ou historico de doses.
       final data = await SupabaseService.client
-          .from('pets')
-          .select()
-          .eq('qr_code_uuid', widget.uuid)
-          .maybeSingle();
+          .rpc('get_public_pet', params: {'p_uuid': widget.uuid});
       if (data == null) {
         _error = 'Pet nao encontrado.';
       } else {
-        _pet = data;
+        _pet = data as Map<String, dynamic>;
       }
     } catch (e) {
       final msg = e.toString().toLowerCase();

@@ -56,6 +56,9 @@ Future<void> main() async {
       // Crashlytics (apenas se Firebase inicializou corretamente)
       if (firebaseInitialized) {
         try {
+          // Garante que PII (dados pessoais) NAO sao enviados ao Crashlytics
+          await FirebaseCrashlytics.instance
+              .setCrashlyticsCollectionEnabled(!kDebugMode);
           FlutterError.onError =
               FirebaseCrashlytics.instance.recordFlutterFatalError;
           PlatformDispatcher.instance.onError = (error, stack) {

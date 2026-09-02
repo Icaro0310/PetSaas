@@ -2,7 +2,9 @@ import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../config/constants.dart';
 import '../../config/routes.dart';
 import '../../config/theme.dart';
 
@@ -61,6 +63,25 @@ class LoginPage extends ConsumerWidget {
                       signedOutBuilder: (context, authState) {
                         return const ClerkAuthentication();
                       },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () => launchUrl(
+                      Uri.parse('${AppConstants.siteUrl}privacy.html'),
+                    ),
+                    child: const Text(
+                      'Politica de Privacidade',
+                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => launchUrl(
+                      Uri.parse('${AppConstants.siteUrl}terms.html'),
+                    ),
+                    child: const Text(
+                      'Termos de Uso',
+                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                     ),
                   ),
                 ],
