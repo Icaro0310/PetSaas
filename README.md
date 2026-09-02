@@ -286,8 +286,8 @@ A estrategia usa defesa em profundidade, com pings leves e um relatorio semanal 
 3. **Relatorio semanal por email** (`.github/workflows/weekly-report.yml`):
    - Corre todos os domingos as 10:00 UTC.
    - Le os runs do workflow `keep-supabase-active` dos ultimos 7 dias.
-   - Envia um email com tabela de Passed/Failed/Total para `icarogalvao5@gmail.com` via **MailerSend**.
-   - Secrets do repo: `MAILERSEND_API_TOKEN`, `MAILERSEND_FROM_DOMAIN` e `MAILERSEND_TO_EMAIL`.
+   - Envia um email com tabela de Passed/Failed/Total para `icarogalvao5@gmail.com` via **MailerSend SMTP**.
+   - Secrets do repo: `MAILERSEND_SMTP_HOST`, `MAILERSEND_SMTP_PORT`, `MAILERSEND_SMTP_USER`, `MAILERSEND_SMTP_PASSWORD`.
 
 ## 13. Limitações conhecidas
 

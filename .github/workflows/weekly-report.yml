@@ -11,9 +11,7 @@ permissions:
   contents: read
 
 env:
-  MAILERSEND_API_TOKEN: ${{ secrets.MAILERSEND_API_TOKEN }}
-  MAILERSEND_FROM_DOMAIN: ${{ secrets.MAILERSEND_FROM_DOMAIN }}
-  MAILERSEND_TO_EMAIL: ${{ secrets.MAILERSEND_TO_EMAIL }}
+  SMTP_PASSWORD: ${{ secrets.MAILERSEND_SMTP_PASSWORD }}
 
 jobs:
   report:
@@ -63,41 +61,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Send report via MailerSend
-        if: env.MAILERSEND_API_TOKEN != ''
-        env:
-          HTML_BODY: ${{ steps.report.outputs.body }}
-          TOTAL: ${{ steps.report.outputs.total }}
-          FAILED: ${{ steps.report.outputs.failed }}
-        run: |
-          payload=$(jq -n \
-            --arg from_email "petsaas@${MAILERSEND_FROM_DOMAIN}" \
-            --arg from_name "PetSaas Bot" \
-            --arg to_email "${MAILERSEND_TO_EMAIL}" \
-            --arg to_name "Icaro" \
-            --arg subject "[PetSaas] Relatorio Semanal Keep-Alive - ${TOTAL} runs, ${FAILED} failed" \
-            --arg html "$HTML_BODY" \
-            '{
-              from: {email: $from_email, name: $from_name},
-              to: [{email: $to_email, name: $to_name}],
-              subject: $subject,
-              html: $html
-            }')
-          http_code=$(printf '%s' "$payload" | curl -sS -X POST "https://api.mailersend.com/v1/email" \
-            -H "Authorization: Bearer ${MAILERSEND_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d @- \
-            -o /tmp/mailersend-response.json -w "%{http_code}")
-          echo "HTTP status: $http_code"
-          cat /tmp/mailersend-response.json
-          if [ "$http_code" = "202" ]; then
-            echo "Email enviado com sucesso"
-          else
-            echo "Erro no envio (HTTP $http_code):"
-            exit 1
-          fi
+      - name: Send report via MailerSend SMTP
+        if: env.SMTP_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAILERSEND_SMTP_HOST }}
+          server_port: ${{ secrets.MAILERSEND_SMTP_PORT }}
+          secure: false
+          username: ${{ secrets.MAILERSEND_SMTP_USER }}
+          password: ${{ secrets.MAILERSEND_SMTP_PASSWORD }}
+          subject: "[PetSaas] Relatorio Semanal Keep-Alive - ${{ steps.report.outputs.total }} runs, ${{ steps.report.outputs.failed }} failed"
+          to: icarogalvao5@gmail.com
+          from: PetSaas Bot <petsaas@test-z0vklo638kvl7qrx.mlsender.net>
+          html_body: ${{ steps.report.outputs.body }}
 
-      - name: Warn if MailerSend token is missing
-        if: env.MAILERSEND_API_TOKEN == ''
+      - name: Warn if email secret is missing
+        if: env.SMTP_PASSWORD == ''
         run: |
-          echo "::warning:: MAILERSEND_API_TOKEN nao configurado. O relatorio foi gerado, mas nao enviado."
+          echo "::warning:: MAILERSEND_SMTP_PASSWORD nao configurado. O relatorio foi gerado, mas nao enviado."
