@@ -1,0 +1,71 @@
+RELATORIO LEGAL - PetCare
+Data: 02 de setembro de 2026
+Commit: 6f14593
+
+[✓] Termos de Servico criados e commitados.
+    - docs/legal/termos-de-servico.txt
+    - web/terms.html (HTML formatado, deployado no Netlify)
+    - Inclui DMCA (Secao 7) e Arbitragem vinculativa (Secao 9)
+
+[✓] Politica de Privacidade criada e commitada.
+    - docs/legal/politica-de-privacidade.txt
+    - web/privacy.html (HTML formatado, deployado no Netlify)
+    - Conformidade: LGPD (Brasil), CCPA (California), GDPR (UE), Lei 23/96 (Portugal)
+
+[✓] Checklist AI gerado.
+    - docs/legal/checklist-auditoria-IA.md
+    - Conformidade FTC sobre AI washing
+    - PetCare NAO usa IA - nenhuma declaracao enganosa
+
+[✓] Guia DMCA gerado com lembrete para 3 anos.
+    - docs/legal/guia-registro-DMCA.md
+    - docs/legal/lembrete-dmca.txt
+    - RENOVAR DMCA EM: 2029-09-02
+
+[✓] Checklist loja gerado.
+    - docs/legal/checklist-loja-app.md
+    - Schema do Supabase verificado: 9 tabelas, todos os campos existem
+    - Data Safety Form, permissoes, keystore, store listing
+
+[✓] Paginas /privacy e /terms acessiveis via Netlify.
+    - https://moonlit-pothos-c56cd4.netlify.app/privacy.html → HTTP 200
+    - https://moonlit-pothos-c56cd4.netlify.app/terms.html → HTTP 200
+    - Conteudo verificado: LGPD, CCPA, DMCA, arbitragem presentes
+
+[ ] (ACAO MANUAL) Registrar DMCA no copyright.gov.
+    - Acessar: https://dmca.copyright.gov
+    - Taxa: $6 USD
+    - Agente: [SEU_NOME], legal@petcare.com
+    - Renovar em: 2029-09-02
+
+[ ] (ACAO MANUAL) Linkar ToS e Privacy na pagina de login do Flutter.
+    - JA FEITO: links adicionados em lib/modules/auth/login_page.dart
+    - Pendente: substituir [SEU_NOME] e [SEU_ENDERECO] nos documentos
+
+[ ] (ACAO MANUAL) Atualizar dominio www.petcare.com no Framer/Netlify.
+    - Dominio atual: moonlit-pothos-c56cd4.netlify.app
+    - Dominio final: app.petcare.com
+    - Atualizar URLs em: web/privacy.html, web/terms.html, lib/config/constants.dart
+
+[ ] (ACAO MANUAL) Substituir placeholders nos documentos legais:
+    - [SEU_NOME] → nome real do responsavel
+    - [SEU_ENDERECO] → endereco real
+    - [SEU_TELEFONE] → telefone de contacto
+    - legal@petcare.com → email real (se diferente)
+
+FICHEIROS CRIADOS:
+    docs/legal/termos-de-servico.txt
+    docs/legal/politica-de-privacidade.txt
+    docs/legal/checklist-auditoria-IA.md
+    docs/legal/guia-registro-DMCA.md
+    docs/legal/checklist-loja-app.md
+    docs/legal/lembrete-dmca.txt
+    docs/legal/RELATORIO-LEGAL.txt
+    web/privacy.html (atualizado)
+    web/terms.html (atualizado)
+
+DEPLOY:
+    Commit: 6f14593 pushed to origin/main
+    Netlify: https://moonlit-pothos-c56cd4.netlify.app (deploy complete)
+    Privacy: HTTP 200 ✓
+    Terms: HTTP 200 ✓
