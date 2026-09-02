@@ -148,18 +148,20 @@ jobs:
           # 7. Firebase (Crashlytics + FCM)
           # ============================================================
           # google-services.json esta no .gitignore (nao commitado).
-          # Verificamos apenas se o endpoint FCM do Firebase e alcancavel.
+          # O endpoint legacy fcm.googleapis.com/fcm/send foi descontinuado
+          # em junho 2024 (FCM HTTP v1 API substitui). Verificamos apenas
+          # se o dominio FCM responde.
           FCM_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://fcm.googleapis.com/fcm/send" \
-            -X POST --max-time 10 2>/dev/null || echo "000")
+            "https://fcm.googleapis.com/" --max-time 10 2>/dev/null || echo "000")
 
-          # 401/403 = endpoint existe mas requer auth (esperado)
-          if [ "$FCM_HTTP" = "401" ] || [ "$FCM_HTTP" = "403" ] || [ "$FCM_HTTP" = "200" ]; then
+          # Qualquer resposta HTTP (incluindo 404/403) significa que o
+          # servidor FCM esta alcancavel. 000 = timeout/sem conexao.
+          if [ "$FCM_HTTP" != "000" ]; then
             FB_STATUS="ACTIVE"
-            FB_DETAIL="FCM endpoint reachable (HTTP ${FCM_HTTP}). google-services.json configurado localmente."
+            FB_DETAIL="FCM server reachable (HTTP ${FCM_HTTP}). google-services.json configurado localmente."
           else
             FB_STATUS="FAILED"
-            FB_DETAIL="FCM endpoint HTTP ${FCM_HTTP}"
+            FB_DETAIL="FCM server unreachable (timeout)"
           fi
 
           # ============================================================
