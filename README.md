@@ -266,7 +266,24 @@ Opcoes para quem nao tem um dispositivo Android real:
 
 Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o **BlueStacks (Lite)** ou um dispositivo Android real para testes finais.
 
-## 12. Limitações conhecidas
+## 12. Manter o Supabase Free ativo
+
+O Supabase Free pausa projetos inativos apos ~7 dias sem atividade na base de dados.
+Para evitar a pausa automatica:
+
+1. **pg_cron interno** (migration `0004_keep_alive.sql`):
+   - Tabela `public.keep_alive` com leitura publica (`anon`).
+   - Job `keep-alive-ping` a cada 6 horas: `select 1 from public.keep_alive limit 1;`
+   - Deploy: `supabase db push`
+
+2. **GitHub Actions externo** (`.github/workflows/keep-supabase-active.yml`):
+   - Correr `cron: '0 */6 * * *'` (4 vezes por dia).
+   - Faz `GET /rest/v1/keep_alive?select=id&limit=1` com a `anon key`.
+   - Secrets do repo: `SUPABASE_URL` e `SUPABASE_ANON_KEY`.
+
+3. **Aviso:** GitHub Actions desativa workflows agendados apos 60 dias sem atividade no repositorio. Se isso acontecer, correr manualmente via `workflow_dispatch` ou fazer um commit vazio.
+
+## 13. Limitações conhecidas
 
 - Emulador Android não testado por falta de HAXM/Hyper-V; AVD AOSP `PetCare_API_34_AOSP` criado e arranca, mas o host não tem recursos para correr a UI de forma fluída.
 - ~~Configuração web do Firebase está hardcoded em `lib/main.dart`; idealmente substituir por `firebase_options.dart` gerado via `flutterfire configure`.~~ ✅ Resolvido.
@@ -274,7 +291,7 @@ Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o *
 - Notificações locais e paywall só testáveis em dispositivo real.
 - ~~Termos de Uso e Política de Privacidade ainda não criados (obrigatório para Play Store).~~ ✅ Resolvido em `web/privacy.html` e `web/terms.html`.
 
-## 13. Próximos passos
+## 14. Próximos passos
 
 1. ~~Gerar Termos de Uso e Política de Privacidade.~~ ✅
 2. ~~Criar páginas estáticas `/privacy` e `/terms` no web.~~ ✅
