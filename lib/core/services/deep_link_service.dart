@@ -1,15 +1,17 @@
-/// Serviço para tratar deep links (/pet/:uuid e /join?token=...).
+/// Servico para tratar deep links (/p/:uuid e /join?token=...).
 ///
-/// O roteamento real é feito pelo go_router; este serviço expõe helpers
-/// para construir URIs públicos da página do pet e do convite de cuidador.
+/// O roteamento real e feito pelo go_router; este servico expoe helpers
+/// para construir URIs publicos da pagina do pet e do convite de cuidador.
 class DeepLinkService {
   DeepLinkService._();
 
-  /// Base URL pública (web). Em produção, substituir pelo domínio real.
-  static const String webBaseUrl = 'https://petcare-micro-saas.web.app';
+  /// Base URL publica (web). Em producao, substituir pelo dominio real.
+  /// TODO: Quando o dominio custom estiver configurado, trocar por:
+  ///   static const String webBaseUrl = 'https://app.petcare.com';
+  static const String webBaseUrl = 'https://moonlit-pothos-c56cd4.netlify.app';
 
   static String publicPetUrl(String qrCodeUuid) =>
-      '$webBaseUrl/pet/$qrCodeUuid';
+      '$webBaseUrl/p/$qrCodeUuid';
 
   static String inviteUrl(String token) => '$webBaseUrl/join?token=$token';
 }

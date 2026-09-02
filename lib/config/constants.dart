@@ -32,6 +32,8 @@ class AppConstants {
       'https://climbing-burro-4910.clerk.accounts.dev';
 
   // Web deploy
+  // TODO: Quando o dominio custom estiver configurado no Netlify, trocar por:
+  //   static const String siteUrl = 'https://app.petcare.com/';
   static const String siteUrl = 'https://moonlit-pothos-c56cd4.netlify.app/';
 
   // Redirect usado no magic link
