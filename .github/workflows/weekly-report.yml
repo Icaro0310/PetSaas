@@ -1,0 +1,81 @@
+name: Weekly Keep-Alive Report
+
+on:
+  schedule:
+    # Domingo, 10:00 UTC (report da semana anterior)
+    - cron: '0 10 * * 0'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME || 'icarogalvao5@gmail.com' }}
+  GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gather keep-alive runs
+        id: report
+        run: |
+          since=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          runs=$(gh api "repos/${{ github.repository }}/actions/workflows/keep-supabase-active.yml/runs?created=>=$since&per_page=100" --jq '.workflow_runs')
+          total=$(echo "$runs" | jq 'length')
+          passed=$(echo "$runs" | jq '[.[] | select(.conclusion == "success")] | length')
+          failed=$(echo "$runs" | jq '[.[] | select(.conclusion == "failure")] | length')
+          cancelled=$(echo "$runs" | jq '[.[] | select(.conclusion == "cancelled")] | length')
+          skipped=$(echo "$runs" | jq '[.[] | select(.conclusion == "skipped")] | length')
+          other=$((total - passed - failed - cancelled - skipped))
+
+          html="<h2>PetSaas - Relatorio Semanal Keep-Alive</h2>"
+          html="$html<p>Periodo: $since ate agora</p>"
+          html="$html<table border='1' cellpadding='8' style='border-collapse:collapse'>"
+          html="$html<tr><th>Status</th><th>Quantidade</th></tr>"
+          html="$html<tr style='background:#d4edda'><td>Passed</td><td>$passed</td></tr>"
+          html="$html<tr style='background:#f8d7da'><td>Failed</td><td>$failed</td></tr>"
+          html="$html<tr><td>Cancelled</td><td>$cancelled</td></tr>"
+          html="$html<tr><td>Skipped</td><td>$skipped</td></tr>"
+          html="$html<tr><td>Other</td><td>$other</td></tr>"
+          html="$html<tr style='font-weight:bold'><td>Total</td><td>$total</td></tr>"
+          html="$html</table>"
+          html="$html<p>Repositorio: https://github.com/${{ github.repository }}/actions</p>"
+
+          if [ "$failed" -gt 0 ]; then
+            html="$html<p style='color:red;font-weight:bold'>ATENCAO: $failed execucao(oes) falharam. Verifique os logs.</p>"
+          else
+            html="$html<p style='color:green;font-weight:bold'>Todas as execucoes da semana foram bem-sucedidas.</p>"
+          fi
+
+          echo "total=$total" >> "$GITHUB_OUTPUT"
+          echo "passed=$passed" >> "$GITHUB_OUTPUT"
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+          echo "since=$since" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "body<<EOF"
+            echo "$html"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send email report
+        if: env.GMAIL_APP_PASSWORD != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ env.GMAIL_USERNAME }}
+          password: ${{ env.GMAIL_APP_PASSWORD }}
+          subject: "[PetSaas] Relatorio Semanal Keep-Alive - ${{ steps.report.outputs.total }} runs, ${{ steps.report.outputs.failed }} failed"
+          to: icarogalvao5@gmail.com
+          from: "PetSaas Bot <${{ env.GMAIL_USERNAME }}>"
+          html_body: ${{ steps.report.outputs.body }}
+
+      - name: Warn if email secret is missing
+        if: env.GMAIL_APP_PASSWORD == ''
+        run: |
+          echo "::warning:: GMAIL_APP_PASSWORD nao configurado. O relatorio foi gerado, mas nao enviado."

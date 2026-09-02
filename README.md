@@ -269,19 +269,25 @@ Recomendacao para este hardware: **usar a versao Web** para validar fluxos e o *
 ## 12. Manter o Supabase Free ativo
 
 O Supabase Free pausa projetos inativos apos ~7 dias sem atividade na base de dados.
-Para evitar a pausa automatica, a estrategia e usar defesa em profundidade:
+A estrategia usa defesa em profundidade, com pings leves e um relatorio semanal por email:
 
-1. **pg_cron interno** (migrations `0004` e `0005`):
+1. **pg_cron interno** (migrations `0004`, `0005` e `0006`):
    - Tabela `public.keep_alive` com leitura publica (`anon`).
-   - Job `keep-alive-ping` a cada **5 minutos**: `select 1 from public.keep_alive limit 1;`
+   - Job `keep-alive-ping` a cada **11:00 e 23:00 UTC** (2 vezes por dia): `select 1 from public.keep_alive limit 1;`
    - Job `prune-cron-logs` todos os dias as 03:00 UTC para limpar o historico do `pg_cron`.
    - Deploy: `supabase db push`
 
 2. **GitHub Actions externo** (`.github/workflows/keep-supabase-active.yml`):
    - Ping ao Supabase: `cron: '0 */6 * * *'` (4 vezes por dia).
-   - **Keepalive do proprio GitHub**: `cron: '0 0 1 * *'` (1º de cada mes) faz um commit em `.github/LAST_GITHUB_ACTIVITY`.
-   - O commit mensal gera atividade no repositorio e evita que o GitHub desative o workflow agendado apos 60 dias.
+   - **Keepalive do proprio GitHub**: `cron: '0 0 1,15 * *'` (dias 1 e 15 de cada mes) faz um commit em `.github/LAST_GITHUB_ACTIVITY`.
+   - O commit a cada 15 dias gera atividade no repositorio e evita que o GitHub desative o workflow agendado apos 60 dias.
    - Secrets do repo: `SUPABASE_URL` e `SUPABASE_ANON_KEY`.
+
+3. **Relatorio semanal por email** (`.github/workflows/weekly-report.yml`):
+   - Corre todos os domingos as 10:00 UTC.
+   - Le os runs do workflow `keep-supabase-active` dos ultimos 7 dias.
+   - Envia um email com tabela de Passed/Failed/Total para `icarogalvao5@gmail.com`.
+   - **Necessario configurar o secret `GMAIL_APP_PASSWORD`** (App Password do Gmail).
 
 ## 13. Limitações conhecidas
 

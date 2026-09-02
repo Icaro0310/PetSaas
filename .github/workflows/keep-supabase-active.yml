@@ -4,8 +4,8 @@ on:
   schedule:
     # Ping ao Supabase: a cada 6 horas
     - cron: '0 */6 * * *'
-    # Commit mensal para manter o repositorio ativo (GitHub desativa workflows agendados apos 60 dias sem atividade)
-    - cron: '0 0 1 * *'
+    # Commit a cada 15 dias para manter o repositorio ativo (GitHub desativa workflows agendados apos 60 dias sem atividade)
+    - cron: '0 0 1,15 * *'
   workflow_dispatch:
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
   keepalive:
-    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 1 * *'
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 0 1,15 * *'
     runs-on: ubuntu-latest
     permissions:
       contents: write
