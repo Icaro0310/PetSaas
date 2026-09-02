@@ -6,8 +6,6 @@
 -- =========================================================================
 -- 1. Funcao helper: retorna o user ID do Clerk a partir do JWT
 -- =========================================================================
--- Quando o Supabase recebe um JWT do Clerk (via JWT Template),
--- o user ID fica em request.jwt.claim.sub.
 create or replace function public.clerk_user_id()
 returns text
 language sql
@@ -34,54 +32,60 @@ drop policy if exists "Users can view own notifications" on notifications_log;
 drop policy if exists "Users can manage own devices" on user_devices;
 
 -- =========================================================================
--- 3. Alterar tipos de colunas: uuid -> text
+-- 3. Remover TODAS as foreign key constraints primeiro
 -- =========================================================================
--- profiles.id: era uuid references auth.users, agora text (Clerk user ID)
 alter table profiles drop constraint if exists profiles_id_fkey;
+alter table pets drop constraint if exists pets_owner_id_fkey;
+alter table caregivers drop constraint if exists caregivers_owner_id_fkey;
+alter table caregivers drop constraint if exists caregivers_caregiver_id_fkey;
+alter table dose_logs drop constraint if exists dose_logs_given_by_fkey;
+alter table subscriptions drop constraint if exists subscriptions_user_id_fkey;
+alter table notifications_log drop constraint if exists notifications_log_user_id_fkey;
+alter table user_devices drop constraint if exists user_devices_user_id_fkey;
+
+-- =========================================================================
+-- 4. Alterar tipos de colunas: uuid -> text
+-- =========================================================================
 alter table profiles alter column id type text using id::text;
 
--- pets.owner_id: era uuid references profiles(id), agora text
 alter table pets alter column owner_id type text using owner_id::text;
-alter table pets drop constraint if exists pets_owner_id_fkey;
+
+alter table caregivers alter column owner_id type text using owner_id::text;
+alter table caregivers alter column caregiver_id type text using caregiver_id::text;
+
+alter table dose_logs alter column given_by type text using given_by::text;
+
+alter table subscriptions alter column user_id type text using user_id::text;
+
+alter table notifications_log alter column user_id type text using user_id::text;
+
+alter table user_devices alter column user_id type text using user_id::text;
+
+-- =========================================================================
+-- 5. Recriar foreign key constraints
+-- =========================================================================
 alter table pets add constraint pets_owner_id_fkey
   foreign key (owner_id) references profiles(id) on delete cascade;
 
--- caregivers.owner_id e caregiver_id
-alter table caregivers alter column owner_id type text using owner_id::text;
-alter table caregivers alter column caregiver_id type text using caregiver_id::text;
-alter table caregivers drop constraint if exists caregivers_owner_id_fkey;
-alter table caregivers drop constraint if exists caregivers_caregiver_id_fkey;
 alter table caregivers add constraint caregivers_owner_id_fkey
   foreign key (owner_id) references profiles(id) on delete cascade;
 alter table caregivers add constraint caregivers_caregiver_id_fkey
   foreign key (caregiver_id) references profiles(id) on delete set null;
 
--- dose_logs.given_by
-alter table dose_logs alter column given_by type text using given_by::text;
-alter table dose_logs drop constraint if exists dose_logs_given_by_fkey;
 alter table dose_logs add constraint dose_logs_given_by_fkey
   foreign key (given_by) references profiles(id) on delete set null;
 
--- subscriptions.user_id
-alter table subscriptions alter column user_id type text using user_id::text;
-alter table subscriptions drop constraint if exists subscriptions_user_id_fkey;
 alter table subscriptions add constraint subscriptions_user_id_fkey
   foreign key (user_id) references profiles(id) on delete cascade;
 
--- notifications_log.user_id
-alter table notifications_log alter column user_id type text using user_id::text;
-alter table notifications_log drop constraint if exists notifications_log_user_id_fkey;
 alter table notifications_log add constraint notifications_log_user_id_fkey
   foreign key (user_id) references profiles(id) on delete cascade;
 
--- user_devices.user_id
-alter table user_devices alter column user_id type text using user_id::text;
-alter table user_devices drop constraint if exists user_devices_user_id_fkey;
 alter table user_devices add constraint user_devices_user_id_fkey
   foreign key (user_id) references profiles(id) on delete cascade;
 
 -- =========================================================================
--- 4. Recriar RLS policies com clerk_user_id()
+-- 6. Recriar RLS policies com clerk_user_id()
 -- =========================================================================
 create policy "Users can view own profile" on profiles
   for select using (clerk_user_id() = id);
@@ -133,8 +137,9 @@ create policy "Users can manage own devices" on user_devices
   for all using (clerk_user_id() = user_id);
 
 -- =========================================================================
--- 5. Atualizar funcoes que usavam auth.uid()
+-- 7. Atualizar funcoes que usavam auth.uid()
 -- =========================================================================
+drop function if exists public.mark_dose(uuid, uuid, text);
 create or replace function public.mark_dose(
   p_dose_id uuid,
   p_user_id text,
@@ -152,6 +157,7 @@ begin
 end;
 $$;
 
+drop function if exists public.accept_invite(uuid);
 create or replace function public.accept_invite(p_token text)
 returns void
 language plpgsql
@@ -163,9 +169,3 @@ begin
   where invite_token = p_token;
 end;
 $$;
-
--- =========================================================================
--- 6. Trigger: criar profile automaticamente (chamado via webhook Clerk)
--- =========================================================================
--- O webhook do Clerk chama uma edge function que faz upsert na tabela profiles.
--- Nao precisamos de trigger no DB porque o Clerk nao cria users no auth.users.
