@@ -37,5 +37,6 @@ jobs:
           supabase functions deploy notify-pet-found --no-verify-jwt
           supabase functions deploy notify-dose-missed --no-verify-jwt
           supabase functions deploy clerk-webhook --no-verify-jwt
+          supabase functions deploy health --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
