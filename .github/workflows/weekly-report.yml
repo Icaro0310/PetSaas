@@ -11,8 +11,9 @@ permissions:
   contents: read
 
 env:
-  GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME || 'icarogalvao5@gmail.com' }}
-  GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+  MAILERSEND_API_TOKEN: ${{ secrets.MAILERSEND_API_TOKEN }}
+  MAILERSEND_FROM_DOMAIN: ${{ secrets.MAILERSEND_FROM_DOMAIN }}
+  MAILERSEND_TO_EMAIL: ${{ secrets.MAILERSEND_TO_EMAIL }}
 
 jobs:
   report:
@@ -62,20 +63,40 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Send email report
-        if: env.GMAIL_APP_PASSWORD != ''
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ env.GMAIL_USERNAME }}
-          password: ${{ env.GMAIL_APP_PASSWORD }}
-          subject: "[PetSaas] Relatorio Semanal Keep-Alive - ${{ steps.report.outputs.total }} runs, ${{ steps.report.outputs.failed }} failed"
-          to: icarogalvao5@gmail.com
-          from: "PetSaas Bot <${{ env.GMAIL_USERNAME }}>"
-          html_body: ${{ steps.report.outputs.body }}
-
-      - name: Warn if email secret is missing
-        if: env.GMAIL_APP_PASSWORD == ''
+      - name: Send report via MailerSend
+        if: env.MAILERSEND_API_TOKEN != ''
+        env:
+          HTML_BODY: ${{ steps.report.outputs.body }}
+          TOTAL: ${{ steps.report.outputs.total }}
+          FAILED: ${{ steps.report.outputs.failed }}
         run: |
-          echo "::warning:: GMAIL_APP_PASSWORD nao configurado. O relatorio foi gerado, mas nao enviado."
+          payload=$(jq -n \
+            --arg from_email "petsaas@${MAILERSEND_FROM_DOMAIN}" \
+            --arg from_name "PetSaas Bot" \
+            --arg to_email "${MAILERSEND_TO_EMAIL}" \
+            --arg to_name "Icaro" \
+            --arg subject "[PetSaas] Relatorio Semanal Keep-Alive - ${TOTAL} runs, ${FAILED} failed" \
+            --arg html "$HTML_BODY" \
+            '{
+              from: {email: $from_email, name: $from_name},
+              to: [{email: $to_email, name: $to_name}],
+              subject: $subject,
+              html: $html
+            }')
+          printf '%s' "$payload" | curl -sS -X POST "https://api.mailersend.com/v1/email" \
+            -H "Authorization: Bearer ${MAILERSEND_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d @- \
+            -o /tmp/mailersend-response.json -w "HTTP status: %{http_code}\n"
+          cat /tmp/mailersend-response.json
+          if [ "$(cat /tmp/mailersend-response.json)" = '""' ]; then
+            echo "Email enviado com sucesso"
+          else
+            echo "Erro no envio:"
+            exit 1
+          fi
+
+      - name: Warn if MailerSend token is missing
+        if: env.MAILERSEND_API_TOKEN == ''
+        run: |
+          echo "::warning:: MAILERSEND_API_TOKEN nao configurado. O relatorio foi gerado, mas nao enviado."
