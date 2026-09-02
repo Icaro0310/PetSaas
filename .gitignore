@@ -58,3 +58,12 @@ android/app/google-services.json
 # Supabase CLI artifacts
 supabase/.temp/
 
+# Netlify CLI artifacts
+.netlify/
+
+# Sentry wizard (downloaded binary)
+sentry-wizard.exe
+
+# Flutter Web build output (deployed separately)
+/build/
+
