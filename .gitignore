@@ -67,3 +67,6 @@ sentry-wizard.exe
 # Flutter Web build output (deployed separately)
 /build/
 
+# Graphify knowledge graph output
+graphify-out/
+
