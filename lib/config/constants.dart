@@ -25,7 +25,14 @@ class AppConstants {
   // Doses
   static const Duration missedDoseThreshold = Duration(hours: 2);
 
+  // Web deploy
+  static const String siteUrl = 'https://moonlit-pothos-c56cd4.netlify.app/';
+
+  // Redirect usado no magic link
+  static const String webRedirectUrl = siteUrl;
+  static const String mobileRedirectUrl = 'io.supabase.flutter://reset-callback/';
+
   // Deep link / página pública
-  static const String publicPetBasePath = '/pet';
+  static const String publicPetBasePath = '/p';
   static const String joinBasePath = '/join';
 }

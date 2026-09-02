@@ -1,0 +1,30 @@
+name: Configure Supabase Auth URL
+
+on:
+  workflow_dispatch:
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Supabase Auth URL configuration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          echo "Configuring Supabase auth redirect URLs..."
+          curl -sS -X PATCH "https://api.supabase.com/v1/projects/${PROJECT_REF}/config/auth" \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "site_url": "https://moonlit-pothos-c56cd4.netlify.app/",
+              "additional_redirect_urls": [
+                "https://moonlit-pothos-c56cd4.netlify.app/",
+                "https://moonlit-pothos-c56cd4.netlify.app/**",
+                "https://*--moonlit-pothos-c56cd4.netlify.app/**",
+                "io.supabase.flutter://reset-callback/",
+                "http://localhost:*/**",
+                "http://localhost:*"
+              ]
+            }'
+          echo "Done."

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../config/constants.dart';
@@ -25,11 +26,14 @@ class SupabaseService {
   }
 
   /// Envia magic link para o email.
+  ///
+  /// No Web o link volta para o site (Netlify). No Android/iOS usa o deep link nativo.
   static Future<void> signInWithMagicLink(String email) async {
     await client.auth.signInWithOtp(
       email: email.trim(),
-      emailRedirectTo:
-          'io.supabase.flutter://reset-callback/', // fallback deep link
+      emailRedirectTo: kIsWeb
+          ? AppConstants.webRedirectUrl
+          : AppConstants.mobileRedirectUrl,
     );
   }
 
