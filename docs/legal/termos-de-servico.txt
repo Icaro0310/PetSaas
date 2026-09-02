@@ -1,0 +1,141 @@
+TERMOS DE SERVICO - PetCare
+
+Ultima atualizacao: 02 de setembro de 2026
+
+1. ACEITACAO DOS TERMOS
+
+Ao acessar ou utilizar o PetCare ("Servico"), disponivel em https://app.petcare.com e na aplicacao movel, voce concorda com estes Termos de Servico ("Termos"). Se nao concordar, nao utilize o Servico.
+
+O PetCare e operado por [SEU_NOME] ("Operador", "nos", "nosso"), com sede em [SEU_ENDERECO]. Para questoes legais, contacte legal@petcare.com.
+
+2. DESCRICAO DO SERVICO
+
+O PetCare e uma aplicacao de gestao de cuidados para animais de estimacao que permite:
+- Registar e gerir informacoes sobre pets (nome, foto, peso, raca);
+- Registar medicacoes e doses administradas;
+- Rastrear quem administrou cada dose;
+- Gerar QR Codes unicos por pet para identificacao em caso de perda;
+- Permitir que terceiros enviem mensagens ao dono ao encontrar o pet;
+- Convidar cuidadores com permissoes restritas;
+- Receber notificacoes locais e push.
+
+3. CONTAS DE UTILIZADOR
+
+3.1 Registo: Para utilizar o Servico, deve criar uma conta atraves do Clerk (nosso provedor de autenticacao). Voce e responsavel pela exatidao das informacoes fornecidas.
+
+3.2 Seguranca: Voce e responsavel por manter a confidencialidade da sua conta e por todas as atividades realizadas com ela.
+
+3.3 Idade: Deve ter pelo menos 16 anos (ou a idade minima de consentimento no seu pais) para utilizar o Servico. Menores devem ter supervisao dos pais ou responsaveis legais.
+
+3.4 Exclusao de conta: Pode excluir a sua conta a qualquer momento na secao "Perfil > Excluir conta (LGPD)". A exclusao apaga permanentemente todos os seus dados.
+
+4. PLANOS E COBRANCA
+
+4.1 Plano Free: Permite 1 pet, 1 cuidador e historico de 7 dias, sem custo.
+
+4.2 Trial Premium: Periodo de teste de 14 dias com acesso completo ao Premium.
+
+4.3 Plano Premium: Custo de 1,99 EUR/mes, com pets ilimitados, cuidadores ilimitados e historico completo.
+
+4.4 Cancelamento: Pode cancelar a qualquer momento. O acesso Premium continua ate o fim do periodo pago. Nao ha reembolso de periodos parciais.
+
+5. OBRIGACOES DO UTILIZADOR
+
+Voce concorda em:
+- Fornecer informacoes verdadeiras e atualizadas;
+- Nao utilizar o Servico para atividades ilegais ou fraudulentas;
+- Nao tentar acessar dados de outros utilizadores sem autorizacao;
+- Nao fazer engenharia reversa, descompilar ou decodificar a aplicacao;
+- Nao sobrecarregar os servidores com requisicoes automatizadas excessivas.
+
+6. PROPRIEDADE INTELECTUAL
+
+6.1 O Servico, incluindo design, codigo, logotipos e conteudos originais, e protegido por direitos autorais e outras leis de propriedade intelectual.
+
+6.2 O utilizador mantem a propriedade das informacoes que submete (fotos do pet, dados de medicacao, etc.).
+
+6.3 Ao submeter fotos do pet, concede ao PetCare uma licenca nao-exclusiva, mundial, gratuita para hospedar, exibir e processar essas imagens exclusivamente para o funcionamento do Servico (incluindo a pagina publica do QR Code).
+
+7. DMCA - DIGITAL MILLENNIUM COPYRIGHT ACT
+
+7.1 Notificacao de violacao: Se acredita que conteudo no PetCare viola os seus direitos autorais, envie uma notificacao DMCA para legal@petcare.com incluindo:
+   a) Identificacao da obra protegida;
+   b) Identificacao do conteudo alegadamente infrator e sua localizacao no Servico;
+   c) Seus dados de contacto (nome, endereco, telefone, email);
+   d) Declaracao de boa-fe de que a reclamacao e verdadeira;
+   e) Assinatura fisica ou eletronica.
+
+7.2 Contra-notificacao: Se o seu conteudo foi removido e acredita que foi por engano, pode enviar contra-notificacao com os mesmos requisitos.
+
+7.3 Repetidores de infracoes: Utilizadores reincidentes em violacoes de direitos autorais terao a conta terminada.
+
+7.4 Registro DMCA: O Operador deve registrar a designacao de agente DMCA no U.S. Copyright Office (https://dmca.copyright.gov). Renovacao a cada 3 anos (ver docs/legal/lembrete-dmca.txt).
+
+8. LIMITACAO DE RESPONSABILIDADE
+
+8.1 O Servico e fornecido "COMO ESTA" e "CONFORME DISPONIVEL", sem garantias expressas ou implicitas.
+
+8.2 O Operador nao garante que:
+   a) O Servico sera ininterrupto, seguro ou livre de erros;
+   b) As informacoes de medicacao estao corretas ou atualizadas;
+   c) O QR Code resultara na recuperacao do pet.
+
+8.3 O Servico nao substitui aconselhamento veterinario. Sempre consulte um veterinario para questoes de saude do pet.
+
+8.4 Em nenhuma circunstancia o Operador sera responsavel por danos indiretos, incidentais, especiais, consequenciais ou punitivos, incluindo perda de dados, lucros ou pets.
+
+8.5 A responsabilidade total do Operador nao excedera o valor pago pelo utilizador nos ultimos 12 meses.
+
+9. ARBITRAGEM E RESOLUCAO DE DISPUTAS
+
+9.1 Negociacao informal: Antes de arbitragem, as partes devem tentar resolver a disputa informalmente por escrito durante 30 dias.
+
+9.2 Arbitragem vinculativa: Se a disputa nao for resolvida informalmente, sera resolvida por arbitragem final e vinculativa administrada por uma entidade de arbitragem mutuamente acordada (ou, na falta de acordo, pela CAM - Camara Arbitral de Lisboa, para disputas em Portugal; ou pela AAA - American Arbitration Association, para disputas nos EUA).
+
+9.3 Local: A arbitragem ocorrera em Lisboa, Portugal (ou no condado da residencia do utilizador, se nos EUA).
+
+9.4 Idioma: Portugues (ou Ingles, se o utilizador for dos EUA).
+
+9.5 Renuncia a acao coletiva: Voce e o Operador concordam que cada parte pode apresentar reclamacoes apenas em nome individual, nao em acao coletiva, representativa ou consolidada.
+
+9.6 Excecoes: Disputas sobre propriedade intelectual, DMCA e injuncoes podem ser levadas a tribunal competente.
+
+10. INDENIZACAO
+
+Voce concorda em indemnizar e isentar o Operador, seus diretores, funcionarios e parceiros de quaisquer reclamacoes, danos, obrigacoes, perdas e despesas (incluindo honorarios advocaticios) decorrentes do seu uso do Servico ou violacao destes Termos.
+
+11. MODIFICACOES
+
+11.1 O Operador pode modificar estes Termos a qualquer momento. As modificacoes entram em vigor 30 dias apos a publicacao na aplicacao ou no site.
+
+11.2 O uso continuado do Servico apos 30 dias constitui aceitacao dos novos Termos.
+
+12. TERMINO
+
+12.1 O Operador pode suspender ou terminar o acesso a qualquer momento, com ou sem causa, com ou sem aviso previo.
+
+12.2 Em caso de termino, todas as licencas concedidas ao utilizador cessam imediatamente.
+
+13. LEI APLICAVEL
+
+Estes Termos sao regidos pelas leis de Portugal (Lei n. 23/96, de 26 de julho, e Codigo Civil), sem consideracao a conflitos de principios legais. Para utilizadores nos EUA, aplicam-se adicionalmente as leis do estado de residencia.
+
+14. DISPOSICOES GERAIS
+
+14.1 Se qualquer disposicao for considerada invalida, as restantes permanecem em vigor.
+
+14.2 A falha em exercer um direito nao constitui renuncia.
+
+14.3 Estes Termos constituem o acordo integral entre as partes relativamente ao Servico.
+
+15. CONTACTO
+
+Operador: [SEU_NOME]
+Endereco: [SEU_ENDERECO]
+Email: legal@petcare.com
+Site: https://app.petcare.com
+
+---
+
+Documento gerado em 02 de setembro de 2026.
+Substitua [SEU_NOME] e [SEU_ENDERECO] pelos dados reais antes de publicar.

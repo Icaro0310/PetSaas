@@ -1,0 +1,193 @@
+POLITICA DE PRIVACIDADE - PetCare
+
+Ultima atualizacao: 02 de setembro de 2026
+
+1. INTRODUCAO
+
+O PetCare ("Servico", "nos", "nosso") respeita a sua privacidade. Esta Politica de Privacidade descreve como recolhemos, usamos, compartilhamos e protegemos os seus dados pessoais.
+
+Estamos em conformidade com:
+- Lei Geral de Protecao de Dados (LGPD) - Lei n. 13.709/2018 (Brasil);
+- California Consumer Privacy Act (CCPA) - Cal. Civ. Code 1798.100;
+- Regulamento Geral de Protecao de Dados (RGPD/GDPR) - Regulamento (UE) 2016/679;
+- Lei n. 23/96, de 26 de julho (Portugal).
+
+Operador: [SEU_NOME]
+Endereco: [SEU_ENDERECO]
+Email: legal@petcare.com
+Encarregado de Dados (DPO): legal@petcare.com
+
+2. DADOS RECOLHIDOS
+
+2.1 Dados de conta:
+- Nome completo;
+- Email;
+- Numero de telefone (opcional);
+- ID de utilizador (Clerk user ID, formato: user_xxx).
+
+2.2 Dados do pet:
+- Nome do pet;
+- Especie e raca;
+- Foto do pet;
+- Peso;
+- Descricao;
+- Informacoes de emergencia (alergias, medicacoes criticas, avisos);
+- Numero de microchip;
+- QR Code UUID (identificador publico unico).
+
+2.3 Dados de medicacao:
+- Nome do medicamento;
+- Tipo (diario, semanal, intervalo, PRN);
+- Dosagem;
+- Horarios;
+- Historico de doses administradas;
+- Identificacao de quem administrou cada dose (owner_id ou caregiver_id).
+
+2.4 Dados de cuidador:
+- Email do cuidador convidado;
+- Token de convite;
+- Permissoes atribuidas.
+
+2.5 Dados do dispositivo:
+- Device ID (identificador do dispositivo);
+- FCM Token (Firebase Cloud Messaging, para push notifications);
+- Sistema operativo (Android/Web).
+
+2.6 Dados tecnicos:
+- Endereco IP (recolhido automaticamente pelo Supabase);
+- User agent (browser/app version);
+- Dados de analytics (PostHog, Firebase Analytics): eventos de uso, sessoes, timestamps.
+
+2.7 Dados de localizacao:
+- Localizacao aproximada (latitude/longitude) - apenas quando o utilizador envia uma mensagem "encontrei um pet" via QR Code, e apenas se o utilizador conceder permissao explicita.
+
+3. FINALIDADE DO TRATAMENTO
+
+| Dado | Finalidade | Base legal (LGPD) | Base legal (GDPR) |
+|------|-----------|-------------------|-------------------|
+| Nome, email | Gestao de conta | Art. 7, I (consentimento) | Art. 6(1)(b) (contrato) |
+| Dados do pet | Funcionamento do Servico | Art. 7, I | Art. 6(1)(b) |
+| Dados de medicacao | Rastreamento de doses | Art. 7, I | Art. 6(1)(b) |
+| Foto do pet | Identificacao via QR | Art. 7, I | Art. 6(1)(a) (consentimento) |
+| Device ID, FCM Token | Notificacoes push | Art. 7, I | Art. 6(1)(a) |
+| IP, analytics | Melhoria do Servico | Art. 7, V (legitimo interesse) | Art. 6(1)(f) |
+| Localizacao | Mensagem "pet encontrado" | Art. 7, I | Art. 6(1)(a) |
+
+4. COMPARTILHAMENTO DE DADOS
+
+4.1 Provedores de servico:
+- Supabase (backend, base de dados, storage) - https://supabase.com/privacy;
+- Clerk (autenticacao) - https://clerk.com/privacy-policy;
+- Firebase / Google (analytics, crashlytics, FCM) - https://policies.google.com/privacy;
+- PostHog (analytics) - https://posthog.com/privacy;
+- Sentry (monitoramento de erros) - https://sentry.io/privacy/;
+- Netlify (hosting web) - https://www.netlify.com/privacy-policy/;
+- MailerSend (envio de emails) - https://www.mailersend.com/privacy-policy.
+
+4.2 Pagamentos: Processados diretamente pelo utilizador (sem armazenamento de dados de cartao no Servico).
+
+4.3 Autoridades: Podemos compartilhar dados quando exigido por lei, ordem judicial ou para proteger direitos legais.
+
+4.4 Dados publicos via QR Code: Quando um pet e registado, e gerado um QR Code unico. Se alguem escanear o QR Code, ve APENAS: nome do pet, especie, raca, foto, descricao, info de emergencia, alergias, meds criticas, avisos, microchip, status is_lost. NUNCA ve: owner_id, email, telefone, endereco, ou historico de doses.
+
+5. DIREITOS DO UTILIZADOR (LGPD + CCPA + GDPR)
+
+5.1 Direitos do titular dos dados (LGPD Art. 18, GDPR Art. 15-22, CCPA 1798.105-120):
+- Confirmacao da existencia de tratamento;
+- Acesso aos dados;
+- Correcao de dados incompletos, inexatos ou desatualizados;
+- Anonimizacao, bloqueio ou eliminacao de dados desnecessarios/excessivos;
+- Portabilidade dos dados (exportacao em formato estruturado);
+- Eliminacao dos dados pessoais tratados com consentimento;
+- Informacao sobre compartilhamento com terceiros;
+- Revogacao do consentimento.
+
+5.2 Exclusao de conta: Disponivel em "Perfil > Excluir conta (LGPD)". A exclusao apaga FISICAMENTE todos os dados (pets, medicacoes, historico, cuidadores, notificacoes, dispositivos, perfil). A acao e IRREVERSIVEL.
+
+5.3 Como exercer os direitos: Envie email para legal@petcare.com com:
+- Assunto: "Exercicio de direitos - LGPD/GDPR/CCPA";
+- Nome e email da conta;
+- Direito que deseja exercer;
+- Responderemos em ate 15 dias (LGPD) / 30 dias (CCPA) / 1 mes (GDPR).
+
+6. CCPA - DIREITOS ESPECIFICOS (CALIFORNIA)
+
+6.1 Nao vendemos os seus dados pessoais. Nao ha "Do Not Sell My Personal Information" aplicavel.
+
+6.2 Direito de saber (CCPA 1798.110): Pode solicitar as categorias e pecas especificas de dados pessoais recolhidos.
+
+6.3 Direito de excluir (CCPA 1798.105): Pode solicitar a exclusao dos dados pessoais.
+
+6.4 Direito de nao discriminacao (CCPA 1798.125): Nao discriminaremos por exercer os seus direitos CCPA.
+
+7. RETENCAO DE DADOS
+
+7.1 Dados da conta: Retidos enquanto a conta estiver ativa. Excluidos fisicamente em ate 30 dias apos pedido de exclusao.
+
+7.2 Dados de analytics: Retidos por 13 meses (PostHog) / 14 meses (Firebase Analytics), conforme padroes das plataformas.
+
+7.3 Logs de erro (Sentry): Retidos por 90 dias.
+
+7.4 Backups: O Supabase mantem backups diarios por 7 dias (plano Free) ou PITR (Point-in-Time Recovery, plano Pro).
+
+8. SEGURANCA
+
+8.1 Criptografia: Dados em transito via HTTPS/TLS 1.2+. Dados em repouso cifrados pelo Supabase (AES-256).
+
+8.2 RLS (Row Level Security): Todas as 9 tabelas da base de dados tem RLS ativo. Cada utilizador so pode acessar os SEUS dados. As policies usam auth.jwt()->>'sub' para identificar o utilizador.
+
+8.3 Chaves: Apenas chaves publicas (anon/publishable) estao no cliente. Chaves secretas (service_role, secret key) NUNCA no frontend.
+
+8.4 Terceiros: Todos os provedores (Supabase, Clerk, Firebase, etc.) sao certificados (SOC 2, ISO 27001 onde aplicavel).
+
+9. TRANSFERENCIA INTERNACIONAL DE DADOS
+
+Os dados podem ser processados em:
+- Uniao Europeia (Supabase Frankfurt, PostHog EU, Sentry EU);
+- Estados Unidos (Firebase/Google, Clerk);
+- Brasil (quando aplicavel).
+
+Transferencias fora da UE/EEE sao feitas com garantias adequadas (Clausulas Contratuais Padrao da Comissao Europeia, conforme GDPR Art. 46).
+
+10. COOKIES E TECNOLOGIAS SIMILARES
+
+10.1 O PetCare Web utiliza cookies essenciais para o funcionamento (sessao de autenticacao via Clerk).
+
+10.2 Analytics (PostHog) utiliza cookies/anonimizacao para rastrear eventos de uso. Nao utilizamos cookies de publicidade de terceiros.
+
+10.3 O utilizador pode gerir cookies nas configuracoes do browser.
+
+11. NOTIFICACOES PUSH
+
+11.1 O PetCare envia notificacoes push (FCM) para:
+- Doses pendentes/perdidas;
+- Mensagens de "pet encontrado";
+- Lembretes.
+
+11.2 O utilizador pode desativar as notificacoes nas configuracoes do dispositivo. O FCM Token e removido quando a conta e excluida.
+
+12. MENORES
+
+O Servico nao e direcionado a menores de 16 anos. Nao recolhemos intencionalmente dados de menores. Se descobrirmos dados de menor, serao excluidos imediatamente.
+
+13. ALTERACOES A ESTA POLITICA
+
+13.1 Podemos atualizar esta Politica a qualquer momento. Notificaremos os utilizadores por email e/ou na aplicacao com pelo menos 30 dias de antecedencia para mudancas materiais.
+
+13.2 A data da ultima atualizacao estara sempre no topo deste documento.
+
+14. CONTACTO
+
+Para questoes sobre privacidade:
+Email: legal@petcare.com
+Assunto: "Privacidade - PetCare"
+
+Para reclamacoes a autoridades de protecao de dados:
+- Brasil (LGPD): ANPD - https://www.gov.br/anpd
+- California (CCPA): AG California - https://oag.ca.gov
+- UE (GDPR): Autoridade local do seu pais (em Portugal: CNPD - https://www.cnpd.pt)
+
+---
+
+Documento gerado em 02 de setembro de 2026.
+Substitua [SEU_NOME] e [SEU_ENDERECO] pelos dados reais antes de publicar.

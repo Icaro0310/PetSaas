@@ -3,52 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetCare - Política de Privacidade</title>
+  <title>PetCare - Politica de Privacidade</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 720px; margin: 0 auto; padding: 2rem; color: #333; }
     h1 { color: #2e7d32; }
     h2 { color: #1b5e20; margin-top: 1.5rem; }
+    h3 { color: #2e7d32; margin-top: 1.2rem; }
     a { color: #2e7d32; }
     .date { color: #666; font-size: 0.9rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 0.9rem; }
+    th { background: #e8f5e9; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <h1>Política de Privacidade - PetCare</h1>
-  <p class="date">Última atualização: 27 de agosto de 2026</p>
+  <h1>Politica de Privacidade - PetCare</h1>
+  <p class="date">Ultima atualizacao: 02 de setembro de 2026</p>
 
-  <p>A PetCare respeita a privacidade dos utilizadores. Esta política descreve que dados recolhemos, como os usamos e como os protegemos.</p>
-
-  <h2>1. Dados recolhidos</h2>
+  <h2>1. Introducao</h2>
+  <p>O PetCare ("Servico", "nos", "nosso") respeita a sua privacidade. Esta Politica de Privacidade descreve como recolhemos, usamos, compartilhamos e protegemos os seus dados pessoais.</p>
+  <p>Estamos em conformidade com:</p>
   <ul>
-    <li><strong>Dados de conta:</strong> e-mail, nome e identificador de utilizador, fornecidos através do Supabase Auth.</li>
-    <li><strong>Dados dos pets:</strong> nome, espécie, raça, fotos, histórico médico, medicações e doses.</li>
-    <li><strong>Dados de cuidadores:</strong> e-mail dos convidados e permissões atribuídas.</li>
-    <li><strong>Dados de localização:</strong> opcionais, apenas quando um finder partilha a localização do animal encontrado.</li>
-    <li><strong>Token FCM:</strong> para notificações push, com consentimento do dispositivo.</li>
+    <li>Lei Geral de Protecao de Dados (LGPD) - Lei n. 13.709/2018 (Brasil)</li>
+    <li>California Consumer Privacy Act (CCPA) - Cal. Civ. Code 1798.100</li>
+    <li>Regulamento Geral de Protecao de Dados (RGPD/GDPR) - Regulamento (UE) 2016/679</li>
+    <li>Lei n. 23/96, de 26 de julho (Portugal)</li>
+  </ul>
+  <p><strong>Operador:</strong> [SEU_NOME]<br>
+  <strong>Endereco:</strong> [SEU_ENDERECO]<br>
+  <strong>Email:</strong> <a href="mailto:legal@petcare.com">legal@petcare.com</a><br>
+  <strong>Encarregado de Dados (DPO):</strong> legal@petcare.com</p>
+
+  <h2>2. Dados Recolhidos</h2>
+
+  <h3>2.1 Dados de conta</h3>
+  <ul>
+    <li>Nome completo</li>
+    <li>Email</li>
+    <li>Numero de telefone (opcional)</li>
+    <li>ID de utilizador (Clerk user ID, formato: user_xxx)</li>
   </ul>
 
-  <h2>2. Finalidade do tratamento</h2>
-  <p>Os dados são utilizados exclusivamente para:</p>
+  <h3>2.2 Dados do pet</h3>
   <ul>
-    <li>Gerir o perfil e os animais de estimação;</li>
-    <li>Lembrar doses de medicação;</li>
-    <li>Permitir que terceiros contactem o dono se encontrarem o pet perdido, sem revelar dados pessoais;</li>
-    <li>Enviar notificações de rotina.</li>
+    <li>Nome do pet, especie e raca</li>
+    <li>Foto do pet</li>
+    <li>Peso, descricao</li>
+    <li>Informacoes de emergencia (alergias, medicacoes criticas, avisos)</li>
+    <li>Numero de microchip</li>
+    <li>QR Code UUID (identificador publico unico)</li>
   </ul>
 
-  <h2>3. Partilha de dados</h2>
-  <p>Não vendemos, alugamos ou partilhamos dados pessoais com terceiros para fins comerciais. A página pública do QR Code mostra apenas informações não identificáveis do pet, nunca do dono.</p>
+  <h3>2.3 Dados de medicacao</h3>
+  <ul>
+    <li>Nome do medicamento, tipo, dosagem, horarios</li>
+    <li>Historico de doses administradas</li>
+    <li>Identificacao de quem administrou cada dose (owner_id ou caregiver_id)</li>
+  </ul>
 
-  <h2>4. Segurança</h2>
-  <p>Utilizamos Row Level Security (RLS) na base de dados Supabase, autenticação por magic link, ligações encriptadas (HTTPS/TLS) e acesso restrito a cuidadores convidados.</p>
+  <h3>2.4 Dados do dispositivo</h3>
+  <ul>
+    <li>Device ID (identificador do dispositivo)</li>
+    <li>FCM Token (Firebase Cloud Messaging, para push notifications)</li>
+    <li>Sistema operativo (Android/Web)</li>
+  </ul>
 
-  <h2>5. Direitos do utilizador</h2>
-  <p>Pode aceder, corrigir ou eliminar os seus dados a qualquer momento na aplicação. Para eliminar a conta definitivamente, contacte-nos.</p>
+  <h3>2.5 Dados tecnicos</h3>
+  <ul>
+    <li>Endereco IP (recolhido automaticamente pelo Supabase)</li>
+    <li>User agent (browser/app version)</li>
+    <li>Dados de analytics (PostHog, Firebase Analytics): eventos de uso, sessoes, timestamps</li>
+  </ul>
 
-  <h2>6. Provedores de serviços</h2>
-  <p>Utilizamos Supabase (base de dados, auth, storage), Firebase (notificações e analytics) e Cloudflare (hospedagem web).</p>
+  <h3>2.6 Dados de localizacao</h3>
+  <p>Localizacao aproximada (latitude/longitude) - apenas quando o utilizador envia uma mensagem "encontrei um pet" via QR Code, e apenas se o utilizador conceder permissao explicita.</p>
 
-  <h2>7. Contacto</h2>
-  <p>Para questões sobre privacidade, contacte <a href="mailto:privacidade@petsaas.pt">privacidade@petsaas.pt</a>.</p>
+  <h2>3. Finalidade do Tratamento</h2>
+  <table>
+    <tr><th>Dado</th><th>Finalidade</th><th>Base legal (LGPD)</th><th>Base legal (GDPR)</th></tr>
+    <tr><td>Nome, email</td><td>Gestao de conta</td><td>Art. 7, I (consentimento)</td><td>Art. 6(1)(b) (contrato)</td></tr>
+    <tr><td>Dados do pet</td><td>Funcionamento do Servico</td><td>Art. 7, I</td><td>Art. 6(1)(b)</td></tr>
+    <tr><td>Dados de medicacao</td><td>Rastreamento de doses</td><td>Art. 7, I</td><td>Art. 6(1)(b)</td></tr>
+    <tr><td>Foto do pet</td><td>Identificacao via QR</td><td>Art. 7, I</td><td>Art. 6(1)(a) (consentimento)</td></tr>
+    <tr><td>Device ID, FCM Token</td><td>Notificacoes push</td><td>Art. 7, I</td><td>Art. 6(1)(a)</td></tr>
+    <tr><td>IP, analytics</td><td>Melhoria do Servico</td><td>Art. 7, V (legitimo interesse)</td><td>Art. 6(1)(f)</td></tr>
+    <tr><td>Localizacao</td><td>Mensagem "pet encontrado"</td><td>Art. 7, I</td><td>Art. 6(1)(a)</td></tr>
+  </table>
+
+  <h2>4. Compartilhamento de Dados</h2>
+  <h3>4.1 Provedores de servico</h3>
+  <ul>
+    <li><a href="https://supabase.com/privacy">Supabase</a> (backend, base de dados, storage)</li>
+    <li><a href="https://clerk.com/privacy-policy">Clerk</a> (autenticacao)</li>
+    <li><a href="https://policies.google.com/privacy">Firebase / Google</a> (analytics, crashlytics, FCM)</li>
+    <li><a href="https://posthog.com/privacy">PostHog</a> (analytics)</li>
+    <li><a href="https://sentry.io/privacy/">Sentry</a> (monitoramento de erros)</li>
+    <li><a href="https://www.netlify.com/privacy-policy/">Netlify</a> (hosting web)</li>
+    <li><a href="https://www.mailersend.com/privacy-policy">MailerSend</a> (envio de emails)</li>
+  </ul>
+
+  <h3>4.2 Dados publicos via QR Code</h3>
+  <p>Quando um pet e registado, e gerado um QR Code unico. Se alguem escanear o QR Code, ve APENAS: nome do pet, especie, raca, foto, descricao, info de emergencia, alergias, meds criticas, avisos, microchip, status is_lost. <strong>NUNCA</strong> ve: owner_id, email, telefone, endereco, ou historico de doses.</p>
+
+  <h2>5. Direitos do Utilizador (LGPD + CCPA + GDPR)</h2>
+  <ul>
+    <li>Confirmacao da existencia de tratamento</li>
+    <li>Acesso aos dados</li>
+    <li>Correcao de dados incompletos, inexatos ou desatualizados</li>
+    <li>Anonimizacao, bloqueio ou eliminacao de dados desnecessarios/excessivos</li>
+    <li>Portabilidade dos dados (exportacao em formato estruturado)</li>
+    <li>Eliminacao dos dados pessoais tratados com consentimento</li>
+    <li>Informacao sobre compartilhamento com terceiros</li>
+    <li>Revogacao do consentimento</li>
+  </ul>
+  <p><strong>Exclusao de conta:</strong> Disponivel em "Perfil > Excluir conta (LGPD)". A exclusao apaga FISICAMENTE todos os dados. A acao e IRREVERSIVEL.</p>
+  <p><strong>Como exercer os direitos:</strong> Envie email para <a href="mailto:legal@petcare.com">legal@petcare.com</a> com assunto "Exercicio de direitos - LGPD/GDPR/CCPA". Responderemos em ate 15 dias (LGPD) / 30 dias (CCPA) / 1 mes (GDPR).</p>
+
+  <h2>6. CCPA - Direitos Especificos (California)</h2>
+  <ul>
+    <li><strong>Nao vendemos os seus dados pessoais.</strong> Nao ha "Do Not Sell My Personal Information" aplicavel.</li>
+    <li><strong>Direito de saber</strong> (CCPA 1798.110): Pode solicitar as categorias e pecas especificas de dados pessoais recolhidos.</li>
+    <li><strong>Direito de excluir</strong> (CCPA 1798.105): Pode solicitar a exclusao dos dados pessoais.</li>
+    <li><strong>Direito de nao discriminacao</strong> (CCPA 1798.125): Nao discriminaremos por exercer os seus direitos CCPA.</li>
+  </ul>
+
+  <h2>7. Retencao de Dados</h2>
+  <ul>
+    <li>Dados da conta: Retidos enquanto a conta estiver ativa. Excluidos em ate 30 dias apos pedido.</li>
+    <li>Dados de analytics: 13 meses (PostHog) / 14 meses (Firebase Analytics).</li>
+    <li>Logs de erro (Sentry): 90 dias.</li>
+    <li>Backups: Supabase mantem backups diarios por 7 dias (plano Free).</li>
+  </ul>
+
+  <h2>8. Seguranca</h2>
+  <ul>
+    <li><strong>Criptografia:</strong> Dados em transito via HTTPS/TLS 1.2+. Dados em repouso cifrados pelo Supabase (AES-256).</li>
+    <li><strong>RLS (Row Level Security):</strong> Todas as 9 tabelas tem RLS ativo. Cada utilizador so pode acessar os SEUS dados.</li>
+    <li><strong>Chaves:</strong> Apenas chaves publicas (anon/publishable) no cliente. Chaves secretas NUNCA no frontend.</li>
+  </ul>
+
+  <h2>9. Transferencia Internacional de Dados</h2>
+  <p>Os dados podem ser processados em Uniao Europeia (Supabase Frankfurt, PostHog EU, Sentry EU), Estados Unidos (Firebase/Google, Clerk) e Brasil. Transferencias fora da UE/EEE sao feitas com Clausulas Contratuais Padrao (GDPR Art. 46).</p>
+
+  <h2>10. Cookies e Tecnologias Similares</h2>
+  <p>O PetCare Web utiliza cookies essenciais para o funcionamento (sessao de autenticacao via Clerk). Analytics (PostHog) utiliza cookies/anonimizacao para rastrear eventos. Nao utilizamos cookies de publicidade de terceiros.</p>
+
+  <h2>11. Notificacoes Push</h2>
+  <p>O PetCare envia notificacoes push (FCM) para doses pendentes/perdidas, mensagens de "pet encontrado" e lembretes. O utilizador pode desativar nas configuracoes do dispositivo. O FCM Token e removido quando a conta e excluida.</p>
+
+  <h2>12. Menores</h2>
+  <p>O Servico nao e direcionado a menores de 16 anos. Nao recolhemos intencionalmente dados de menores. Se descobrirmos dados de menor, serao excluidos imediatamente.</p>
+
+  <h2>13. Alteracoes a esta Politica</h2>
+  <p>Podemos atualizar esta Politica a qualquer momento. Notificaremos os utilizadores por email e/ou na aplicacao com pelo menos 30 dias de antecedencia para mudancas materiais.</p>
+
+  <h2>14. Contacto</h2>
+  <p>Para questoes sobre privacidade: <a href="mailto:legal@petcare.com">legal@petcare.com</a></p>
+  <p>Para reclamacoes a autoridades de protecao de dados:</p>
+  <ul>
+    <li>Brasil (LGPD): <a href="https://www.gov.br/anpd">ANPD</a></li>
+    <li>California (CCPA): <a href="https://oag.ca.gov">AG California</a></li>
+    <li>UE (GDPR): Autoridade local (Portugal: <a href="https://www.cnpd.pt">CNPD</a>)</li>
+  </ul>
 </body>
 </html>
