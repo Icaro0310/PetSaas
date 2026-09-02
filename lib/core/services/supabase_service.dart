@@ -5,12 +5,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../config/constants.dart';
 
 /// Estado de autenticacao mantido pelo Clerk e sincronizado via
-/// [ClerkAuthBridge] no top-level do widget tree.
+/// [ClerkAuthSync] no top-level do widget tree.
 class ClerkAuthData {
   final String userId;
   final String? email;
 
-  ClerkAuthData({required this.userId, this.email});
+  /// Funcao que retorna o JWT do Clerk para passar ao Supabase.
+  final Future<String?> Function()? tokenProvider;
+
+  ClerkAuthData({
+    required this.userId,
+    this.email,
+    this.tokenProvider,
+  });
 }
 
 /// Encapsula o acesso ao Supabase.
@@ -23,7 +30,7 @@ class SupabaseService {
 
   static SupabaseClient get client => Supabase.instance.client;
 
-  /// Estado atual do Clerk (atualizado por ClerkAuthBridge).
+  /// Estado atual do Clerk (atualizado por ClerkAuthSync).
   static ClerkAuthData? authData;
 
   /// Retorna o user ID do Clerk (string, ex: user_abc123).
@@ -40,6 +47,23 @@ class SupabaseService {
       publishableKey: AppConstants.supabaseAnonKey,
       debug: false,
     );
+  }
+
+  /// Sincroniza o profile do utilizador Clerk na tabela profiles.
+  /// Chamado quando o utilizador faz login.
+  static Future<void> syncProfile() async {
+    final data = authData;
+    if (data == null) return;
+    try {
+      await client.from('profiles').upsert({
+        'id': data.userId,
+        'email': data.email,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      });
+    } catch (_) {
+      // Ignora erros de sync - a RLS pode bloquear se o JWT nao estiver
+      // configurado ainda. O profile sera criado depois.
+    }
   }
 
   /// Upload de foto para o bucket pet_photos. Retorna a URL publica.
