@@ -1,21 +1,38 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../config/constants.dart';
 
+/// Estado de autenticacao mantido pelo Clerk e sincronizado via
+/// [ClerkAuthBridge] no top-level do widget tree.
+class ClerkAuthData {
+  final String userId;
+  final String? email;
+
+  ClerkAuthData({required this.userId, this.email});
+}
+
 /// Encapsula o acesso ao Supabase.
+///
+/// Autenticacao e gerida pelo Clerk. O Supabase e usado apenas para
+/// base de dados, storage e RLS. O user ID do Clerk e usado como
+/// identificador do utilizador em todas as tabelas.
 class SupabaseService {
   SupabaseService._();
 
   static SupabaseClient get client => Supabase.instance.client;
 
-  static User? get currentUser => client.auth.currentUser;
+  /// Estado atual do Clerk (atualizado por ClerkAuthBridge).
+  static ClerkAuthData? authData;
 
-  static Session? get currentSession => client.auth.currentSession;
+  /// Retorna o user ID do Clerk (string, ex: user_abc123).
+  static String? get currentUserId => authData?.userId;
 
-  static bool get isAuthenticated => currentUser != null;
+  /// Retorna o email do utilizador atual (Clerk).
+  static String? get currentUserEmail => authData?.email;
+
+  static bool get isAuthenticated => currentUserId != null;
 
   static Future<void> initialize() async {
     await Supabase.initialize(
@@ -23,22 +40,6 @@ class SupabaseService {
       publishableKey: AppConstants.supabaseAnonKey,
       debug: false,
     );
-  }
-
-  /// Envia magic link para o email.
-  ///
-  /// No Web o link volta para o site (Netlify). No Android/iOS usa o deep link nativo.
-  static Future<void> signInWithMagicLink(String email) async {
-    await client.auth.signInWithOtp(
-      email: email.trim(),
-      emailRedirectTo: kIsWeb
-          ? AppConstants.webRedirectUrl
-          : AppConstants.mobileRedirectUrl,
-    );
-  }
-
-  static Future<void> signOut() async {
-    await client.auth.signOut();
   }
 
   /// Upload de foto para o bucket pet_photos. Retorna a URL publica.

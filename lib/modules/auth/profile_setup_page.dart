@@ -28,11 +28,11 @@ class _ProfileSetupPageState extends ConsumerState<ProfileSetupPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     try {
       await SupabaseService.client.from('profiles').upsert({
-        'id': user.id,
+        'id': user,
         'full_name': _nameController.text.trim(),
         'phone': _phoneController.text.trim().isEmpty
             ? null

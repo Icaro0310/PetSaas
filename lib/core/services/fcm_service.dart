@@ -36,11 +36,11 @@ class FcmService {
   }
 
   static Future<void> _registerToken(String token) async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     try {
       await SupabaseService.client.from('user_devices').upsert({
-        'user_id': user.id,
+        'user_id': user,
         'fcm_token': token,
         'platform': defaultTargetPlatform.name,
       });

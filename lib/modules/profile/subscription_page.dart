@@ -20,13 +20,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage> {
   bool _subscribing = false;
 
   Future<void> _subscribe() async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     setState(() => _subscribing = true);
     try {
       // Placeholder: integração Stripe/IAP futura. Ativa direto para demo.
       await SupabaseService.client.from('subscriptions').upsert({
-        'user_id': user.id,
+        'user_id': user,
         'status': 'active',
         'plan': 'premium',
         'current_period_start': DateTime.now().toIso8601String(),

@@ -213,11 +213,11 @@ class _DoseCard extends ConsumerWidget {
         dose: dose,
         medName: medName,
         onConfirm: ({photoUrl, notes}) async {
-          final user = SupabaseService.currentUser;
+          final user = SupabaseService.currentUserId;
           if (user == null) return;
           await SupabaseService.client.rpc('mark_dose_given', params: {
             'p_dose_id': dose.id,
-            'p_user_id': user.id,
+            'p_user_id': user,
             'p_photo_url': photoUrl,
             'p_notes': notes,
           });

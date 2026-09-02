@@ -25,6 +25,12 @@ class AppConstants {
   // Doses
   static const Duration missedDoseThreshold = Duration(hours: 2);
 
+  // Clerk
+  static const String clerkPublishableKey =
+      'pk_test_Y2xpbWJpbmctYnVycm8tNDkxMC5jbGVyay5hY2NvdW50cy5kZXYk';
+  static const String clerkFrontendApiUrl =
+      'https://climbing-burro-4910.clerk.accounts.dev';
+
   // Web deploy
   static const String siteUrl = 'https://moonlit-pothos-c56cd4.netlify.app/';
 

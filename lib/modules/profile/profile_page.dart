@@ -1,3 +1,4 @@
+import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +42,7 @@ class ProfilePage extends ConsumerWidget {
           ),
           Center(
             child: Text(
-              SupabaseService.currentUser?.email ?? '',
+              SupabaseService.currentUserEmail ?? '',
               style: const TextStyle(color: AppTheme.textMuted),
             ),
           ),
@@ -90,7 +91,7 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () async {
-              await SupabaseService.signOut();
+              await ClerkAuth.of(context).signOut();
               if (context.mounted) context.go(AppRoutes.login);
             },
             icon: const Icon(Icons.logout, color: AppTheme.danger),

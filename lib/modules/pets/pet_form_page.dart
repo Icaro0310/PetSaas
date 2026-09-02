@@ -95,7 +95,7 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     setState(() => _saving = true);
 
@@ -117,7 +117,7 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
       }
 
       final payload = <String, dynamic>{
-        'owner_id': user.id,
+        'owner_id': user,
         'name': _name.text.trim(),
         'species': _species.name,
         'breed': _breed.text.trim().isEmpty ? null : _breed.text.trim(),

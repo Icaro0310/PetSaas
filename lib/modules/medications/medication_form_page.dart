@@ -151,16 +151,16 @@ class _MedicationFormPageState extends ConsumerState<MedicationFormPage> {
   }
 
   Future<void> _ensureTrial() async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     final existing = await SupabaseService.client
         .from('subscriptions')
         .select()
-        .eq('user_id', user.id)
+        .eq('user_id', user)
         .maybeSingle();
     if (existing == null) {
       await SupabaseService.client.from('subscriptions').insert({
-        'user_id': user.id,
+        'user_id': user,
         'status': 'trialing',
         'plan': 'premium',
         'current_period_start': DateTime.now().toIso8601String(),

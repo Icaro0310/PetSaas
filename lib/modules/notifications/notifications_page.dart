@@ -24,7 +24,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   }
 
   Future<void> _load() async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) {
       setState(() => _loading = false);
       return;
@@ -33,7 +33,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       final data = await SupabaseService.client
           .from('notifications_log')
           .select()
-          .eq('user_id', user.id)
+          .eq('user_id', user)
           .order('created_at', ascending: false)
           .limit(100);
       setState(() {
@@ -53,12 +53,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   }
 
   Future<void> _markAllRead() async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     await SupabaseService.client
         .from('notifications_log')
         .update({'read_at': DateTime.now().toUtc().toIso8601String()})
-        .eq('user_id', user.id)
+        .eq('user_id', user)
         .filter('read_at', 'is', null);
     _load();
   }

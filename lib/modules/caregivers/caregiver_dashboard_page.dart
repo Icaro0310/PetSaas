@@ -25,7 +25,7 @@ class _CaregiverDashboardPageState
   }
 
   Future<void> _load() async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) {
       setState(() => _loading = false);
       return;
@@ -34,7 +34,7 @@ class _CaregiverDashboardPageState
       final data = await SupabaseService.client
           .from('caregivers')
           .select('pet_id, pets(id, name, photo_url)')
-          .eq('caregiver_id', user.id)
+          .eq('caregiver_id', user)
           .eq('status', 'active');
       setState(() {
         _assignments = (data as List).cast<Map<String, dynamic>>();
@@ -134,11 +134,11 @@ class _PendingDosesSheetState extends ConsumerState<_PendingDosesSheet> {
   }
 
   Future<void> _markGiven(String doseId) async {
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     if (user == null) return;
     await SupabaseService.client.rpc('mark_dose_given', params: {
       'p_dose_id': doseId,
-      'p_user_id': user.id,
+      'p_user_id': user,
     });
     _load();
   }

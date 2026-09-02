@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/models/caregiver_model.dart';
 import '../core/models/dose_log_model.dart';
@@ -12,25 +11,27 @@ import '../core/utils/extensions.dart';
 
 // ---------- Auth ----------
 
-final authStateProvider = StreamProvider<AuthState>((ref) {
-  return SupabaseService.client.auth.onAuthStateChange;
+/// Provider simples que indica se ha utilizador autenticado (Clerk).
+final isAuthenticatedProvider = Provider<bool>((ref) {
+  return SupabaseService.isAuthenticated;
 });
 
-final isAuthenticatedProvider = Provider<bool>((ref) {
-  return SupabaseService.currentUser != null;
+/// Provider que retorna o user ID do Clerk.
+final currentUserIdProvider = Provider<String?>((ref) {
+  return SupabaseService.currentUserId;
 });
 
 // ---------- Profile ----------
 
 final currentUserProfileProvider =
     FutureProvider.autoDispose<UserModel?>((ref) async {
-  final user = SupabaseService.currentUser;
-  if (user == null) return null;
-  ref.watch(authStateProvider);
+  final userId = SupabaseService.currentUserId;
+  if (userId == null) return null;
+  ref.watch(currentUserIdProvider);
   final data = await SupabaseService.client
       .from('profiles')
       .select()
-      .eq('id', user.id)
+      .eq('id', userId)
       .maybeSingle();
   if (data == null) return null;
   return UserModel.fromJson(data);
@@ -40,13 +41,13 @@ final currentUserProfileProvider =
 
 final subscriptionProvider =
     FutureProvider.autoDispose<SubscriptionModel?>((ref) async {
-  final user = SupabaseService.currentUser;
-  if (user == null) return null;
-  ref.watch(authStateProvider);
+  final userId = SupabaseService.currentUserId;
+  if (userId == null) return null;
+  ref.watch(currentUserIdProvider);
   final data = await SupabaseService.client
       .from('subscriptions')
       .select()
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .maybeSingle();
   if (data == null) return null;
   return SubscriptionModel.fromJson(data);
@@ -60,16 +61,16 @@ final hasPremiumProvider = FutureProvider.autoDispose<bool>((ref) async {
 // ---------- Pets ----------
 
 final petsProvider = StreamProvider.autoDispose<List<PetModel>>((ref) async* {
-  final user = SupabaseService.currentUser;
-  if (user == null) {
+  final userId = SupabaseService.currentUserId;
+  if (userId == null) {
     yield [];
     return;
   }
-  ref.watch(authStateProvider);
+  ref.watch(currentUserIdProvider);
   yield* SupabaseService.client
       .from('pets')
       .stream(primaryKey: ['id'])
-      .eq('owner_id', user.id)
+      .eq('owner_id', userId)
       .map((rows) => rows
           .map((r) => PetModel.fromJson(_normalizePet(r)))
           .toList());
@@ -89,8 +90,8 @@ final selectedPetProvider =
 /// Cuidadores veem apenas visualizacao + marcar doses.
 final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) async {
   final pet = ref.watch(selectedPetProvider);
-  final user = SupabaseService.currentUser;
-  if (pet == null || user == null) return false;
+  final userId = SupabaseService.currentUserId;
+  if (pet == null || userId == null) return false;
   // Se o pet esta na lista de pets do dono, e dono.
   final pets = ref.watch(petsProvider).valueOrNull ?? [];
   if (pets.any((p) => p.id == pet.id)) return true;
@@ -99,7 +100,7 @@ final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) asyn
       .from('caregivers')
       .select('id')
       .eq('pet_id', pet.id)
-      .eq('caregiver_id', user.id)
+      .eq('caregiver_id', userId)
       .eq('status', 'active')
       .maybeSingle();
   return cg == null; // se nao e cuidador, assume dono (fallback)
@@ -110,7 +111,7 @@ final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) asyn
 final medicationsForPetProvider =
     StreamProvider.autoDispose.family<List<MedicationModel>, String>(
         (ref, petId) async* {
-  ref.watch(authStateProvider);
+  ref.watch(currentUserIdProvider);
   yield* SupabaseService.client
       .from('medications')
       .stream(primaryKey: ['id'])
@@ -124,9 +125,9 @@ final medicationsForPetProvider =
 
 final todayDosesProvider =
     FutureProvider.autoDispose<List<DoseLogModel>>((ref) async {
-  final user = SupabaseService.currentUser;
-  if (user == null) return [];
-  ref.watch(authStateProvider);
+  final userId = SupabaseService.currentUserId;
+  if (userId == null) return [];
+  ref.watch(currentUserIdProvider);
   final start = DateTime.now().dateOnly.toUtc();
   final end = start.add(const Duration(days: 1));
   final data = await SupabaseService.client
@@ -145,7 +146,7 @@ final todayDosesProvider =
 final caregiversForPetProvider =
     StreamProvider.autoDispose.family<List<CaregiverModel>, String>(
         (ref, petId) async* {
-  ref.watch(authStateProvider);
+  ref.watch(currentUserIdProvider);
   yield* SupabaseService.client
       .from('caregivers')
       .stream(primaryKey: ['id'])

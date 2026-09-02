@@ -51,13 +51,13 @@ class _InviteCaregiverPageState extends ConsumerState<InviteCaregiverPage> {
       return;
     }
 
-    final user = SupabaseService.currentUser;
+    final user = SupabaseService.currentUserId;
     try {
       final res = await SupabaseService.client
           .from('caregivers')
           .insert({
             'pet_id': widget.petId,
-            'owner_id': user!.id,
+            'owner_id': user!,
             'caregiver_email': _email.text.trim(),
             'status': 'pending',
             'permissions': ['view', 'mark_dose'],
