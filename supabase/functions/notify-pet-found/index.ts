@@ -1,6 +1,11 @@
 // Edge Function: notify-pet-found
 // Recebe mensagem de quem encontrou o pet e notifica o dono.
 // Publica (sem auth) - chamada por qualquer pessoa que le o QR Code.
+//
+// Seguranca:
+// - Validacao Zod com .strict() (bloqueia campos extras)
+// - Rate limiting por IP (max 5 mensagens por hora por IP)
+// - Rate limiting por pet (max 10 mensagens por 24h por pet)
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { z } from 'https://esm.sh/zod@3.23.8'
@@ -15,6 +20,11 @@ const schema = z.object({
   finder_email: z.string().email().max(255).optional(),
   finder_name: z.string().max(100).optional(),
 }).strict()
+
+// Rate limiting: max 5 mensagens por hora por IP
+const MAX_PER_IP_PER_HOUR = 5
+// Rate limiting: max 10 mensagens por 24h por pet
+const MAX_PER_PET_PER_DAY = 10
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
@@ -46,6 +56,34 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
+  // === Rate limiting por IP ===
+  // Obter IP do cliente (Supabase passa via header x-forwarded-for ou x-real-ip)
+  const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || req.headers.get('x-real-ip')
+    || 'unknown'
+
+  if (clientIp !== 'unknown') {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { count: ipCount } = await supabase
+      .from('pet_found_messages')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', oneHourAgo)
+      .eq('finder_ip', clientIp)
+
+    if (ipCount !== null && ipCount >= MAX_PER_IP_PER_HOUR) {
+      return new Response(JSON.stringify({
+        error: 'Rate limit exceeded: max 5 messages per hour per IP',
+      }), {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': '3600',
+        },
+      })
+    }
+  }
+
+  // === Verificar se o pet existe ===
   const { data: pet } = await supabase
     .from('pets')
     .select('id, name, owner_id')
@@ -53,6 +91,27 @@ Deno.serve(async (req) => {
     .single()
   if (!pet) return new Response('Pet not found', { status: 404 })
 
+  // === Rate limiting por pet ===
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { count: petCount } = await supabase
+    .from('pet_found_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('pet_id', pet.id)
+    .gte('created_at', oneDayAgo)
+
+  if (petCount !== null && petCount >= MAX_PER_PET_PER_DAY) {
+    return new Response(JSON.stringify({
+      error: 'Rate limit exceeded: max 10 messages per 24h per pet',
+    }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        'Retry-After': '86400',
+      },
+    })
+  }
+
+  // === Inserir mensagem ===
   const { data: owner } = await supabase
     .from('profiles')
     .select('id')
@@ -68,6 +127,7 @@ Deno.serve(async (req) => {
     photo_url: data.photo_url,
     location_lat: data.location_lat,
     location_lng: data.location_lng,
+    finder_ip: clientIp !== 'unknown' ? clientIp : null,
   })
 
   if (owner) {

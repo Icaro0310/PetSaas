@@ -5,8 +5,11 @@
 // Configurar no Clerk Dashboard:
 //   Endpoint: https://dotplnbakltelacsxvjz.supabase.co/functions/v1/clerk-webhook
 //   Events: user.created, user.updated, user.deleted
+//
+// Seguranca: valida assinatura Svix do Clerk usando Webhook.verify.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Webhook } from "https://esm.sh/svix@1.24.0";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -20,12 +23,39 @@ Deno.serve(async (req) => {
     return new Response("Method not allowed", { status: 405 });
   }
 
-  const payload = await req.json();
+  // Verifica assinatura Svix do webhook.
+  // O Clerk assina cada webhook com o secret configurado no Dashboard.
+  // Sem isto, qualquer pessoa que descubra o URL pode enviar webhooks falsos.
+  if (!CLERK_WEBHOOK_SECRET) {
+    console.error("CLERK_WEBHOOK_SECRET nao configurado");
+    return new Response("Webhook secret not configured", { status: 500 });
+  }
+
+  const svixId = req.headers.get("svix-id");
+  const svixTimestamp = req.headers.get("svix-timestamp");
+  const svixSignature = req.headers.get("svix-signature");
+
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    return new Response("Missing Svix headers", { status: 400 });
+  }
+
+  const body = await req.text();
+
+  const wh = new Webhook(CLERK_WEBHOOK_SECRET);
+  let payload: any;
+  try {
+    payload = wh.verify(body, {
+      "svix-id": svixId,
+      "svix-timestamp": svixTimestamp,
+      "svix-signature": svixSignature,
+    });
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err);
+    return new Response("Invalid signature", { status: 401 });
+  }
+
   const eventType = payload.type;
   const user = payload.data;
-
-  // TODO: verificar assinatura do webhook com CLERK_WEBHOOK_SECRET
-  // Por agora, confiamos no URL secreto da edge function.
 
   try {
     if (eventType === "user.created" || eventType === "user.updated") {
