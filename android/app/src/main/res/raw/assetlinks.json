@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "Ikaros.petcare",
+      "sha256_cert_fingerprints": [
+        "43:F5:5D:50:11:F9:59:DE:90:46:ED:CD:5A:97:E8:00:95:32:A7:AF:C0:9D:E7:C0:60:11:2F:11:26:81:2B:C2"
+      ]
+    }
+  }
+]

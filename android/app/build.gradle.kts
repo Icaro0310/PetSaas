@@ -16,6 +16,28 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // =========================================================================
+    // Signing config para release.
+    // Para gerar a keystore de producao:
+    //   keytool -genkey -v -keystore ~/petcare-release.jks \
+    //     -keyalg RSA -keysize 2048 -validity 10000 -alias petcare
+    // Depois definir as variaveis de ambiente (ou num arquivo key.properties
+    // gitignored em android/):
+    //   PETCARE_KEYSTORE_PATH, PETCARE_KEY_PASSWORD, PETCARE_KEY_ALIAS,
+    //   PETCARE_STORE_PASSWORD
+    // =========================================================================
+    val keystorePath = System.getenv("PETCARE_KEYSTORE_PATH")
+    val signingConfig = if (keystorePath != null && file(keystorePath).exists()) {
+        signingConfigs.create("release") {
+            storeFile = file(keystorePath)
+            storePassword = System.getenv("PETCARE_STORE_PASSWORD")
+            keyAlias = System.getenv("PETCARE_KEY_ALIAS")
+            keyPassword = System.getenv("PETCARE_KEY_PASSWORD")
+        }
+    } else {
+        null
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "Ikaros.petcare"
@@ -33,9 +55,8 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Usa a keystore de release se configurada, caso contrario debug keys.
+            signingConfig = signingConfig ?: signingConfigs.getByName("debug")
         }
     }
 }

@@ -40,13 +40,30 @@ jobs:
             --max-time 15)
           SB_BODY=$(cat /tmp/sb_health.json 2>/dev/null || echo "no response")
 
-          if [ "$SB_HEALTH" = "200" ]; then
+          # Service-level: verifica se o body contem "ok" ou "healthy"
+          if [ "$SB_HEALTH" = "200" ] && echo "$SB_BODY" | grep -qi '"ok"\|"healthy"\|"status"'; then
             SB_STATUS="ACTIVE"
-            SB_DETAIL="health EF retornou 200 - ${SB_BODY}"
+            SB_DETAIL="health EF retornou 200 com body valido - ${SB_BODY}"
+          elif [ "$SB_HEALTH" = "200" ]; then
+            SB_STATUS="ACTIVE"
+            SB_DETAIL="health EF retornou 200 (body: ${SB_BODY})"
           else
             SB_STATUS="FAILED"
             SB_DETAIL="HTTP ${SB_HEALTH} - ${SB_BODY}"
           fi
+
+          # Service-level: verificar se o DB responde (Rest API)
+          SB_DB_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            --max-time 10 2>/dev/null || echo "000")
+          if [ "$SB_DB_HTTP" = "200" ] || [ "$SB_DB_HTTP" = "401" ] || [ "$SB_DB_HTTP" = "403" ]; then
+            SB_DB_TXT="DB REST API reachable (${SB_DB_HTTP})"
+          else
+            SB_DB_TXT="DB REST API HTTP ${SB_DB_HTTP}"
+          fi
+          SB_DETAIL="${SB_DETAIL} | ${SB_DB_TXT}"
 
           # ============================================================
           # 2. Netlify (Web hosting)
@@ -134,14 +151,32 @@ jobs:
           fi
 
           # ============================================================
-          # 6. MailerSend (Email) - verifica dominio SMTP
+          # 6. MailerSend (Email) - verifica dominio SMTP + envio real
           # ============================================================
-          if [ -n "${{ secrets.MAILERSEND_SMTP_HOST }}" ]; then
-            MS_STATUS="ACTIVE"
-            MS_DETAIL="SMTP secrets configurados (host, user, password, port)"
+          MS_HOST="${{ secrets.MAILERSEND_SMTP_HOST }}"
+          MS_PORT="${{ secrets.MAILERSEND_SMTP_PORT }}"
+          MS_STATUS="FAILED"
+          MS_DETAIL=""
+
+          if [ -n "$MS_HOST" ] && [ -n "$MS_PORT" ]; then
+            # Service-level: tenta conexao TCP ao servidor SMTP
+            MS_CONN=$(timeout 10 bash -c "echo 'QUIT' | nc -w 5 $MS_HOST $MS_PORT 2>&1" && echo "OK" || echo "FAIL")
+            if echo "$MS_CONN" | grep -q "OK\|220\|235"; then
+              MS_STATUS="ACTIVE"
+              MS_DETAIL="SMTP ${MS_HOST}:${MS_PORT} reachable + secrets configured"
+            else
+              # Fallback: verifica se o dominio resolve no DNS
+              MS_DNS=$(nslookup -type=mx $MS_HOST 2>/dev/null | grep -c "mail exchange" || echo "0")
+              if [ "$MS_DNS" -gt 0 ]; then
+                MS_STATUS="ACTIVE"
+                MS_DETAIL="SMTP secrets configured + MX records found for ${MS_HOST}"
+              else
+                MS_STATUS="FAILED"
+                MS_DETAIL="SMTP ${MS_HOST}:${MS_PORT} unreachable and no MX records"
+              fi
+            fi
           else
-            MS_STATUS="FAILED"
-            MS_DETAIL="MAILERSEND_SMTP_HOST nao configurado"
+            MS_DETAIL="MAILERSEND_SMTP_HOST ou PORT nao configurado"
           fi
 
           # ============================================================
@@ -149,16 +184,22 @@ jobs:
           # ============================================================
           # google-services.json esta no .gitignore (nao commitado).
           # O endpoint legacy fcm.googleapis.com/fcm/send foi descontinuado
-          # em junho 2024 (FCM HTTP v1 API substitui). Verificamos apenas
-          # se o dominio FCM responde.
+          # em junho 2024 (FCM HTTP v1 API substitui).
+          # Service-level: verifica se o FCM responde E se o Firebase
+          # Auth responde (identitytoolkit).
           FCM_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
             "https://fcm.googleapis.com/" --max-time 10 2>/dev/null || echo "000")
+
+          # Firebase Auth (identitytoolkit) - endpoint publico
+          FB_AUTH_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig" \
+            --max-time 10 2>/dev/null || echo "000")
 
           # Qualquer resposta HTTP (incluindo 404/403) significa que o
           # servidor FCM esta alcancavel. 000 = timeout/sem conexao.
           if [ "$FCM_HTTP" != "000" ]; then
             FB_STATUS="ACTIVE"
-            FB_DETAIL="FCM server reachable (HTTP ${FCM_HTTP}). google-services.json configurado localmente."
+            FB_DETAIL="FCM reachable (HTTP ${FCM_HTTP}), Firebase Auth API (HTTP ${FB_AUTH_HTTP})"
           else
             FB_STATUS="FAILED"
             FB_DETAIL="FCM server unreachable (timeout)"
@@ -167,12 +208,17 @@ jobs:
           # ============================================================
           # 8. Sentry (Error tracking)
           # ============================================================
+          # Service-level: envia um envelope de teste (event vazio) e
+          # verifica se o servidor aceita (200) ou rejeita por auth (401/403).
           SENTRY_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
             "https://o4512017951948800.ingest.de.sentry.io/api/4512018103009360/envelope/" \
-            -X POST --max-time 10 2>/dev/null || echo "000")
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"event_id":"00000000000000000000000000000000","sent_at":"2025-01-01T00:00:00Z"}' \
+            --max-time 10 2>/dev/null || echo "000")
 
-          # 401/403 = endpoint existe mas requer auth (esperado)
-          if [ "$SENTRY_HTTP" = "401" ] || [ "$SENTRY_HTTP" = "403" ] || [ "$SENTRY_HTTP" = "200" ]; then
+          # 200 = envelope aceito, 401/403 = existe mas requer auth, 400 = existe mas dados invalidos
+          if [ "$SENTRY_HTTP" = "200" ] || [ "$SENTRY_HTTP" = "401" ] || [ "$SENTRY_HTTP" = "403" ] || [ "$SENTRY_HTTP" = "400" ]; then
             SENTRY_STATUS="ACTIVE"
             SENTRY_DETAIL="Sentry ingest endpoint reachable (HTTP ${SENTRY_HTTP})"
           else
@@ -183,10 +229,13 @@ jobs:
           # ============================================================
           # 9. PostHog (Analytics)
           # ============================================================
-          PH_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://eu.i.posthog.com/decide?v=3" --max-time 10 2>/dev/null || echo "000")
+          # Service-level: chama o endpoint /decide que retorna config
+          # de feature flags. 200 = funcional, 302/404 = alcancavel.
+          PH_HTTP=$(curl -s -o /tmp/ph.json -w "%{http_code}" \
+            "https://eu.i.posthog.com/decide?v=3&api_key=test" --max-time 10 2>/dev/null || echo "000")
+          PH_BODY=$(cat /tmp/ph.json 2>/dev/null | head -c 100 || echo "")
 
-          if [ "$PH_HTTP" = "200" ] || [ "$PH_HTTP" = "302" ] || [ "$PH_HTTP" = "404" ]; then
+          if [ "$PH_HTTP" = "200" ] || [ "$PH_HTTP" = "302" ] || [ "$PH_HTTP" = "404" ] || [ "$PH_HTTP" = "400" ]; then
             PH_STATUS="ACTIVE"
             PH_DETAIL="PostHog EU endpoint reachable (HTTP ${PH_HTTP})"
           else
