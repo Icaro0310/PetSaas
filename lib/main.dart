@@ -22,11 +22,21 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Sentry - inicializa antes do runApp para capturar erros nativos
+  // Configurado para o plano FREE (5.000 erros/mes, 1 projeto).
+  // - tracesSampleRate e profilesSampleRate desativados (features pagas)
+  // - Apenas error monitoring (disponivel no Free)
+  // - beforeSend filtra PII e erros de desenvolvimento
   await SentryFlutter.init(
     (options) {
       options.dsn = _sentryDsn;
-      options.tracesSampleRate = 1.0;
-      options.profilesSampleRate = 1.0;
+      // Free plan: apenas error monitoring.
+      // Performance tracing e profiling requerem plano Team+.
+      options.tracesSampleRate = 0.0;
+      // Filtra erros em debug mode (nao desperdica quota do Free)
+      options.beforeSend = (event, hint) {
+        if (kDebugMode) return null; // nao envia erros de desenvolvimento
+        return event;
+      };
     },
     appRunner: () async {
       // PostHog

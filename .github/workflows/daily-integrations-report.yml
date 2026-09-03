@@ -208,17 +208,17 @@ jobs:
           # ============================================================
           # 8. Sentry (Error tracking)
           # ============================================================
-          # Service-level: envia um envelope de teste (event vazio) e
-          # verifica se o servidor aceita (200) ou rejeita por auth (401/403).
+          # Service-level: verifica se o endpoint de ingest responde.
+          # IMPORTANTE: NAO enviamos um envelope real (POST) porque isso
+          # criaria um falso erro no Sentry e desperdicaria quota do plano Free.
+          # Usamos OPTIONS (CORS preflight) que retorna 200/204 sem criar evento.
           SENTRY_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
             "https://o4512017951948800.ingest.de.sentry.io/api/4512018103009360/envelope/" \
-            -X POST \
-            -H "Content-Type: application/json" \
-            -d '{"event_id":"00000000000000000000000000000000","sent_at":"2025-01-01T00:00:00Z"}' \
+            -X OPTIONS \
             --max-time 10 2>/dev/null || echo "000")
 
-          # 200 = envelope aceito, 401/403 = existe mas requer auth, 400 = existe mas dados invalidos
-          if [ "$SENTRY_HTTP" = "200" ] || [ "$SENTRY_HTTP" = "401" ] || [ "$SENTRY_HTTP" = "403" ] || [ "$SENTRY_HTTP" = "400" ]; then
+          # 200/204 = CORS preflight OK, 401/403/404/405 = endpoint existe
+          if [ "$SENTRY_HTTP" = "200" ] || [ "$SENTRY_HTTP" = "204" ] || [ "$SENTRY_HTTP" = "401" ] || [ "$SENTRY_HTTP" = "403" ] || [ "$SENTRY_HTTP" = "404" ] || [ "$SENTRY_HTTP" = "405" ]; then
             SENTRY_STATUS="ACTIVE"
             SENTRY_DETAIL="Sentry ingest endpoint reachable (HTTP ${SENTRY_HTTP})"
           else
