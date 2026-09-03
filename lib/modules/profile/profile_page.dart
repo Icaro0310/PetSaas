@@ -1,7 +1,9 @@
 import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../config/routes.dart';
 import '../../config/theme.dart';
@@ -105,6 +107,37 @@ class ProfilePage extends ConsumerWidget {
             label: const Text('Excluir conta (LGPD)',
                 style: TextStyle(color: AppTheme.danger)),
           ),
+          if (kDebugMode) ...[
+            const SizedBox(height: 24),
+            const Divider(),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Text('Diagnostico (debug only)',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            ),
+            OutlinedButton.icon(
+              onPressed: () async {
+                // Em debug mode o beforeSend filtra eventos automaticos,
+                // mas captureMessage com withScope ignora esse filtro.
+                await Sentry.captureMessage(
+                  'Sentry verification test from PetSaas',
+                  level: SentryLevel.info,
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          'Evento enviado. NOTA: em debug mode o beforeSend '
+                          'filtra eventos automaticos. Para testar erros reais, '
+                          'faça build em release mode.'),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.bug_report),
+              label: const Text('Testar Sentry'),
+            ),
+          ],
         ],
       ),
     );

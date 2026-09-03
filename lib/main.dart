@@ -34,7 +34,11 @@ Future<void> main() async {
       options.tracesSampleRate = 0.0;
       // Filtra erros em debug mode (nao desperdica quota do Free)
       options.beforeSend = (event, hint) {
-        if (kDebugMode) return null; // nao envia erros de desenvolvimento
+        if (kDebugMode) {
+          // Permite mensagens explicitas (captureMessage) para testes
+          if (event.level == SentryLevel.info) return event;
+          return null; // filtra erros automaticos em desenvolvimento
+        }
         return event;
       };
     },
