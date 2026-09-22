@@ -458,6 +458,33 @@ a { color: var(--color-primary); text-decoration-thickness: 1px; text-underline-
 .compare td:last-child, .compare th:last-child { text-align: center; }
 .compare td:nth-child(2) { text-align: center; }
 
+/* ---------- Subscribe (waitlist -> Supabase) ---------- */
+.subscribe {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  max-width: 30rem;
+}
+.subscribe input[type="email"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.subscribe input[type="email"]:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+.subscribe input[aria-invalid="true"] { border-color: #B3261E; }
+.subscribe__msg { margin-top: var(--space-3); font-size: var(--text-sm); min-height: 1.4em; }
+.subscribe__msg.is-ok { color: var(--color-primary-dark); font-weight: 600; }
+.subscribe__msg.is-error { color: #B3261E; }
+
 /* ---------- CTA final ---------- */
 .cta-final {
   background: var(--color-primary-dark);
