@@ -84,7 +84,7 @@
         .then(function (res) {
           if (res.ok) {
             msg.classList.add("is-ok");
-            msg.textContent = "Subscricao confirmada. Obrigado!";
+            msg.textContent = "Subscricao confirmada. Enviamos um email de boas-vindas - verifique a sua caixa de entrada!";
             form.reset();
             return;
           }
