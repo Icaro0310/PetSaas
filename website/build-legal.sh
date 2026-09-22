@@ -93,5 +93,5 @@ gen "privacy.html" "privacy.html" \
 
 gen "terms.html" "terms.html" \
   "Termos de Uso - PetCare" \
-  "Condicoes de utilizacao do PetCare. Planos, cancelamento, DMCA e arbitragem." \
+  "Condicoes de utilizacao do PetCare. Contas de utilizador, DMCA e arbitragem." \
   "https://icaro0310.github.io/PetSaas/terms.html"
