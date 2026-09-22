@@ -13,7 +13,7 @@
   --color-surface: #FFFFFF;
   --color-ink: #1E2A1E;            /* texto principal */
   --color-ink-2: #41503F;          /* texto secundario */
-  --color-ink-3: #6B7A68;          /* texto terciario */
+  --color-ink-3: #4E5D4B;          /* texto terciario (>=4.5:1 em paper) */
   --color-border: #DCE7D8;         /* hairline esverdeado */
   --color-primary-tint: #EAF3E9;   /* fundo de card suave */
   --color-on-dark: #F3F8F1;

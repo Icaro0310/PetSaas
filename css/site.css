@@ -497,9 +497,9 @@ a { color: var(--color-primary); text-decoration-thickness: 1px; text-underline-
 .legal code { background: var(--color-primary-tint); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
 .legal ul { padding-left: var(--space-5); }
 
-/* ---------- Reveal ---------- */
-.reveal { opacity: 0; transform: translateY(18px); }
-.reveal.is-visible {
+/* ---------- Reveal (apenas com JS ativo) ---------- */
+.js .reveal { opacity: 0; transform: translateY(18px); }
+.js .reveal.is-visible {
   opacity: 1;
   transform: none;
   transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out);
