@@ -21,12 +21,13 @@ const _sentryDsn =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Sentry - inicializa antes do runApp para capturar erros nativos
-  // Configurado para o plano FREE (5.000 erros/mes, 1 projeto).
-  // - tracesSampleRate e profilesSampleRate desativados (features pagas)
-  // - Apenas error monitoring (disponivel no Free)
-  // - beforeSend filtra PII e erros de desenvolvimento
-  await SentryFlutter.init(
+  try {
+    // Sentry - inicializa antes do runApp para capturar erros nativos
+    // Configurado para o plano FREE (5.000 erros/mes, 1 projeto).
+    // - tracesSampleRate e profilesSampleRate desativados (features pagas)
+    // - Apenas error monitoring (disponivel no Free)
+    // - beforeSend filtra PII e erros de desenvolvimento
+    await SentryFlutter.init(
     (options) {
       options.dsn = _sentryDsn;
       // Free plan: apenas error monitoring.
@@ -55,7 +56,11 @@ Future<void> main() async {
       }
 
       // Supabase
-      await SupabaseService.initialize();
+      try {
+        await SupabaseService.initialize();
+      } catch (e) {
+        debugPrint('Supabase init failed: $e');
+      }
 
       // Firebase (Android usa google-services.json; Web usa firebase_options.dart)
       var firebaseInitialized = false;
@@ -85,8 +90,10 @@ Future<void> main() async {
         } catch (_) {}
       }
 
-      // Notificacoes locais + timezone
-      await NotificationService.initialize();
+      // Notificacoes locais + timezone (nao existe impl web)
+      if (!kIsWeb) {
+        await NotificationService.initialize();
+      }
 
       // FCM (push remoto) - registra token no Supabase
       try {
@@ -98,7 +105,10 @@ Future<void> main() async {
       // URLs limpas na Web para /p/<uuid> funcionar em hosts estaticos
       usePathUrlStrategy();
     },
-  );
+    );
+  } catch (e) {
+    debugPrint('Init chain failed: $e');
+  }
 
   runApp(
     DefaultAssetBundle(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -13,6 +14,7 @@ class NotificationService {
   static const String _channelName = 'Lembretes de Medicacao';
 
   static Future<void> initialize() async {
+    if (kIsWeb) return; // flutter_local_notifications nao tem impl web
     tz.initializeTimeZones();
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -54,6 +56,7 @@ class NotificationService {
     required String medName,
     required DateTime scheduledTime,
   }) async {
+    if (kIsWeb) return;
     if (scheduledTime.isBefore(DateTime.now())) return;
 
     await _plugin.zonedSchedule(
@@ -81,10 +84,12 @@ class NotificationService {
   }
 
   static Future<void> cancelReminder(int id) async {
+    if (kIsWeb) return;
     await _plugin.cancel(id);
   }
 
   static Future<void> cancelAll() async {
+    if (kIsWeb) return;
     await _plugin.cancelAll();
   }
 }
