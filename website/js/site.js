@@ -44,3 +44,62 @@
 
   items.forEach(function (el) { observer.observe(el); });
 })();
+
+// Newsletter / waitlist -> Edge Function `subscribe` (Supabase)
+(function () {
+  "use strict";
+
+  var SUBSCRIBE_URL = "https://dotplnbakltelacsxvjz.supabase.co/functions/v1/subscribe";
+
+  document.querySelectorAll("[data-subscribe]").forEach(function (form) {
+    var input = form.querySelector('input[type="email"]');
+    var button = form.querySelector('button[type="submit"]');
+    var msg = form.parentElement.querySelector(".subscribe__msg");
+    if (!input || !button || !msg) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = input.value.trim();
+      input.setAttribute("aria-invalid", "false");
+      msg.className = "subscribe__msg";
+      msg.textContent = "";
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        input.setAttribute("aria-invalid", "true");
+        msg.classList.add("is-error");
+        msg.textContent = "Introduza um email valido.";
+        input.focus();
+        return;
+      }
+
+      button.disabled = true;
+      var label = button.textContent;
+      button.textContent = "A subscrever...";
+
+      fetch(SUBSCRIBE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, source: "website" })
+      })
+        .then(function (res) {
+          if (res.ok) {
+            msg.classList.add("is-ok");
+            msg.textContent = "Subscricao confirmada. Obrigado!";
+            form.reset();
+            return;
+          }
+          return res.json().catch(function () { return {}; }).then(function (body) {
+            throw new Error(body.error || "Erro ao subscrever. Tente novamente.");
+          });
+        })
+        .catch(function () {
+          msg.classList.add("is-error");
+          msg.textContent = "Nao foi possivel subscrever. Tente novamente mais tarde.";
+        })
+        .finally(function () {
+          button.disabled = false;
+          button.textContent = label;
+        });
+    });
+  });
+})();
