@@ -10,6 +10,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { z } from 'https://esm.sh/zod@3.23.8'
+import { sendWelcomeEmail } from './welcome-email.ts'
 
 const schema = z.object({
   email: z.string().email().max(255),
@@ -110,6 +111,12 @@ Deno.serve(async (req) => {
       status: 500,
       headers,
     })
+  }
+
+  // Email de boas-vindas apenas em NOVA inscricao (evita bombardear
+  // um email alheio via re-submissao). Falha nao afeta a inscricao.
+  if (!error) {
+    await sendWelcomeEmail(email)
   }
 
   return new Response(JSON.stringify({ success: true }), { headers })
