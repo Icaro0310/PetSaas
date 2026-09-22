@@ -1,6 +1,6 @@
 /* Hallmark · macrostructure: Split-Hero Document · tone: calmo/empatico (playful suave)
  * theme: locked-brand (PetCare) · paper #FAFBF6 · accent green ~3% amber
- * audience: donos de pets · use: abrir app / trial 14d · nav: N1b SaaS · footer: Ft-lite
+ * audience: donos de pets · use: abrir app (gratuito) · nav: N1b SaaS · footer: Ft-lite
  * Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V4
  */
 
@@ -387,6 +387,11 @@ a { color: var(--color-primary); text-decoration-thickness: 1px; text-underline-
   align-items: stretch;
   max-width: 56rem;
   margin-inline: auto;
+}
+
+.pricing-grid--single {
+  grid-template-columns: minmax(0, 26rem);
+  justify-content: center;
 }
 
 .price-card {
