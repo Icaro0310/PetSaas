@@ -16,9 +16,10 @@ class PetsListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final petsAsync = ref.watch(petsProvider);
-    final premiumAsync = ref.watch(hasPremiumProvider);
+    // DESATIVADO: gate Premium — app gratuita, pets ilimitados.
+    // final premiumAsync = ref.watch(hasPremiumProvider);
     final pets = petsAsync.valueOrNull ?? [];
-    final hasPremium = premiumAsync.valueOrNull ?? false;
+    // final hasPremium = premiumAsync.valueOrNull ?? false;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Meus pets')),
@@ -45,17 +46,18 @@ class PetsListPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final canAdd = hasPremium || pets.isEmpty;
-          if (!canAdd) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    'Plano Free permite 1 pet. Assine o Premium para mais.'),
-              ),
-            );
-            context.push(AppRoutes.subscription);
-            return;
-          }
+          // DESATIVADO: limite de 1 pet do plano Free — app gratuita.
+          // final canAdd = hasPremium || pets.isEmpty;
+          // if (!canAdd) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(
+          //       content: Text(
+          //           'Plano Free permite 1 pet. Assine o Premium para mais.'),
+          //     ),
+          //   );
+          //   context.push(AppRoutes.subscription);
+          //   return;
+          // }
           context.push(AppRoutes.petNew);
         },
         icon: const Icon(Icons.add),

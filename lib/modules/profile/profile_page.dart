@@ -16,7 +16,8 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final profile = ref.watch(currentUserProfileProvider).valueOrNull;
-    final sub = ref.watch(subscriptionProvider).valueOrNull;
+    // DESATIVADO: plano/assinatura — app gratuita.
+    // final sub = ref.watch(subscriptionProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil')),
@@ -56,22 +57,23 @@ class ProfilePage extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: 24),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.star, color: AppTheme.accent),
-              title: const Text('Plano'),
-              subtitle: Text(
-                sub == null
-                    ? 'Free'
-                    : (sub.hasPremiumAccess
-                        ? 'Premium (${sub.status.name})'
-                        : 'Free (expirado)'),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push(AppRoutes.subscription),
-            ),
-          ),
-          const SizedBox(height: 12),
+          // DESATIVADO: card de plano/assinatura — app gratuita por agora.
+          // Card(
+          //   child: ListTile(
+          //     leading: const Icon(Icons.star, color: AppTheme.accent),
+          //     title: const Text('Plano'),
+          //     subtitle: Text(
+          //       sub == null
+          //           ? 'Free'
+          //           : (sub.hasPremiumAccess
+          //               ? 'Premium (${sub.status.name})'
+          //               : 'Free (expirado)'),
+          //     ),
+          //     trailing: const Icon(Icons.chevron_right),
+          //     onTap: () => context.push(AppRoutes.subscription),
+          //   ),
+          // ),
+          // const SizedBox(height: 12),
           Card(
             child: ListTile(
               leading: const Icon(Icons.today, color: AppTheme.primary),

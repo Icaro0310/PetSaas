@@ -21,7 +21,8 @@ void main() {
       expect(AppRoutes.qr, '/qr');
       expect(AppRoutes.caregivers, '/caregivers');
       expect(AppRoutes.profile, '/profile');
-      expect(AppRoutes.subscription, '/subscription');
+      // DESATIVADO: rota de assinatura — app gratuita.
+      // expect(AppRoutes.subscription, '/subscription');
       expect(AppRoutes.notifications, '/notifications');
     });
 

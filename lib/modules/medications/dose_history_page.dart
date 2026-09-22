@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../config/constants.dart';
+// import '../../config/constants.dart'; // DESATIVADO: pricing (freeHistoryDays)
 import '../../config/theme.dart';
 import '../../core/models/dose_log_model.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/extensions.dart';
-import '../../providers/app_providers.dart';
+// import '../../providers/app_providers.dart'; // DESATIVADO: hasPremiumProvider
 
 class DoseHistoryPage extends ConsumerStatefulWidget {
   final String petId;
@@ -21,7 +21,8 @@ class _DoseHistoryPageState extends ConsumerState<DoseHistoryPage> {
   String _filter = 'week'; // today, week, month
 
   Future<List<Map<String, dynamic>>> _load() async {
-    final hasPremium = await ref.read(hasPremiumProvider.future);
+    // DESATIVADO: limite de historico do plano Free — app gratuita.
+    // final hasPremium = await ref.read(hasPremiumProvider.future);
     DateTime start;
     switch (_filter) {
       case 'today':
@@ -33,11 +34,11 @@ class _DoseHistoryPageState extends ConsumerState<DoseHistoryPage> {
       default:
         start = DateTime.now().subtract(const Duration(days: 7));
     }
-    // Free: limita a 7 dias
-    if (!hasPremium) {
-      final freeStart = DateTime.now().subtract(const Duration(days: AppConstants.freeHistoryDays));
-      if (start.isBefore(freeStart)) start = freeStart;
-    }
+    // DESATIVADO: Free limitava a 7 dias — agora o historico e completo.
+    // if (!hasPremium) {
+    //   final freeStart = DateTime.now().subtract(const Duration(days: AppConstants.freeHistoryDays));
+    //   if (start.isBefore(freeStart)) start = freeStart;
+    // }
     final data = await SupabaseService.client
         .from('dose_logs')
         .select('id, scheduled_time, given_at, given_by, status, notes, '

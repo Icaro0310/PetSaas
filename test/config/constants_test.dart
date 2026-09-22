@@ -22,19 +22,20 @@ void main() {
       expect(AppConstants.siteUrl, startsWith('https://'));
     });
 
-    test('limites do plano free sao positivos', () {
-      expect(AppConstants.freeMaxPets, greaterThan(0));
-      expect(AppConstants.freeMaxCaregivers, greaterThan(0));
-      expect(AppConstants.freeHistoryDays, greaterThan(0));
-    });
-
-    test('trialDays e 14', () {
-      expect(AppConstants.trialDays, 14);
-    });
-
-    test('premiumMonthlyPriceEur e positivo', () {
-      expect(AppConstants.premiumMonthlyPriceEur, greaterThan(0));
-    });
+    // DESATIVADO: planos/precos — app gratuita por agora.
+    // test('limites do plano free sao positivos', () {
+    //   expect(AppConstants.freeMaxPets, greaterThan(0));
+    //   expect(AppConstants.freeMaxCaregivers, greaterThan(0));
+    //   expect(AppConstants.freeHistoryDays, greaterThan(0));
+    // });
+    //
+    // test('trialDays e 14', () {
+    //   expect(AppConstants.trialDays, 14);
+    // });
+    //
+    // test('premiumMonthlyPriceEur e positivo', () {
+    //   expect(AppConstants.premiumMonthlyPriceEur, greaterThan(0));
+    // });
 
     test('missedDoseThreshold e 2 horas', () {
       expect(AppConstants.missedDoseThreshold, const Duration(hours: 2));

@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../config/constants.dart';
+// import '../../config/constants.dart'; // DESATIVADO: pricing
 import '../../config/theme.dart';
 import '../../core/services/analytics_service.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
-import '../../providers/app_providers.dart';
+// import '../../providers/app_providers.dart'; // DESATIVADO: hasPremiumProvider
 import '../../shared/widgets/loading_button.dart';
 
 class InviteCaregiverPage extends ConsumerStatefulWidget {
@@ -33,23 +33,23 @@ class _InviteCaregiverPageState extends ConsumerState<InviteCaregiverPage> {
       return;
     }
 
-    // Gate: max 1 cuidador no Free
-    final hasPremium = await ref.read(hasPremiumProvider.future);
-    final existing = await SupabaseService.client
-        .from('caregivers')
-        .select()
-        .eq('pet_id', widget.petId)
-        .neq('status', 'removed');
-    if (!hasPremium && (existing as List).length >= AppConstants.freeMaxCaregivers) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Free permite 1 cuidador. Assine Premium para mais.')),
-        );
-      }
-      return;
-    }
+    // DESATIVADO: limite de cuidadores do plano Free — app gratuita.
+    // final hasPremium = await ref.read(hasPremiumProvider.future);
+    // final existing = await SupabaseService.client
+    //     .from('caregivers')
+    //     .select()
+    //     .eq('pet_id', widget.petId)
+    //     .neq('status', 'removed');
+    // if (!hasPremium && (existing as List).length >= AppConstants.freeMaxCaregivers) {
+    //   if (mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //           content: Text(
+    //               'Free permite 1 cuidador. Assine Premium para mais.')),
+    //     );
+    //   }
+    //   return;
+    // }
 
     final user = SupabaseService.currentUserId;
     try {

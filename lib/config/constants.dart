@@ -15,12 +15,12 @@ class AppConstants {
   // Storage
   static const String petPhotosBucket = 'pet_photos';
 
-  // Planos
-  static const int freeMaxPets = 1;
-  static const int freeMaxCaregivers = 1;
-  static const int freeHistoryDays = 7;
-  static const int trialDays = 14;
-  static const double premiumMonthlyPriceEur = 1.99;
+  // Planos — DESATIVADO: a app e gratuita por agora (sem Premium/limites).
+  // static const int freeMaxPets = 1;
+  // static const int freeMaxCaregivers = 1;
+  // static const int freeHistoryDays = 7;
+  // static const int trialDays = 14;
+  // static const double premiumMonthlyPriceEur = 1.99;
 
   // Doses
   static const Duration missedDoseThreshold = Duration(hours: 2);

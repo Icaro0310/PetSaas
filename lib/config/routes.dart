@@ -18,7 +18,7 @@ import '../modules/caregivers/caregivers_list_page.dart';
 import '../modules/caregivers/invite_caregiver_page.dart';
 import '../modules/caregivers/caregiver_dashboard_page.dart';
 import '../modules/profile/profile_page.dart';
-import '../modules/profile/subscription_page.dart';
+// import '../modules/profile/subscription_page.dart'; // DESATIVADO: plano Premium
 import '../modules/notifications/notifications_page.dart';
 import '../modules/qr_code/public_pet_page.dart';
 import '../modules/caregivers/join_page.dart';
@@ -42,7 +42,7 @@ class AppRoutes {
   static const String invite = '/invite';
   static const String caregiverDashboard = '/caregiver-dashboard';
   static const String profile = '/profile';
-  static const String subscription = '/subscription';
+  // static const String subscription = '/subscription'; // DESATIVADO: app gratuita
   static const String notifications = '/notifications';
   static const String publicPet = '/p'; // rota pública curta
   static const String join = '/join';
@@ -128,8 +128,9 @@ class AppRoutes {
           builder: (_, __) => const CaregiverDashboardPage(),
         ),
         GoRoute(path: profile, builder: (_, __) => const ProfilePage()),
-        GoRoute(
-            path: subscription, builder: (_, __) => const SubscriptionPage()),
+        // DESATIVADO: pagina de assinatura — app gratuita por agora.
+        // GoRoute(
+        //     path: subscription, builder: (_, __) => const SubscriptionPage()),
         GoRoute(
           path: notifications,
           builder: (_, __) => const NotificationsPage(),

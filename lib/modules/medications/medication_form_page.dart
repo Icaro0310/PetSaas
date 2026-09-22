@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../config/constants.dart';
-import '../../config/routes.dart';
+// import '../../config/constants.dart'; // DESATIVADO: pricing
+// import '../../config/routes.dart'; // DESATIVADO: paywall
 import '../../config/theme.dart';
 import '../../core/models/medication_model.dart';
 import '../../core/services/analytics_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/utils/validators.dart';
-import '../../providers/app_providers.dart';
+// import '../../providers/app_providers.dart'; // DESATIVADO: hasPremiumProvider
 import '../../shared/widgets/loading_button.dart';
 
 class MedicationFormPage extends ConsumerStatefulWidget {
@@ -85,19 +85,19 @@ class _MedicationFormPageState extends ConsumerState<MedicationFormPage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Gate: medicacao e Premium
-    final hasPremium = await ref.read(hasPremiumProvider.future);
-    if (!hasPremium) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Medicacao e uma funcionalidade Premium.'),
-          ),
-        );
-        context.push(AppRoutes.subscription);
-      }
-      return;
-    }
+    // DESATIVADO: gate Premium — medicacao e gratuita para todos.
+    // final hasPremium = await ref.read(hasPremiumProvider.future);
+    // if (!hasPremium) {
+    //   if (mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text('Medicacao e uma funcionalidade Premium.'),
+    //       ),
+    //     );
+    //     context.push(AppRoutes.subscription);
+    //   }
+    //   return;
+    // }
 
     setState(() => _saving = true);
     try {
@@ -130,8 +130,8 @@ class _MedicationFormPageState extends ConsumerState<MedicationFormPage> {
           .single();
       final medId = res['id'] as String;
 
-      // Iniciar trial automatico na primeira medicacao
-      await _ensureTrial();
+      // DESATIVADO: trial automatico (app gratuita)
+      // await _ensureTrial();
 
       // Gerar dose_logs para os proximos 30 dias
       await _generateDoseLogs(medId);
@@ -150,26 +150,27 @@ class _MedicationFormPageState extends ConsumerState<MedicationFormPage> {
     }
   }
 
-  Future<void> _ensureTrial() async {
-    final user = SupabaseService.currentUserId;
-    if (user == null) return;
-    final existing = await SupabaseService.client
-        .from('subscriptions')
-        .select()
-        .eq('user_id', user)
-        .maybeSingle();
-    if (existing == null) {
-      await SupabaseService.client.from('subscriptions').insert({
-        'user_id': user,
-        'status': 'trialing',
-        'plan': 'premium',
-        'current_period_start': DateTime.now().toIso8601String(),
-        'current_period_end': DateTime.now()
-            .add(const Duration(days: AppConstants.trialDays))
-            .toIso8601String(),
-      });
-    }
-  }
+  // DESATIVADO: trial automatico — app gratuita por agora.
+  // Future<void> _ensureTrial() async {
+  //   final user = SupabaseService.currentUserId;
+  //   if (user == null) return;
+  //   final existing = await SupabaseService.client
+  //       .from('subscriptions')
+  //       .select()
+  //       .eq('user_id', user)
+  //       .maybeSingle();
+  //   if (existing == null) {
+  //     await SupabaseService.client.from('subscriptions').insert({
+  //       'user_id': user,
+  //       'status': 'trialing',
+  //       'plan': 'premium',
+  //       'current_period_start': DateTime.now().toIso8601String(),
+  //       'current_period_end': DateTime.now()
+  //           .add(const Duration(days: AppConstants.trialDays))
+  //           .toIso8601String(),
+  //     });
+  //   }
+  // }
 
   Future<void> _generateDoseLogs(String medId) async {
     final now = DateTime.now();

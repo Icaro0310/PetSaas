@@ -248,24 +248,19 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
   final _notes = TextEditingController();
   bool _saving = false;
   String? _photoPath;
-  bool _hasPremium = false;
+  // DESATIVADO: foto na dose era Premium — app gratuita.
+  // bool _hasPremium = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _checkPremium();
-  }
-
-  Future<void> _checkPremium() async {
-    final premium = await ref.read(hasPremiumProvider.future);
-    if (mounted) setState(() => _hasPremium = premium);
-  }
+  // Future<void> _checkPremium() async {
+  //   final premium = await ref.read(hasPremiumProvider.future);
+  //   if (mounted) setState(() => _hasPremium = premium);
+  // }
 
   Future<void> _confirm() async {
     setState(() => _saving = true);
     try {
       String? photoUrl;
-      if (_photoPath != null && _hasPremium) {
+      if (_photoPath != null) {
         final ext = _photoPath!.split('.').last.toLowerCase();
         photoUrl = await SupabaseService.uploadPetPhoto(
           petId: widget.dose.petId,
@@ -313,28 +308,13 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
           const SizedBox(height: 8),
           Text(widget.medName),
           const SizedBox(height: 16),
-          if (_hasPremium) ...[
-            PhotoPicker(
-              localPath: _photoPath,
-              onChanged: (p) => setState(() => _photoPath = p),
-              size: 100,
-            ),
-            const SizedBox(height: 12),
-          ] else ...[
-            Row(
-              children: [
-                const Icon(Icons.lock_outline, size: 18, color: AppTheme.accent),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Foto na dose e Premium',
-                    style: TextStyle(color: AppTheme.textMuted, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-          ],
+          // DESATIVADO: gate Premium — foto na dose e gratuita.
+          PhotoPicker(
+            localPath: _photoPath,
+            onChanged: (p) => setState(() => _photoPath = p),
+            size: 100,
+          ),
+          const SizedBox(height: 12),
           TextField(
             controller: _notes,
             decoration: const InputDecoration(labelText: 'Notas (opcional)'),
