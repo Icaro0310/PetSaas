@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCare - Gestao de medicamentos e QR Code para pets</title>
+  <meta name="description" content="Saiba quem deu cada medicamento ao seu pet. QR Code unico na coleira para encontra-lo se se perder. Teste gratis 14 dias.">
+  <link rel="canonical" href="https://icaro0310.github.io/PetSaas/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PetCare - Gestao de medicamentos e QR Code para pets">
+  <meta property="og:description" content="Saiba quem deu cada medicamento ao seu pet. QR Code unico na coleira para encontra-lo se se perder. Teste gratis 14 dias.">
+  <meta property="og:url" content="https://icaro0310.github.io/PetSaas/">
+  <meta property="og:image" content="https://icaro0310.github.io/PetSaas/assets/og-image.png">
+  <meta property="og:locale" content="pt_PT">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "PetCare",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Android, Web",
+    "description": "Gestao de medicamentos e QR Code de identificacao para animais de estimacao.",
+    "url": "https://moonlit-pothos-c56cd4.netlify.app",
+    "offers": [
+      { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "EUR" },
+      { "@type": "Offer", "name": "Premium", "price": "1.99", "priceCurrency": "EUR" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="container site-nav__inner">
+      <a class="brand" href="./">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>
+        </span>
+        PetCare
+      </a>
+
+      <nav class="site-nav__links" aria-label="Principal">
+        <a class="nav-link" href="#como-funciona">Como funciona</a>
+        <a class="nav-link" href="#funcionalidades">Funcionalidades</a>
+        <a class="nav-link" href="pricing.html">Precos</a>
+        <a class="btn btn--primary" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Abrir a app</a>
+      </nav>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="navOverlay">Menu</button>
+    </div>
+  </header>
+
+  <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Menu">
+    <button class="nav-overlay__close" aria-label="Fechar menu">Fechar</button>
+    <a href="./">Inicio</a>
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="pricing.html">Precos</a>
+    <a href="privacy.html">Privacidade</a>
+    <a class="btn btn--primary" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Abrir a app</a>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <svg class="hero__paws" aria-hidden="true" width="100%" height="100%">
+        <defs>
+          <pattern id="paws" width="180" height="180" patternUnits="userSpaceOnUse">
+            <g fill="#2E7D32" opacity="0.05">
+              <ellipse cx="40" cy="46" rx="9" ry="7"/>
+              <circle cx="26" cy="30" r="4"/><circle cx="38" cy="24" r="4"/>
+              <circle cx="50" cy="26" r="4"/><circle cx="58" cy="36" r="4"/>
+            </g>
+            <g fill="#2E7D32" opacity="0.05" transform="translate(120,110) rotate(24)">
+              <ellipse cx="40" cy="46" rx="9" ry="7"/>
+              <circle cx="26" cy="30" r="4"/><circle cx="38" cy="24" r="4"/>
+              <circle cx="50" cy="26" r="4"/><circle cx="58" cy="36" r="4"/>
+            </g>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#paws)"/>
+      </svg>
+
+      <div class="container hero__grid">
+        <div>
+          <h1 class="hero__title">Saber exatamente quem deu cada medicamento ao seu pet. E encontra-lo mais rapido, se ele se perder.</h1>
+          <p class="lead">Gerencie medicacoes, convide cuidadores e tenha um QR Code unico na coleira do seu pet - tudo com privacidade total.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Comecar teste gratis de 14 dias</a>
+            <a class="btn btn--ghost btn--lg" href="#como-funciona">Ver como funciona</a>
+          </div>
+          <p class="hero__note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            Sem cartao de credito. Cancele quando quiser.
+          </p>
+        </div>
+
+        <div class="hero__media">
+          <figure style="margin:0">
+            <img class="hero__shot" src="assets/app-login.png" alt="Ecra de entrada da app PetCare: logo com pata, campo de email e botao Entrar com email" width="500" height="960">
+          </figure>
+          <figure class="hero__qr">
+            <img src="assets/pet-qr.png" alt="QR Code unico gerado pela app PetCare para a coleira do pet" width="94" height="94">
+            <figcaption>QR unico na coleira</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problema / solucao -->
+    <section class="section" id="problema">
+      <div class="container">
+        <h2>Cuidar de um pet com medicacao nao precisa ser um caos.</h2>
+        <div class="cards-3">
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
+            </div>
+            <h3>Nunca mais perca uma dose</h3>
+            <p>Agendamentos diarios, semanais ou intervalados. Receba lembretes no seu telemovel e saiba exatamente quando a proxima dose deve ser dada.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M16 11l2 2 4-4"/></svg>
+            </div>
+            <h3>Quem deu? Fica registado</h3>
+            <p>Cuidadores e familiares marcam as doses que administram. Historico completo com nome e hora - adeus a duvida.</p>
+          </article>
+
+          <article class="card reveal">
+            <div class="card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1M17 17h1"/></svg>
+            </div>
+            <h3>QR Code na coleira = seguranca extra</h3>
+            <p>Se alguem encontrar o seu pet, basta escanear o QR Code. Recebe um alerta instantaneo com a localizacao - sem expor os seus dados pessoais.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Como funciona -->
+    <section class="section section--tight" id="como-funciona">
+      <div class="container">
+        <h2>Em 3 passos, o seu pet esta protegido</h2>
+        <div class="steps">
+          <div class="step reveal">
+            <h3>Crie o perfil do seu pet</h3>
+            <p>Adicione nome, foto, peso e as medicacoes que ele toma - tudo em menos de 2 minutos.</p>
+          </div>
+          <div class="step reveal">
+            <h3>Gere e imprima o QR Code</h3>
+            <p>A app gera um codigo unico para cada pet. Coloque na coleira, na plaqueta ou imprima uma etiqueta.</p>
+          </div>
+          <div class="step reveal">
+            <h3>Convide cuidadores e relaxe</h3>
+            <p>Partilhe um link de convite com quem ajuda nos cuidados. Eles marcam as doses, mas nunca editam ou apagam informacoes importantes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Funcionalidades -->
+    <section class="section feature-band" id="funcionalidades">
+      <div class="container">
+        <h2>Tudo o que precisa para cuidar bem</h2>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Registo ilimitado de doses e historico completo</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Notificacoes push para doses pendentes e perdidas</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Pagina publica do pet (via QR Code) sem dados privados</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Suporte a varios pets, cuidadores e tipos de medicacao</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.5-2.3zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Dados seguros com autenticacao por Magic Link (sem passwords)</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Funciona no telemovel, tablet e computador (Web)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Precos (resumo) -->
+    <section class="section" id="precos">
+      <div class="container">
+        <h2 style="text-align:center">Planos simples e justos</h2>
+        <div class="pricing-grid">
+          <article class="price-card">
+            <p class="price-card__name">Free</p>
+            <p class="price-card__price">EUR 0<small>/mes</small></p>
+            <p class="price-card__sub">Para sempre</p>
+            <ul>
+              <li>1 pet</li>
+              <li>1 medicacao ativa</li>
+              <li>1 cuidador</li>
+              <li>QR Code e pagina publica</li>
+              <li>Lembretes por email</li>
+            </ul>
+            <a class="btn btn--ghost" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Comecar gratis</a>
+          </article>
+
+          <article class="price-card price-card--pro">
+            <span class="price-card__badge">14 dias de teste gratis</span>
+            <p class="price-card__name">Premium</p>
+            <p class="price-card__price">EUR 1,99<small>/mes</small></p>
+            <p class="price-card__sub">ou EUR 19,99/ano</p>
+            <ul>
+              <li>Pets ilimitados</li>
+              <li>Medicacoes ilimitadas</li>
+              <li>Cuidadores ilimitados</li>
+              <li>Notificacoes push em tempo real</li>
+              <li>Historico completo de doses</li>
+              <li>Suporte prioritario</li>
+            </ul>
+            <a class="btn btn--primary" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Experimentar 14 dias gratis</a>
+          </article>
+        </div>
+        <p class="pricing-note">Nao pedimos cartao de credito para iniciar o teste. Cancele quando quiser.</p>
+      </div>
+    </section>
+
+    <!-- CTA final -->
+    <section class="section cta-final">
+      <div class="container">
+        <h2>Pronto para cuidar do seu pet com mais tranquilidade?</h2>
+        <p class="lead">Junte-se a centenas de donos que ja protegem os seus animais com o PetCare.</p>
+        <a class="btn btn--amber btn--lg" href="https://moonlit-pothos-c56cd4.netlify.app" target="_blank" rel="noopener noreferrer">Testar gratis por 14 dias</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__row">
+        <a class="brand" href="./">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>
+          </span>
+          PetCare
+        </a>
+        <nav class="site-footer__links" aria-label="Rodape">
+          <a href="./">Sobre</a>
+          <a href="pricing.html">Precos</a>
+          <a href="privacy.html">Politica de Privacidade</a>
+          <a href="terms.html">Termos de Uso</a>
+          <a href="mailto:legal@petcare.com">Contacto</a>
+        </nav>
+      </div>
+      <p class="site-footer__copy">&copy; 2026 PetCare. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/site.js" defer></script>
+</body>
+</html>
