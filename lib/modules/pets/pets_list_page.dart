@@ -22,7 +22,16 @@ class PetsListPage extends ConsumerWidget {
     // final hasPremium = premiumAsync.valueOrNull ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Meus pets')),
+      appBar: AppBar(
+        title: const Text('Meus pets'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            tooltip: 'Perfil e conta',
+            onPressed: () => context.push(AppRoutes.profile),
+          ),
+        ],
+      ),
       body: petsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erro: $e')),
@@ -102,13 +111,17 @@ class _PetCard extends StatelessWidget {
                           child: Text(
                             pet.name,
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                         if (pet.isLost)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: AppTheme.danger,
                               borderRadius: BorderRadius.circular(12),
@@ -116,7 +129,9 @@ class _PetCard extends StatelessWidget {
                             child: const Text(
                               'PERDIDO',
                               style: TextStyle(
-                                  color: Colors.white, fontSize: 11),
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
                             ),
                           ),
                       ],
