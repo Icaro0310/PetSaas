@@ -20,10 +20,16 @@ class Validators {
     return null;
   }
 
-  static String? positiveNumber(String? value, {String label = 'Valor invalido'}) {
+  static String? positiveNumber(
+    String? value, {
+    String label = 'Valor invalido',
+    double? max,
+    String maxLabel = 'Valor demasiado alto',
+  }) {
     if (value == null || value.trim().isEmpty) return null;
     final n = double.tryParse(value.replaceAll(',', '.'));
     if (n == null || n <= 0) return label;
+    if (max != null && n > max) return maxLabel;
     return null;
   }
 }

@@ -106,7 +106,8 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
       if (_photoPath != null) {
         final file = File(_photoPath!);
         final ext = _photoPath!.split('.').last.toLowerCase();
-        final tempId = widget.petId ?? 'temp_${DateTime.now().millisecondsSinceEpoch}';
+        final tempId =
+            widget.petId ?? 'temp_${DateTime.now().millisecondsSinceEpoch}';
         photoUrl = await SupabaseService.uploadPetPhoto(
           petId: tempId,
           filePath: _photoPath!,
@@ -124,23 +125,28 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
         'birth_date': _birthDate?.toIso8601String().split('T').first,
         'weight_kg': double.tryParse(_weight.text.replaceAll(',', '.')),
         'color': _color.text.trim().isEmpty ? null : _color.text.trim(),
-        'description':
-            _description.text.trim().isEmpty ? null : _description.text.trim(),
+        'description': _description.text.trim().isEmpty
+            ? null
+            : _description.text.trim(),
         'emergency_info': _emergencyInfo.text.trim().isEmpty
             ? null
             : _emergencyInfo.text.trim(),
-        'allergies':
-            _allergies.text.trim().isEmpty ? null : _allergies.text.trim(),
+        'allergies': _allergies.text.trim().isEmpty
+            ? null
+            : _allergies.text.trim(),
         'critical_meds': _criticalMeds.text.trim().isEmpty
             ? null
             : _criticalMeds.text.trim(),
-        'warnings':
-            _warnings.text.trim().isEmpty ? null : _warnings.text.trim(),
-        'microchip_id':
-            _microchip.text.trim().isEmpty ? null : _microchip.text.trim(),
+        'warnings': _warnings.text.trim().isEmpty
+            ? null
+            : _warnings.text.trim(),
+        'microchip_id': _microchip.text.trim().isEmpty
+            ? null
+            : _microchip.text.trim(),
         'vet_name': _vetName.text.trim().isEmpty ? null : _vetName.text.trim(),
-        'vet_phone':
-            _vetPhone.text.trim().isEmpty ? null : _vetPhone.text.trim(),
+        'vet_phone': _vetPhone.text.trim().isEmpty
+            ? null
+            : _vetPhone.text.trim(),
         'photo_url': photoUrl,
       };
 
@@ -186,8 +192,7 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-          body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return Scaffold(
       appBar: AppBar(title: Text(_isEdit ? 'Editar pet' : 'Novo pet')),
@@ -210,7 +215,8 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
                 TextFormField(
                   controller: _name,
                   decoration: const InputDecoration(labelText: 'Nome *'),
-                  validator: (v) => Validators.required(v, label: 'Nome obrigatorio'),
+                  validator: (v) =>
+                      Validators.required(v, label: 'Nome obrigatorio'),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -259,10 +265,17 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
                 TextFormField(
                   controller: _weight,
                   decoration: const InputDecoration(
-                      labelText: 'Peso (kg)', prefixText: ''),
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  validator: (v) => Validators.positiveNumber(v),
+                    labelText: 'Peso (kg)',
+                    prefixText: '',
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  validator: (v) => Validators.positiveNumber(
+                    v,
+                    max: 999.99,
+                    maxLabel: 'Peso maximo: 999,99 kg',
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -274,42 +287,52 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
                 TextFormField(
                   controller: _allergies,
                   decoration: const InputDecoration(
-                      labelText: 'Alergias', prefixIcon: Icon(Icons.warning_amber)),
+                    labelText: 'Alergias',
+                    prefixIcon: Icon(Icons.warning_amber),
+                  ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _criticalMeds,
                   decoration: const InputDecoration(
-                      labelText: 'Medicacao critica',
-                      prefixIcon: Icon(Icons.medication)),
+                    labelText: 'Medicacao critica',
+                    prefixIcon: Icon(Icons.medication),
+                  ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _emergencyInfo,
                   decoration: const InputDecoration(
-                      labelText: 'Info de emergencia',
-                      prefixIcon: Icon(Icons.emergency)),
+                    labelText: 'Info de emergencia',
+                    prefixIcon: Icon(Icons.emergency),
+                  ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _warnings,
                   decoration: const InputDecoration(
-                      labelText: 'Avisos', prefixIcon: Icon(Icons.info_outline)),
+                    labelText: 'Avisos',
+                    prefixIcon: Icon(Icons.info_outline),
+                  ),
                   maxLines: 2,
                 ),
                 const SizedBox(height: 20),
                 const _SectionTitle('Veterinario'),
                 TextFormField(
                   controller: _vetName,
-                  decoration: const InputDecoration(labelText: 'Nome do veterinario'),
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do veterinario',
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _vetPhone,
-                  decoration: const InputDecoration(labelText: 'Telefone do veterinario'),
+                  decoration: const InputDecoration(
+                    labelText: 'Telefone do veterinario',
+                  ),
                   keyboardType: TextInputType.phone,
                 ),
                 const SizedBox(height: 12),
