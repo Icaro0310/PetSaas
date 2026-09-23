@@ -146,7 +146,8 @@
           clerk.openSignUp();
         },
         signOut: function () {
-          return clerk.signOut();
+          var appBase = new URL(baseHref, window.location.origin).href;
+          return clerk.signOut({ redirectUrl: appBase });
         },
       });
     } catch (_) {
