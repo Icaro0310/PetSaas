@@ -23,8 +23,9 @@ final currentUserIdProvider = Provider<String?>((ref) {
 
 // ---------- Profile ----------
 
-final currentUserProfileProvider =
-    FutureProvider.autoDispose<UserModel?>((ref) async {
+final currentUserProfileProvider = FutureProvider.autoDispose<UserModel?>((
+  ref,
+) async {
   final userId = SupabaseService.currentUserId;
   if (userId == null) return null;
   ref.watch(currentUserIdProvider);
@@ -39,8 +40,9 @@ final currentUserProfileProvider =
 
 // ---------- Subscription ----------
 
-final subscriptionProvider =
-    FutureProvider.autoDispose<SubscriptionModel?>((ref) async {
+final subscriptionProvider = FutureProvider.autoDispose<SubscriptionModel?>((
+  ref,
+) async {
   final userId = SupabaseService.currentUserId;
   if (userId == null) return null;
   ref.watch(currentUserIdProvider);
@@ -71,15 +73,12 @@ final petsProvider = StreamProvider.autoDispose<List<PetModel>>((ref) async* {
       .from('pets')
       .stream(primaryKey: ['id'])
       .eq('owner_id', userId)
-      .map((rows) => rows
-          .map((r) => PetModel.fromJson(_normalizePet(r)))
-          .toList());
+      .map((rows) => rows.map(PetModel.fromJson).toList());
 });
 
 final selectedPetIdProvider = StateProvider<String?>((ref) => null);
 
-final selectedPetProvider =
-    Provider.autoDispose<PetModel?>((ref) {
+final selectedPetProvider = Provider.autoDispose<PetModel?>((ref) {
   final id = ref.watch(selectedPetIdProvider);
   if (id == null) return null;
   final pets = ref.watch(petsProvider).valueOrNull ?? [];
@@ -88,7 +87,9 @@ final selectedPetProvider =
 
 /// Indica se o utilizador atual e DONO do pet selecionado.
 /// Cuidadores veem apenas visualizacao + marcar doses.
-final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) async {
+final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((
+  ref,
+) async {
   final pet = ref.watch(selectedPetProvider);
   final userId = SupabaseService.currentUserId;
   if (pet == null || userId == null) return false;
@@ -108,23 +109,21 @@ final isOwnerOfSelectedPetProvider = FutureProvider.autoDispose<bool>((ref) asyn
 
 // ---------- Medications ----------
 
-final medicationsForPetProvider =
-    StreamProvider.autoDispose.family<List<MedicationModel>, String>(
-        (ref, petId) async* {
-  ref.watch(currentUserIdProvider);
-  yield* SupabaseService.client
-      .from('medications')
-      .stream(primaryKey: ['id'])
-      .eq('pet_id', petId)
-      .map((rows) => rows
-          .map((r) => MedicationModel.fromJson(_normalizeMedication(r)))
-          .toList());
-});
+final medicationsForPetProvider = StreamProvider.autoDispose
+    .family<List<MedicationModel>, String>((ref, petId) async* {
+      ref.watch(currentUserIdProvider);
+      yield* SupabaseService.client
+          .from('medications')
+          .stream(primaryKey: ['id'])
+          .eq('pet_id', petId)
+          .map((rows) => rows.map(MedicationModel.fromJson).toList());
+    });
 
 // ---------- Dose logs ----------
 
-final todayDosesProvider =
-    FutureProvider.autoDispose<List<DoseLogModel>>((ref) async {
+final todayDosesProvider = FutureProvider.autoDispose<List<DoseLogModel>>((
+  ref,
+) async {
   final userId = SupabaseService.currentUserId;
   if (userId == null) return [];
   ref.watch(currentUserIdProvider);
@@ -137,52 +136,18 @@ final todayDosesProvider =
       .lt('scheduled_time', end.toIso8601String())
       .order('scheduled_time');
   return (data as List)
-      .map((r) => DoseLogModel.fromJson(_normalizeDoseLog(r)))
+      .map((r) => DoseLogModel.fromJson(r as Map<String, dynamic>))
       .toList();
 });
 
 // ---------- Caregivers ----------
 
-final caregiversForPetProvider =
-    StreamProvider.autoDispose.family<List<CaregiverModel>, String>(
-        (ref, petId) async* {
-  ref.watch(currentUserIdProvider);
-  yield* SupabaseService.client
-      .from('caregivers')
-      .stream(primaryKey: ['id'])
-      .eq('pet_id', petId)
-      .map((rows) => rows
-          .map((r) => CaregiverModel.fromJson(_normalizeCaregiver(r)))
-          .toList());
-});
-
-// ---------- Normalizers (snake_case DB -> model) ----------
-
-Map<String, dynamic> _normalizePet(Map<String, dynamic> r) {
-  return {
-    ...r,
-    'species': r['species'] as String?,
-    'qr_code_uuid': r['qr_code_uuid'],
-  };
-}
-
-Map<String, dynamic> _normalizeMedication(Map<String, dynamic> r) {
-  return {
-    ...r,
-    'frequency_type': r['frequency_type'],
-  };
-}
-
-Map<String, dynamic> _normalizeDoseLog(Map<String, dynamic> r) {
-  return {
-    ...r,
-    'status': r['status'],
-  };
-}
-
-Map<String, dynamic> _normalizeCaregiver(Map<String, dynamic> r) {
-  return {
-    ...r,
-    'status': r['status'],
-  };
-}
+final caregiversForPetProvider = StreamProvider.autoDispose
+    .family<List<CaregiverModel>, String>((ref, petId) async* {
+      ref.watch(currentUserIdProvider);
+      yield* SupabaseService.client
+          .from('caregivers')
+          .stream(primaryKey: ['id'])
+          .eq('pet_id', petId)
+          .map((rows) => rows.map(CaregiverModel.fromJson).toList());
+    });

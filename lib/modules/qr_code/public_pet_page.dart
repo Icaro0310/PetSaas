@@ -36,8 +36,8 @@ class _PublicPetPageState extends State<PublicPetPage> {
 
   bool _isValidUuid(String s) {
     return RegExp(
-            r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\$')
-        .hasMatch(s);
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\$',
+    ).hasMatch(s);
   }
 
   Future<void> _loadPet() async {
@@ -52,8 +52,10 @@ class _PublicPetPageState extends State<PublicPetPage> {
       // dados seguros: name, species, breed, photo_url, description,
       // emergency_info, allergies, critical_meds, warnings, microchip_id, is_lost.
       // NUNCA retorna owner_id, email ou historico de doses.
-      final data = await SupabaseService.client
-          .rpc('get_public_pet', params: {'p_uuid': widget.uuid});
+      final data = await SupabaseService.client.rpc(
+        'get_public_pet',
+        params: {'p_uuid': widget.uuid},
+      );
       if (data == null) {
         _error = 'Pet nao encontrado.';
       } else {
@@ -89,7 +91,8 @@ class _PublicPetPageState extends State<PublicPetPage> {
         perm = await Geolocator.requestPermission();
       }
       if (perm == LocationPermission.denied ||
-          perm == LocationPermission.deniedForever) return;
+          perm == LocationPermission.deniedForever)
+        return;
       final pos = await Geolocator.getCurrentPosition();
       setState(() {
         _lat = pos.latitude;
@@ -114,7 +117,9 @@ class _PublicPetPageState extends State<PublicPetPage> {
         body: {
           'qr_code_uuid': widget.uuid,
           'finder_name': _name.text.trim(),
-          'finder_email': _contact.text.trim().isEmpty ? null : _contact.text.trim(),
+          'finder_email': _contact.text.trim().isEmpty
+              ? null
+              : _contact.text.trim(),
           'message': _message.text.trim(),
           'location_lat': _lat,
           'location_lng': _lng,
@@ -163,8 +168,12 @@ class _PublicPetPageState extends State<PublicPetPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (pet['photo_url'] != null)
-                Image.network(pet['photo_url'],
-                    width: double.infinity, height: 220, fit: BoxFit.cover)
+                Image.network(
+                  pet['photo_url'],
+                  width: double.infinity,
+                  height: 220,
+                  fit: BoxFit.cover,
+                )
               else
                 Container(
                   width: double.infinity,
@@ -181,7 +190,9 @@ class _PublicPetPageState extends State<PublicPetPage> {
                     'ESTE PET ESTA PERDIDO',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               Padding(
@@ -189,8 +200,8 @@ class _PublicPetPageState extends State<PublicPetPage> {
                 child: _submitted
                     ? _successView()
                     : _foundFormOpen
-                        ? _foundForm(pet)
-                        : _infoView(pet),
+                    ? _foundForm(pet)
+                    : _infoView(pet),
               ),
             ],
           ),
@@ -203,8 +214,10 @@ class _PublicPetPageState extends State<PublicPetPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(pet['name'] as String,
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+        Text(
+          pet['name'] as String,
+          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 20),
         _row('Descricao', pet['description']),
         _row('Info de emergencia', pet['emergency_info']),
@@ -239,7 +252,10 @@ class _PublicPetPageState extends State<PublicPetPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: AppTheme.textMuted, fontSize: 13)),
+          Text(
+            label,
+            style: const TextStyle(color: AppTheme.textMuted, fontSize: 13),
+          ),
           const SizedBox(height: 2),
           Text(value.toString()),
         ],
@@ -251,8 +267,10 @@ class _PublicPetPageState extends State<PublicPetPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Avisar o dono',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        const Text(
+          'Avisar o dono',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         const Text(
           'O dono sera notificado instantaneamente. Sua localizacao e enviada de forma aproximada.',
@@ -267,7 +285,8 @@ class _PublicPetPageState extends State<PublicPetPage> {
         TextField(
           controller: _contact,
           decoration: const InputDecoration(
-              labelText: 'Email ou telefone (opcional)'),
+            labelText: 'Email ou telefone (opcional)',
+          ),
         ),
         const SizedBox(height: 12),
         TextField(
@@ -281,9 +300,11 @@ class _PublicPetPageState extends State<PublicPetPage> {
             OutlinedButton.icon(
               onPressed: _getLocation,
               icon: const Icon(Icons.my_location),
-              label: Text(_locationApprox == null
-                  ? 'Enviar localizacao'
-                  : 'Local: $_locationApprox'),
+              label: Text(
+                _locationApprox == null
+                    ? 'Enviar localizacao'
+                    : 'Local: $_locationApprox',
+              ),
             ),
           ],
         ),
@@ -298,8 +319,10 @@ class _PublicPetPageState extends State<PublicPetPage> {
       children: [
         const Icon(Icons.check_circle, size: 72, color: AppTheme.primary),
         const SizedBox(height: 16),
-        const Text('O dono foi notificado!',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const Text(
+          'O dono foi notificado!',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         const Text(
           'Obrigado por ajudar. O dono entrara em contato se necessario.',

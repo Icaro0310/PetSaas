@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -37,6 +37,31 @@ class SupabaseService {
     }
     authData = data;
     authChanges.value = data;
+    _syncRealtimeAuth();
+  }
+
+  static Timer? _realtimeTokenTimer;
+
+  /// O JWT do Clerk expira em ~60s. O Realtime nao renova o token
+  /// proactivamente e os canais .stream() morrem com "Token has expired".
+  /// Este timer envia um token fresco a cada 45s (setAuth e no-op se
+  /// o token ainda nao mudou).
+  static void _syncRealtimeAuth() {
+    _realtimeTokenTimer?.cancel();
+    if (authData == null) return;
+    unawaited(_pushRealtimeToken());
+    _realtimeTokenTimer = Timer.periodic(
+      const Duration(seconds: 45),
+      (_) => unawaited(_pushRealtimeToken()),
+    );
+  }
+
+  static Future<void> _pushRealtimeToken() async {
+    final token = await authData?.tokenProvider?.call();
+    if (token == null) return;
+    try {
+      await client.realtime.setAuth(token);
+    } catch (_) {}
   }
 
   /// Retorna o user ID do Clerk (string, ex: user_abc123).
@@ -73,15 +98,55 @@ class SupabaseService {
   }
 
   /// Upload de foto para o bucket pet_photos. Retorna a URL publica.
+  /// Recebe bytes em vez de File: dart:io nao funciona na Web.
+  /// A extensao/content-type sao detetados pelos magic bytes, porque na Web
+  /// o path do ImagePicker e um blob URL sem extensao real.
   static Future<String?> uploadPetPhoto({
     required String petId,
-    required String filePath,
-    required String fileExt,
+    required Uint8List bytes,
+    String fileExt = 'jpg',
   }) async {
-    final path = '$petId/${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+    final (ext, mime) = _detectImageFormat(bytes) ?? (fileExt, 'image/jpeg');
+    final path = '$petId/${DateTime.now().millisecondsSinceEpoch}.$ext';
     await client.storage
         .from(AppConstants.petPhotosBucket)
-        .upload(path, File(filePath));
+        .uploadBinary(path, bytes, fileOptions: FileOptions(contentType: mime));
     return client.storage.from(AppConstants.petPhotosBucket).getPublicUrl(path);
+  }
+
+  /// Identifica o formato da imagem pelos primeiros bytes.
+  static (String ext, String mime)? _detectImageFormat(Uint8List bytes) {
+    if (bytes.length < 4) return null;
+    // JPEG: FF D8 FF
+    if (bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF) {
+      return ('jpg', 'image/jpeg');
+    }
+    // PNG: 89 50 4E 47
+    if (bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47) {
+      return ('png', 'image/png');
+    }
+    // GIF: 47 49 46 38
+    if (bytes[0] == 0x47 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x38) {
+      return ('gif', 'image/gif');
+    }
+    // WebP: RIFF....WEBP
+    if (bytes.length >= 12 &&
+        bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return ('webp', 'image/webp');
+    }
+    return null;
   }
 }

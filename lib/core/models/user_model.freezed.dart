@@ -211,8 +211,8 @@ return $default(_that.id,_that.fullName,_that.phone,_that.avatarUrl,_that.create
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _UserModel implements UserModel {
   const _UserModel({required this.id, this.fullName, this.phone, this.avatarUrl, this.createdAt});
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);

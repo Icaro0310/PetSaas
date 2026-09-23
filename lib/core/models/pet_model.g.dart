@@ -8,60 +8,60 @@ part of 'pet_model.dart';
 
 _PetModel _$PetModelFromJson(Map<String, dynamic> json) => _PetModel(
   id: json['id'] as String,
-  ownerId: json['ownerId'] as String,
+  ownerId: json['owner_id'] as String,
   name: json['name'] as String,
   species: $enumDecode(_$PetSpeciesEnumMap, json['species']),
   breed: json['breed'] as String?,
-  birthDate: json['birthDate'] == null
+  birthDate: json['birth_date'] == null
       ? null
-      : DateTime.parse(json['birthDate'] as String),
-  weightKg: (json['weightKg'] as num?)?.toDouble(),
+      : DateTime.parse(json['birth_date'] as String),
+  weightKg: (json['weight_kg'] as num?)?.toDouble(),
   color: json['color'] as String?,
-  photoUrl: json['photoUrl'] as String?,
+  photoUrl: json['photo_url'] as String?,
   description: json['description'] as String?,
-  emergencyInfo: json['emergencyInfo'] as String?,
+  emergencyInfo: json['emergency_info'] as String?,
   allergies: json['allergies'] as String?,
-  criticalMeds: json['criticalMeds'] as String?,
+  criticalMeds: json['critical_meds'] as String?,
   warnings: json['warnings'] as String?,
-  microchipId: json['microchipId'] as String?,
-  vetName: json['vetName'] as String?,
-  vetPhone: json['vetPhone'] as String?,
-  isLost: json['isLost'] as bool? ?? false,
-  lostAt: json['lostAt'] == null
+  microchipId: json['microchip_id'] as String?,
+  vetName: json['vet_name'] as String?,
+  vetPhone: json['vet_phone'] as String?,
+  isLost: json['is_lost'] as bool? ?? false,
+  lostAt: json['lost_at'] == null
       ? null
-      : DateTime.parse(json['lostAt'] as String),
-  qrCodeUuid: json['qrCodeUuid'] as String?,
-  createdAt: json['createdAt'] == null
+      : DateTime.parse(json['lost_at'] as String),
+  qrCodeUuid: json['qr_code_uuid'] as String?,
+  createdAt: json['created_at'] == null
       ? null
-      : DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
+      : DateTime.parse(json['created_at'] as String),
+  updatedAt: json['updated_at'] == null
       ? null
-      : DateTime.parse(json['updatedAt'] as String),
+      : DateTime.parse(json['updated_at'] as String),
 );
 
 Map<String, dynamic> _$PetModelToJson(_PetModel instance) => <String, dynamic>{
   'id': instance.id,
-  'ownerId': instance.ownerId,
+  'owner_id': instance.ownerId,
   'name': instance.name,
   'species': _$PetSpeciesEnumMap[instance.species]!,
   'breed': instance.breed,
-  'birthDate': instance.birthDate?.toIso8601String(),
-  'weightKg': instance.weightKg,
+  'birth_date': instance.birthDate?.toIso8601String(),
+  'weight_kg': instance.weightKg,
   'color': instance.color,
-  'photoUrl': instance.photoUrl,
+  'photo_url': instance.photoUrl,
   'description': instance.description,
-  'emergencyInfo': instance.emergencyInfo,
+  'emergency_info': instance.emergencyInfo,
   'allergies': instance.allergies,
-  'criticalMeds': instance.criticalMeds,
+  'critical_meds': instance.criticalMeds,
   'warnings': instance.warnings,
-  'microchipId': instance.microchipId,
-  'vetName': instance.vetName,
-  'vetPhone': instance.vetPhone,
-  'isLost': instance.isLost,
-  'lostAt': instance.lostAt?.toIso8601String(),
-  'qrCodeUuid': instance.qrCodeUuid,
-  'createdAt': instance.createdAt?.toIso8601String(),
-  'updatedAt': instance.updatedAt?.toIso8601String(),
+  'microchip_id': instance.microchipId,
+  'vet_name': instance.vetName,
+  'vet_phone': instance.vetPhone,
+  'is_lost': instance.isLost,
+  'lost_at': instance.lostAt?.toIso8601String(),
+  'qr_code_uuid': instance.qrCodeUuid,
+  'created_at': instance.createdAt?.toIso8601String(),
+  'updated_at': instance.updatedAt?.toIso8601String(),
 };
 
 const _$PetSpeciesEnumMap = {PetSpecies.dog: 'dog', PetSpecies.cat: 'cat'};

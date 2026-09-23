@@ -3,15 +3,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'medication_model.freezed.dart';
 part 'medication_model.g.dart';
 
-enum FrequencyType {
-  daily,
-  weekly,
-  interval_hours,
-  as_needed,
-}
+enum FrequencyType { daily, weekly, interval_hours, as_needed }
 
 @freezed
 abstract class MedicationModel with _$MedicationModel {
+  // ignore: invalid_annotation_target
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory MedicationModel({
     required String id,
     required String petId,

@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../config/routes.dart';
 import '../../config/theme.dart';
@@ -33,10 +37,7 @@ class _TodayDosesPageState extends ConsumerState<TodayDosesPage> {
       appBar: AppBar(
         title: const Text('Doses de hoje'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refresh,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _refresh),
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () => context.push(AppRoutes.profile),
@@ -52,13 +53,21 @@ class _TodayDosesPageState extends ConsumerState<TodayDosesPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.check_circle, size: 72, color: AppTheme.primary),
+                  const Icon(
+                    Icons.check_circle,
+                    size: 72,
+                    color: AppTheme.primary,
+                  ),
                   const SizedBox(height: 16),
-                  const Text('Nenhuma dose para hoje',
-                      style: TextStyle(fontSize: 18)),
+                  const Text(
+                    'Nenhuma dose para hoje',
+                    style: TextStyle(fontSize: 18),
+                  ),
                   const SizedBox(height: 8),
-                  const Text('Tudo em dia por aqui!',
-                      style: TextStyle(color: AppTheme.textMuted)),
+                  const Text(
+                    'Tudo em dia por aqui!',
+                    style: TextStyle(color: AppTheme.textMuted),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     onPressed: () => context.push(AppRoutes.pets),
@@ -175,7 +184,8 @@ class _DoseCard extends ConsumerWidget {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: _statusColor(dose.status).withValues(alpha: 0.15),
+              backgroundColor: _statusColor(dose.status)
+                  .withValues(alpha: 0.15),
               child: Icon(Icons.medication, color: _statusColor(dose.status)),
             ),
             const SizedBox(width: 12),
@@ -183,14 +193,25 @@ class _DoseCard extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(medName,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                  Text('$dosage - ${Formatters.time(dose.scheduledTime.toLocal())}',
-                      style: const TextStyle(color: AppTheme.textMuted, fontSize: 13)),
+                  Text(
+                    medName,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    '$dosage - ${Formatters.time(dose.scheduledTime.toLocal())}',
+                    style: const TextStyle(
+                      color: AppTheme.textMuted,
+                      fontSize: 13,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(_statusLabel(dose.status),
-                      style: TextStyle(
-                          color: _statusColor(dose.status), fontSize: 12)),
+                  Text(
+                    _statusLabel(dose.status),
+                    style: TextStyle(
+                      color: _statusColor(dose.status),
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -215,12 +236,15 @@ class _DoseCard extends ConsumerWidget {
         onConfirm: ({photoUrl, notes}) async {
           final user = SupabaseService.currentUserId;
           if (user == null) return;
-          await SupabaseService.client.rpc('mark_dose_given', params: {
-            'p_dose_id': dose.id,
-            'p_user_id': user,
-            'p_photo_url': photoUrl,
-            'p_notes': notes,
-          });
+          await SupabaseService.client.rpc(
+            'mark_dose_given',
+            params: {
+              'p_dose_id': dose.id,
+              'p_user_id': user,
+              'p_photo_url': photoUrl,
+              'p_notes': notes,
+            },
+          );
           await NotificationService.cancelReminder(dose.id.hashCode);
           await AnalyticsService.doseMarkedGiven();
           ref.invalidate(todayDosesProvider);
@@ -261,11 +285,12 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
     try {
       String? photoUrl;
       if (_photoPath != null) {
-        final ext = _photoPath!.split('.').last.toLowerCase();
+        final bytes = kIsWeb
+            ? await XFile(_photoPath!).readAsBytes()
+            : await File(_photoPath!).readAsBytes();
         photoUrl = await SupabaseService.uploadPetPhoto(
           petId: widget.dose.petId,
-          filePath: _photoPath!,
-          fileExt: ext,
+          bytes: bytes,
         );
       }
       await widget.onConfirm(
@@ -303,8 +328,10 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Marcar dose como dada',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            'Marcar dose como dada',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           Text(widget.medName),
           const SizedBox(height: 16),
@@ -327,8 +354,10 @@ class _ConfirmDoseSheetState extends ConsumerState<_ConfirmDoseSheet> {
               onPressed: _saving ? null : _confirm,
               child: _saving
                   ? const SizedBox(
-                      width: 20, height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : const Text('Confirmar'),
             ),
           ),

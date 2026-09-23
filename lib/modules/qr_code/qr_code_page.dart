@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+
+import 'qr_download_stub.dart' if (dart.library.html) 'qr_download_web.dart';
 
 import '../../config/theme.dart';
 import '../../core/services/deep_link_service.dart';
@@ -25,39 +28,54 @@ class QrCodePage extends ConsumerStatefulWidget {
 class _QrCodePageState extends ConsumerState<QrCodePage> {
   final _qrKey = GlobalKey();
 
-  Future<String> _capturePng() async {
+  Future<Uint8List> _capturePng() async {
     final boundary =
         _qrKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    final bytes = byteData!.buffer.asUint8List();
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/qr_${widget.petId}.png');
-    await file.writeAsBytes(bytes);
-    return file.path;
+    return byteData!.buffer.asUint8List();
   }
 
   Future<void> _share() async {
-    final path = await _capturePng();
-    await Share.shareXFiles(
-      [XFile(path)],
-      text: 'Escaneie este QR Code se encontrar meu pet',
-    );
+    final bytes = await _capturePng();
+    final name = 'qr_${widget.petId}.png';
+    if (kIsWeb) {
+      await Share.shareXFiles([
+        XFile.fromData(bytes, name: name, mimeType: 'image/png'),
+      ], text: 'Escaneie este QR Code se encontrar meu pet');
+      return;
+    }
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/$name';
+    await File(path).writeAsBytes(bytes);
+    await Share.shareXFiles([
+      XFile(path),
+    ], text: 'Escaneie este QR Code se encontrar meu pet');
   }
 
   Future<void> _download() async {
-    final path = await _capturePng();
+    final bytes = await _capturePng();
+    final name = 'qr_${widget.petId}.png';
+    if (kIsWeb) {
+      await downloadBytesAsFile(bytes, name);
+      return;
+    }
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/$name';
+    await File(path).writeAsBytes(bytes);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('QR guardado em: $path')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('QR guardado em: $path')));
   }
 
   Future<void> _toggleLost(bool lost) async {
-    await SupabaseService.client.from('pets').update({
-      'is_lost': lost,
-      'lost_at': lost ? DateTime.now().toUtc().toIso8601String() : null,
-    }).eq('id', widget.petId);
+    await SupabaseService.client
+        .from('pets')
+        .update({
+          'is_lost': lost,
+          'lost_at': lost ? DateTime.now().toUtc().toIso8601String() : null,
+        })
+        .eq('id', widget.petId);
     ref.invalidate(petsProvider);
   }
 
@@ -67,8 +85,7 @@ class _QrCodePageState extends ConsumerState<QrCodePage> {
     final pet = ref.watch(selectedPetProvider);
 
     if (pet == null) {
-      return const Scaffold(
-          body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final qrUrl = DeepLinkService.publicPetUrl(pet.qrCodeUuid ?? pet.id);
@@ -123,12 +140,15 @@ class _QrCodePageState extends ConsumerState<QrCodePage> {
                 title: Text(
                   pet.isLost ? 'Marcar como encontrado' : 'Marcar como perdido',
                   style: TextStyle(
-                      color: pet.isLost ? AppTheme.danger : null,
-                      fontWeight: FontWeight.w600),
+                    color: pet.isLost ? AppTheme.danger : null,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                subtitle: Text(pet.isLost
-                    ? 'O pet esta marcado como perdido.'
-                    : 'Ative se o pet estiver perdido.'),
+                subtitle: Text(
+                  pet.isLost
+                      ? 'O pet esta marcado como perdido.'
+                      : 'Ative se o pet estiver perdido.',
+                ),
                 value: pet.isLost,
                 onChanged: (v) => _toggleLost(v),
               ),

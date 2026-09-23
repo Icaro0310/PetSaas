@@ -7,6 +7,8 @@ enum PetSpecies { dog, cat }
 
 @freezed
 abstract class PetModel with _$PetModel {
+  // ignore: invalid_annotation_target
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory PetModel({
     required String id,
     required String ownerId,

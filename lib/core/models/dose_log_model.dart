@@ -7,6 +7,8 @@ enum DoseStatus { pending, given, missed, skipped }
 
 @freezed
 abstract class DoseLogModel with _$DoseLogModel {
+  // ignore: invalid_annotation_target
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory DoseLogModel({
     required String id,
     required String medicationId,

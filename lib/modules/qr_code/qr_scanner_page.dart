@@ -59,10 +59,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
       appBar: AppBar(title: const Text('Escanear QR do pet')),
       body: Stack(
         children: [
-          MobileScanner(
-            controller: _controller,
-            onDetect: _onDetect,
-          ),
+          MobileScanner(controller: _controller, onDetect: _onDetect),
           Center(
             child: Container(
               width: 250,
@@ -81,8 +78,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
                 'Aponte a camara para o QR Code da coleira',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white,
-                    backgroundColor: Colors.black54),
+                  color: Colors.white,
+                  backgroundColor: Colors.black54,
+                ),
               ),
             ),
           ),

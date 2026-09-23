@@ -217,8 +217,8 @@ return $default(_that.id,_that.petId,_that.ownerId,_that.caregiverId,_that.careg
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _CaregiverModel implements CaregiverModel {
   const _CaregiverModel({required this.id, required this.petId, required this.ownerId, this.caregiverId, required this.caregiverEmail, this.inviteToken, this.status = CaregiverStatus.pending,  List<String> permissions = const ['view', 'mark_dose'], this.invitedAt, this.acceptedAt, this.removedAt}): _permissions = permissions;
   factory _CaregiverModel.fromJson(Map<String, dynamic> json) => _$CaregiverModelFromJson(json);

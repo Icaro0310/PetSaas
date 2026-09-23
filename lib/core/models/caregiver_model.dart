@@ -7,6 +7,8 @@ enum CaregiverStatus { pending, active, removed }
 
 @freezed
 abstract class CaregiverModel with _$CaregiverModel {
+  // ignore: invalid_annotation_target
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory CaregiverModel({
     required String id,
     required String petId,

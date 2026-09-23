@@ -9,11 +9,11 @@ part of 'caregiver_model.dart';
 _CaregiverModel _$CaregiverModelFromJson(Map<String, dynamic> json) =>
     _CaregiverModel(
       id: json['id'] as String,
-      petId: json['petId'] as String,
-      ownerId: json['ownerId'] as String,
-      caregiverId: json['caregiverId'] as String?,
-      caregiverEmail: json['caregiverEmail'] as String,
-      inviteToken: json['inviteToken'] as String?,
+      petId: json['pet_id'] as String,
+      ownerId: json['owner_id'] as String,
+      caregiverId: json['caregiver_id'] as String?,
+      caregiverEmail: json['caregiver_email'] as String,
+      inviteToken: json['invite_token'] as String?,
       status:
           $enumDecodeNullable(_$CaregiverStatusEnumMap, json['status']) ??
           CaregiverStatus.pending,
@@ -22,30 +22,30 @@ _CaregiverModel _$CaregiverModelFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const ['view', 'mark_dose'],
-      invitedAt: json['invitedAt'] == null
+      invitedAt: json['invited_at'] == null
           ? null
-          : DateTime.parse(json['invitedAt'] as String),
-      acceptedAt: json['acceptedAt'] == null
+          : DateTime.parse(json['invited_at'] as String),
+      acceptedAt: json['accepted_at'] == null
           ? null
-          : DateTime.parse(json['acceptedAt'] as String),
-      removedAt: json['removedAt'] == null
+          : DateTime.parse(json['accepted_at'] as String),
+      removedAt: json['removed_at'] == null
           ? null
-          : DateTime.parse(json['removedAt'] as String),
+          : DateTime.parse(json['removed_at'] as String),
     );
 
 Map<String, dynamic> _$CaregiverModelToJson(_CaregiverModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'petId': instance.petId,
-      'ownerId': instance.ownerId,
-      'caregiverId': instance.caregiverId,
-      'caregiverEmail': instance.caregiverEmail,
-      'inviteToken': instance.inviteToken,
+      'pet_id': instance.petId,
+      'owner_id': instance.ownerId,
+      'caregiver_id': instance.caregiverId,
+      'caregiver_email': instance.caregiverEmail,
+      'invite_token': instance.inviteToken,
       'status': _$CaregiverStatusEnumMap[instance.status]!,
       'permissions': instance.permissions,
-      'invitedAt': instance.invitedAt?.toIso8601String(),
-      'acceptedAt': instance.acceptedAt?.toIso8601String(),
-      'removedAt': instance.removedAt?.toIso8601String(),
+      'invited_at': instance.invitedAt?.toIso8601String(),
+      'accepted_at': instance.acceptedAt?.toIso8601String(),
+      'removed_at': instance.removedAt?.toIso8601String(),
     };
 
 const _$CaregiverStatusEnumMap = {

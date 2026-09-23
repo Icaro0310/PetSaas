@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -54,7 +56,8 @@ class _PhotoPickerState extends State<PhotoPicker> {
   Widget build(BuildContext context) {
     ImageProvider? image;
     if (_localPath != null) {
-      image = FileImage(File(_localPath!));
+      // Na Web o path do ImagePicker e um blob URL; dart:io File nao funciona.
+      image = kIsWeb ? NetworkImage(_localPath!) : FileImage(File(_localPath!));
     } else if (widget.currentUrl != null) {
       image = NetworkImage(widget.currentUrl!);
     }

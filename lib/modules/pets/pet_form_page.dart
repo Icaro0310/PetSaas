@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/models/pet_model.dart';
 import '../../core/services/analytics_service.dart';
@@ -104,17 +106,15 @@ class _PetFormPageState extends ConsumerState<PetFormPage> {
 
       // Upload da foto se houver nova
       if (_photoPath != null) {
-        final file = File(_photoPath!);
-        final ext = _photoPath!.split('.').last.toLowerCase();
         final tempId =
             widget.petId ?? 'temp_${DateTime.now().millisecondsSinceEpoch}';
+        final bytes = kIsWeb
+            ? await XFile(_photoPath!).readAsBytes()
+            : await File(_photoPath!).readAsBytes();
         photoUrl = await SupabaseService.uploadPetPhoto(
           petId: tempId,
-          filePath: _photoPath!,
-          fileExt: ext,
+          bytes: bytes,
         );
-        // best-effort; ignore unused
-        file;
       }
 
       final payload = <String, dynamic>{

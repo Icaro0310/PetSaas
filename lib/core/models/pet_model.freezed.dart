@@ -228,8 +228,8 @@ return $default(_that.id,_that.ownerId,_that.name,_that.species,_that.breed,_tha
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _PetModel implements PetModel {
   const _PetModel({required this.id, required this.ownerId, required this.name, required this.species, this.breed, this.birthDate, this.weightKg, this.color, this.photoUrl, this.description, this.emergencyInfo, this.allergies, this.criticalMeds, this.warnings, this.microchipId, this.vetName, this.vetPhone, this.isLost = false, this.lostAt, this.qrCodeUuid, this.createdAt, this.updatedAt});
   factory _PetModel.fromJson(Map<String, dynamic> json) => _$PetModelFromJson(json);

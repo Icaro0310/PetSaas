@@ -9,6 +9,8 @@ enum SubscriptionStatus { active, cancelled, past_due, trialing }
 abstract class SubscriptionModel with _$SubscriptionModel {
   const SubscriptionModel._();
 
+  // ignore: invalid_annotation_target
+  @JsonSerializable(fieldRename: FieldRename.snake)
   const factory SubscriptionModel({
     required String id,
     required String userId,

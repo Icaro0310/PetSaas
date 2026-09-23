@@ -9,35 +9,35 @@ part of 'dose_log_model.dart';
 _DoseLogModel _$DoseLogModelFromJson(Map<String, dynamic> json) =>
     _DoseLogModel(
       id: json['id'] as String,
-      medicationId: json['medicationId'] as String,
-      petId: json['petId'] as String,
-      scheduledTime: DateTime.parse(json['scheduledTime'] as String),
-      givenAt: json['givenAt'] == null
+      medicationId: json['medication_id'] as String,
+      petId: json['pet_id'] as String,
+      scheduledTime: DateTime.parse(json['scheduled_time'] as String),
+      givenAt: json['given_at'] == null
           ? null
-          : DateTime.parse(json['givenAt'] as String),
-      givenBy: json['givenBy'] as String?,
+          : DateTime.parse(json['given_at'] as String),
+      givenBy: json['given_by'] as String?,
       status:
           $enumDecodeNullable(_$DoseStatusEnumMap, json['status']) ??
           DoseStatus.pending,
-      photoUrl: json['photoUrl'] as String?,
+      photoUrl: json['photo_url'] as String?,
       notes: json['notes'] as String?,
-      createdAt: json['createdAt'] == null
+      createdAt: json['created_at'] == null
           ? null
-          : DateTime.parse(json['createdAt'] as String),
+          : DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$DoseLogModelToJson(_DoseLogModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'medicationId': instance.medicationId,
-      'petId': instance.petId,
-      'scheduledTime': instance.scheduledTime.toIso8601String(),
-      'givenAt': instance.givenAt?.toIso8601String(),
-      'givenBy': instance.givenBy,
+      'medication_id': instance.medicationId,
+      'pet_id': instance.petId,
+      'scheduled_time': instance.scheduledTime.toIso8601String(),
+      'given_at': instance.givenAt?.toIso8601String(),
+      'given_by': instance.givenBy,
       'status': _$DoseStatusEnumMap[instance.status]!,
-      'photoUrl': instance.photoUrl,
+      'photo_url': instance.photoUrl,
       'notes': instance.notes,
-      'createdAt': instance.createdAt?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
     };
 
 const _$DoseStatusEnumMap = {

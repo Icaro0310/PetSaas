@@ -12,15 +12,15 @@ void main() {
     test('fromJson parseia todos os campos corretamente', () {
       final json = {
         'id': 'pet-1',
-        'ownerId': 'user-1',
+        'owner_id': 'user-1',
         'name': 'Rex',
         'species': 'dog',
         'breed': 'Labrador',
-        'birthDate': '2020-01-15T00:00:00.000Z',
-        'weightKg': 25.5,
+        'birth_date': '2020-01-15T00:00:00.000Z',
+        'weight_kg': 25.5,
         'color': 'brown',
-        'isLost': false,
-        'qrCodeUuid': '550e8400-e29b-41d4-a716-446655440000',
+        'is_lost': false,
+        'qr_code_uuid': '550e8400-e29b-41d4-a716-446655440000',
       };
       final pet = PetModel.fromJson(json);
       expect(pet.id, 'pet-1');
@@ -35,7 +35,7 @@ void main() {
     test('fromJson aceita cat como species', () {
       final pet = PetModel.fromJson({
         'id': 'pet-2',
-        'ownerId': 'user-1',
+        'owner_id': 'user-1',
         'name': 'Mimi',
         'species': 'cat',
       });
@@ -75,14 +75,14 @@ void main() {
     test('fromJson parsea frequencia daily', () {
       final med = MedicationModel.fromJson({
         'id': 'med-1',
-        'petId': 'pet-1',
+        'pet_id': 'pet-1',
         'name': 'Antibiotico',
         'dosage': '1 comprimido',
-        'frequencyType': 'daily',
-        'frequencyValue': 1,
-        'scheduleTimes': ['08:00', '20:00'],
-        'startDate': '2025-01-01T00:00:00.000Z',
-        'isActive': true,
+        'frequency_type': 'daily',
+        'frequency_value': 1,
+        'schedule_times': ['08:00', '20:00'],
+        'start_date': '2025-01-01T00:00:00.000Z',
+        'is_active': true,
       });
       expect(med.frequencyType, FrequencyType.daily);
       expect(med.scheduleTimes, ['08:00', '20:00']);
@@ -92,12 +92,12 @@ void main() {
     test('fromJson parsea interval_hours', () {
       final med = MedicationModel.fromJson({
         'id': 'med-2',
-        'petId': 'pet-1',
+        'pet_id': 'pet-1',
         'name': 'Antiinflamatorio',
         'dosage': '5ml',
-        'frequencyType': 'interval_hours',
-        'frequencyValue': 8,
-        'startDate': '2025-01-01T00:00:00.000Z',
+        'frequency_type': 'interval_hours',
+        'frequency_value': 8,
+        'start_date': '2025-01-01T00:00:00.000Z',
       });
       expect(med.frequencyType, FrequencyType.interval_hours);
       expect(med.frequencyValue, 8);
@@ -131,11 +131,11 @@ void main() {
     test('fromJson parsea status given', () {
       final dose = DoseLogModel.fromJson({
         'id': 'd1',
-        'medicationId': 'm1',
-        'petId': 'p1',
-        'scheduledTime': '2025-01-01T08:00:00.000Z',
-        'givenAt': '2025-01-01T08:05:00.000Z',
-        'givenBy': 'user-1',
+        'medication_id': 'm1',
+        'pet_id': 'p1',
+        'scheduled_time': '2025-01-01T08:00:00.000Z',
+        'given_at': '2025-01-01T08:05:00.000Z',
+        'given_by': 'user-1',
         'status': 'given',
       });
       expect(dose.status, DoseStatus.given);
@@ -158,10 +158,10 @@ void main() {
     test('fromJson parsea status active', () {
       final cg = CaregiverModel.fromJson({
         'id': 'cg-1',
-        'petId': 'pet-1',
-        'ownerId': 'user-1',
-        'caregiverId': 'user-2',
-        'caregiverEmail': 'cg@example.com',
+        'pet_id': 'pet-1',
+        'owner_id': 'user-1',
+        'caregiver_id': 'user-2',
+        'caregiver_email': 'cg@example.com',
         'status': 'active',
         'permissions': ['view', 'mark_dose', 'edit_medication'],
       });
@@ -233,10 +233,10 @@ void main() {
     test('fromJson parsea campos', () {
       final user = UserModel.fromJson({
         'id': 'user-1',
-        'fullName': 'Icaro Galvao',
+        'full_name': 'Icaro Galvao',
         'phone': '+351912345678',
-        'avatarUrl': 'https://example.com/avatar.png',
-        'createdAt': '2025-01-01T00:00:00.000Z',
+        'avatar_url': 'https://example.com/avatar.png',
+        'created_at': '2025-01-01T00:00:00.000Z',
       });
       expect(user.id, 'user-1');
       expect(user.fullName, 'Icaro Galvao');

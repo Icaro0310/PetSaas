@@ -9,35 +9,35 @@ part of 'subscription_model.dart';
 _SubscriptionModel _$SubscriptionModelFromJson(Map<String, dynamic> json) =>
     _SubscriptionModel(
       id: json['id'] as String,
-      userId: json['userId'] as String,
+      userId: json['user_id'] as String,
       status:
           $enumDecodeNullable(_$SubscriptionStatusEnumMap, json['status']) ??
           SubscriptionStatus.trialing,
       plan: json['plan'] as String? ?? 'premium',
-      stripeCustomerId: json['stripeCustomerId'] as String?,
-      stripeSubscriptionId: json['stripeSubscriptionId'] as String?,
-      currentPeriodStart: json['currentPeriodStart'] == null
+      stripeCustomerId: json['stripe_customer_id'] as String?,
+      stripeSubscriptionId: json['stripe_subscription_id'] as String?,
+      currentPeriodStart: json['current_period_start'] == null
           ? null
-          : DateTime.parse(json['currentPeriodStart'] as String),
-      currentPeriodEnd: json['currentPeriodEnd'] == null
+          : DateTime.parse(json['current_period_start'] as String),
+      currentPeriodEnd: json['current_period_end'] == null
           ? null
-          : DateTime.parse(json['currentPeriodEnd'] as String),
-      createdAt: json['createdAt'] == null
+          : DateTime.parse(json['current_period_end'] as String),
+      createdAt: json['created_at'] == null
           ? null
-          : DateTime.parse(json['createdAt'] as String),
+          : DateTime.parse(json['created_at'] as String),
     );
 
 Map<String, dynamic> _$SubscriptionModelToJson(_SubscriptionModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
+      'user_id': instance.userId,
       'status': _$SubscriptionStatusEnumMap[instance.status]!,
       'plan': instance.plan,
-      'stripeCustomerId': instance.stripeCustomerId,
-      'stripeSubscriptionId': instance.stripeSubscriptionId,
-      'currentPeriodStart': instance.currentPeriodStart?.toIso8601String(),
-      'currentPeriodEnd': instance.currentPeriodEnd?.toIso8601String(),
-      'createdAt': instance.createdAt?.toIso8601String(),
+      'stripe_customer_id': instance.stripeCustomerId,
+      'stripe_subscription_id': instance.stripeSubscriptionId,
+      'current_period_start': instance.currentPeriodStart?.toIso8601String(),
+      'current_period_end': instance.currentPeriodEnd?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
     };
 
 const _$SubscriptionStatusEnumMap = {

@@ -215,8 +215,8 @@ return $default(_that.id,_that.userId,_that.status,_that.plan,_that.stripeCustom
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _SubscriptionModel extends SubscriptionModel {
   const _SubscriptionModel({required this.id, required this.userId, this.status = SubscriptionStatus.trialing, this.plan = 'premium', this.stripeCustomerId, this.stripeSubscriptionId, this.currentPeriodStart, this.currentPeriodEnd, this.createdAt}): super._();
   factory _SubscriptionModel.fromJson(Map<String, dynamic> json) => _$SubscriptionModelFromJson(json);

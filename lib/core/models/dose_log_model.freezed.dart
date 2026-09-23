@@ -216,8 +216,8 @@ return $default(_that.id,_that.medicationId,_that.petId,_that.scheduledTime,_tha
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _DoseLogModel implements DoseLogModel {
   const _DoseLogModel({required this.id, required this.medicationId, required this.petId, required this.scheduledTime, this.givenAt, this.givenBy, this.status = DoseStatus.pending, this.photoUrl, this.notes, this.createdAt});
   factory _DoseLogModel.fromJson(Map<String, dynamic> json) => _$DoseLogModelFromJson(json);

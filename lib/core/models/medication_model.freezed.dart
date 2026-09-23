@@ -218,8 +218,8 @@ return $default(_that.id,_that.petId,_that.name,_that.dosage,_that.instructions,
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class _MedicationModel implements MedicationModel {
   const _MedicationModel({required this.id, required this.petId, required this.name, required this.dosage, this.instructions, required this.frequencyType, this.frequencyValue,  List<String> scheduleTimes = const [], required this.startDate, this.endDate, this.isActive = true, this.createdAt}): _scheduleTimes = scheduleTimes;
   factory _MedicationModel.fromJson(Map<String, dynamic> json) => _$MedicationModelFromJson(json);
