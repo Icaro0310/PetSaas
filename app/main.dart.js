@@ -37315,10 +37315,11 @@ return null},
 a3H(a,b){var s=B.c.bz(a)
 if(s.length===0)return b
 return null},
-bwV(a){var s,r=B.c.bz(a)
+bwV(a,b,c){var s,r=B.c.bz(a)
 if(r.length===0)return null
 s=A.td(A.bQ(a,",","."))
 if(s==null||s<=0)return"Valor invalido"
+if(s>b)return c
 return null},
 bpi(){return B.MR},
 btD(){return $.btC},
@@ -115638,7 +115639,7 @@ if(s==null)s=B.hI
 return this.a.db=s},
 $S:0}
 A.aUU.prototype={
-$1(a){return A.bwV(a)},
+$1(a){return A.bwV(a,999.99,"Peso maximo: 999,99 kg")},
 $S:45}
 A.aUV.prototype={
 $0(){var s=0,r=A.u(t.H)
