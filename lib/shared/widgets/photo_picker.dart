@@ -66,13 +66,21 @@ class _PhotoPickerState extends State<PhotoPicker> {
       children: [
         GestureDetector(
           onTap: () => _showOptions(),
-          child: CircleAvatar(
-            radius: widget.size / 2,
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: image,
-            child: image == null
-                ? Icon(Icons.pets, size: widget.size / 2.5, color: Colors.grey)
-                : null,
+          child: Semantics(
+            button: true,
+            label: 'Selecionar foto',
+            child: CircleAvatar(
+              radius: widget.size / 2,
+              backgroundColor: Colors.grey.shade200,
+              backgroundImage: image,
+              child: image == null
+                  ? Icon(
+                      Icons.pets,
+                      size: widget.size / 2.5,
+                      color: Colors.grey,
+                    )
+                  : null,
+            ),
           ),
         ),
         if (image != null)

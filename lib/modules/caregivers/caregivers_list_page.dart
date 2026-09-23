@@ -58,6 +58,7 @@ class CaregiversListPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('${AppRoutes.invite}/$petId'),
+        tooltip: 'Convidar cuidador',
         child: const Icon(Icons.person_add),
       ),
     );
@@ -103,8 +104,11 @@ class _CaregiverTile extends StatelessWidget {
         subtitle: Text(_label(cg.status).capitalize()),
         trailing: cg.status != CaregiverStatus.removed
             ? IconButton(
-                icon: const Icon(Icons.remove_circle_outline,
-                    color: AppTheme.danger),
+                icon: const Icon(
+                  Icons.remove_circle_outline,
+                  color: AppTheme.danger,
+                ),
+                tooltip: 'Remover cuidador',
                 onPressed: onRemove,
               )
             : null,

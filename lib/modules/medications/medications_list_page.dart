@@ -29,8 +29,7 @@ class MedicationsListPage extends ConsumerWidget {
               title: 'Sem medicamentos',
               subtitle: 'Adicione o primeiro remedio para este pet.',
               actionLabel: 'Adicionar remedio',
-              onAction: () =>
-                  context.push('${AppRoutes.medicationNew}/$petId'),
+              onAction: () => context.push('${AppRoutes.medicationNew}/$petId'),
             );
           }
           return ListView.separated(
@@ -43,6 +42,7 @@ class MedicationsListPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('${AppRoutes.medicationNew}/$petId'),
+        tooltip: 'Novo remedio',
         child: const Icon(Icons.add),
       ),
     );
@@ -76,8 +76,10 @@ class _MedCard extends StatelessWidget {
           backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
           child: const Icon(Icons.medication, color: AppTheme.primary),
         ),
-        title: Text(med.name,
-            style: const TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(
+          med.name,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,8 +94,10 @@ class _MedCard extends StatelessWidget {
                   color: med.isActive ? Colors.green : AppTheme.textMuted,
                 ),
                 const SizedBox(width: 4),
-                Text(med.isActive ? 'Ativo' : 'Pausado',
-                    style: const TextStyle(fontSize: 12)),
+                Text(
+                  med.isActive ? 'Ativo' : 'Pausado',
+                  style: const TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ],

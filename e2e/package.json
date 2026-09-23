@@ -6,6 +6,8 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:app": "playwright test --project=app",
+    "auth": "playwright test --project=app-setup",
     "report": "playwright show-report"
   },
   "devDependencies": {

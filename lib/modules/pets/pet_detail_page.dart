@@ -26,6 +26,7 @@ class PetDetailPage extends ConsumerWidget {
           if (isOwner)
             IconButton(
               icon: const Icon(Icons.edit),
+              tooltip: 'Editar',
               onPressed: () => context.push('${AppRoutes.petEdit}/$petId'),
             ),
         ],
@@ -52,7 +53,9 @@ class PetDetailPage extends ConsumerWidget {
                         'ESTE PET ESTA PERDIDO',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   if (!isOwner)
@@ -74,7 +77,9 @@ class PetDetailPage extends ConsumerWidget {
                         Text(
                           pet.name,
                           style: const TextStyle(
-                              fontSize: 26, fontWeight: FontWeight.bold),
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -148,7 +153,11 @@ class _ActionCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  const _ActionCard({required this.icon, required this.label, required this.onTap});
+  const _ActionCard({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -182,8 +191,10 @@ class _InfoSection extends StatelessWidget {
         children: [
           SizedBox(
             width: 110,
-            child: Text(label,
-                style: const TextStyle(color: AppTheme.textMuted)),
+            child: Text(
+              label,
+              style: const TextStyle(color: AppTheme.textMuted),
+            ),
           ),
           Expanded(child: Text(value)),
         ],

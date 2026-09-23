@@ -42,7 +42,8 @@ jobs:
 
       - name: Run E2E suite (live site)
         working-directory: e2e
-        run: npx playwright test
+        # Apenas o site publico — a suite `app` requer sessao Clerk manual.
+        run: npx playwright test --project=desktop --project=mobile
         env:
           SITE_URL: https://icaro0310.github.io/PetSaas
           APP_URL: https://icaro0310.github.io/PetSaas/app

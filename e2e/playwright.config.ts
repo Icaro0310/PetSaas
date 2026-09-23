@@ -46,11 +46,27 @@ export default defineConfig({
   projects: [
     {
       name: 'desktop',
+      testIgnore: [/auth\.setup\.ts/, /app[\\/].*\.spec\.ts/],
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'mobile',
+      testIgnore: [/auth\.setup\.ts/, /app[\\/].*\.spec\.ts/],
       use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
+    },
+    {
+      name: 'app-setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
+      name: 'app',
+      testMatch: /app[\\/].*\.spec\.ts/,
+      dependencies: ['app-setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+        storageState: '.auth/session.json',
+      },
     },
   ],
 });
