@@ -9,7 +9,7 @@ Cada subpasta documenta uma integracao do PetCare: configuracao, ficheiros relac
 | Sentry | [sentry/](sentry/) | Captura de erros e performance |
 | PostHog | [posthog/](posthog/) | Analytics e session replay |
 | Firebase | [firebase/](firebase/) | Crashlytics, FCM, Analytics |
-| Netlify | [netlify/](netlify/) | Hosting do Flutter Web |
+| GitHub Pages | [github-pages/](github-pages/) | Hosting do site e da app Flutter Web |
 | UptimeRobot | [uptimerobot/](uptimerobot/) | Monitorizacao de uptime |
 | MailerSend | [mailersend/](mailersend/) | Relatorio semanal por email |
 | GitHub Actions | [github-actions/](github-actions/) | CI/CD e automatizacoes |

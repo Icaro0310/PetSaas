@@ -53,7 +53,7 @@ Cada integracao tem a sua propria pasta em [integrations/](integrations/) com co
 | Sentry | [integrations/sentry/](integrations/sentry/) | Captura de erros e performance |
 | PostHog | [integrations/posthog/](integrations/posthog/) | Analytics e session replay |
 | Firebase | [integrations/firebase/](integrations/firebase/) | Crashlytics, FCM, Analytics |
-| Netlify | [integrations/netlify/](integrations/netlify/) | Hosting do Flutter Web |
+| GitHub Pages | [integrations/github-pages/](integrations/github-pages/) | Hosting do site e da app Flutter Web |
 | UptimeRobot | [integrations/uptimerobot/](integrations/uptimerobot/) | Monitorizacao de uptime |
 | MailerSend | [integrations/mailersend/](integrations/mailersend/) | Relatorio semanal por email |
 | GitHub Actions | [integrations/github-actions/](integrations/github-actions/) | CI/CD e automatizacoes |
@@ -73,7 +73,7 @@ Cada integracao tem a sua propria pasta em [integrations/](integrations/) com co
 | Push | Firebase Cloud Messaging |
 | QR | qr_flutter, mobile_scanner |
 | Notificacoes locais | flutter_local_notifications |
-| Build web | Netlify CLI |
+| Build web | GitHub Pages (branch gh-pages) |
 | CI/CD | GitHub Actions |
 
 ## 4. Modulos
@@ -101,12 +101,11 @@ dart run build_runner build --delete-conflicting-outputs
 ### Web (producao)
 
 ```bash
-flutter build web --release
-cd build/web
-netlify deploy --prod --dir=. --site moonlit-pothos-c56cd4 --auth <TOKEN>
+flutter build web --base-href=/PetSaas/app/
+# copiar build/web/ para a pasta app/ do branch gh-pages e dar push
 ```
 
-URL de producao: `https://moonlit-pothos-c56cd4.netlify.app`
+URL de producao: `https://icaro0310.github.io/PetSaas/app/`
 
 ### Android
 
@@ -143,7 +142,7 @@ Detalhes: [integrations/supabase/](integrations/supabase/) e [integrations/maile
 
 ## 8. Proximos passos
 
-1. Testar QR e pagina publica com o URL do Netlify
+1. Testar QR e pagina publica com o URL do GitHub Pages (/PetSaas/app)
 2. Testar em dispositivo fisico via `flutter run`
 3. Criar keystore de producao e gerar `.aab`
 4. Submeter APK para Google Play Console

@@ -9,6 +9,10 @@ Monitorizacao externa de uptime.
 | moonlit-pothos-c56cd4.netlify.app | `https://moonlit-pothos-c56cd4.netlify.app` | `803897084` | 300s |
 | Supabase API + Auth | `https://dotplnbakltelacsxvjz.supabase.co/functions/v1/health` | `803898227` | 300s |
 
+> NOTA: o monitor `803897084` ainda aponta para o Netlify. Atualizar no
+> dashboard do UptimeRobot para `https://icaro0310.github.io/PetSaas/app/`
+> (a app agora e hospedada no GitHub Pages).
+
 ## API
 
 | Campo | Valor |
