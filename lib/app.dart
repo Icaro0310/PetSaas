@@ -67,7 +67,14 @@ class _ClerkAuthSyncState extends State<ClerkAuthSync> {
         ClerkAuthData(
           userId: user.id,
           email: user.email,
-          tokenProvider: () async => (await authState.sessionToken()).jwt,
+          tokenProvider: () async {
+            try {
+              return (await authState.sessionToken(templateName: 'supabase'))
+                  .jwt;
+            } catch (_) {
+              return (await authState.sessionToken()).jwt;
+            }
+          },
         ),
       );
       if (_syncedUserId != user.id) {

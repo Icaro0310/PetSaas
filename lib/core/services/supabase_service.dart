@@ -64,7 +64,6 @@ class SupabaseService {
     try {
       await client.from('profiles').upsert({
         'id': data.userId,
-        'email': data.email,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       });
     } catch (_) {
