@@ -132,7 +132,12 @@
           return JSON.stringify(serializeUser(clerk));
         },
         getToken: function () {
-          return clerk.session ? clerk.session.getToken() : Promise.resolve(null);
+          if (!clerk.session) return Promise.resolve(null);
+          return clerk.session
+            .getToken({ template: 'supabase' })
+            .catch(function () {
+              return clerk.session.getToken();
+            });
         },
         signIn: function () {
           clerk.openSignIn();

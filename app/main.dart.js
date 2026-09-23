@@ -32458,20 +32458,21 @@ for(;;)switch(s){case 0:s=2
 return A.n(A.b6C(new A.aIz(),!1,"sb_publishable__Pp5qzGJ2HlZPPD1NEdPSg_ZCCA9I9x","https://dotplnbakltelacsxvjz.supabase.co"),$async$aIy)
 case 2:return A.r(null,r)}})
 return A.t($async$aIy,r)},
-aIA(){var s=0,r=A.u(t.H),q,p=2,o=[],n,m,l,k
+aIA(){var s=0,r=A.u(t.H),q,p=2,o=[],n,m,l,k,j
 var $async$aIA=A.p(function(a,b){if(a===1){o.push(b)
-s=p}for(;;)switch(s){case 0:l=$.fm
-if(l==null){s=1
+s=p}for(;;)switch(s){case 0:k=$.fm
+if(k==null){s=1
 break}p=4
 n=$.dq().b
 n===$&&A.a()
+m=t.N
 s=7
-return A.n(n.el("profiles").ade(A.X(["id",l.a,"email",l.b,"updated_at",new A.br(Date.now(),0,!1).iu().cY()],t.N,t.u)),$async$aIA)
+return A.n(n.el("profiles").ade(A.X(["id",k.a,"updated_at",new A.br(Date.now(),0,!1).iu().cY()],m,m)),$async$aIA)
 case 7:p=2
 s=6
 break
 case 4:p=3
-k=o.pop()
+j=o.pop()
 s=6
 break
 case 3:s=2
