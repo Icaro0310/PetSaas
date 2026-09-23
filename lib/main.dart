@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -20,6 +21,12 @@ const _sentryDsn =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Web: expoe a arvore de semantica no DOM (flt-semantics). Necessario
+  // para leitores de ecra e para testes E2E encontrarem botoes/campos.
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
 
   try {
     // Sentry - inicializa antes do runApp para capturar erros nativos

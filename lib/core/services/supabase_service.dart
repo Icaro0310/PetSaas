@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../config/constants.dart';
@@ -13,11 +14,7 @@ class ClerkAuthData {
   /// Funcao que retorna o JWT do Clerk para passar ao Supabase.
   final Future<String?> Function()? tokenProvider;
 
-  ClerkAuthData({
-    required this.userId,
-    this.email,
-    this.tokenProvider,
-  });
+  ClerkAuthData({required this.userId, this.email, this.tokenProvider});
 }
 
 /// Encapsula o acesso ao Supabase.
@@ -30,8 +27,17 @@ class SupabaseService {
 
   static SupabaseClient get client => Supabase.instance.client;
 
-  /// Estado atual do Clerk (atualizado por ClerkAuthSync).
+  /// Estado atual do Clerk (atualizado pelo adaptador de cada plataforma).
   static ClerkAuthData? authData;
+  static final ValueNotifier<ClerkAuthData?> authChanges = ValueNotifier(null);
+
+  static void updateAuthData(ClerkAuthData? data) {
+    if (authData?.userId == data?.userId && authData?.email == data?.email) {
+      return;
+    }
+    authData = data;
+    authChanges.value = data;
+  }
 
   /// Retorna o user ID do Clerk (string, ex: user_abc123).
   static String? get currentUserId => authData?.userId;
@@ -45,6 +51,7 @@ class SupabaseService {
     await Supabase.initialize(
       url: AppConstants.supabaseUrl,
       publishableKey: AppConstants.supabaseAnonKey,
+      accessToken: () async => await authData?.tokenProvider?.call(),
       debug: false,
     );
   }
@@ -76,8 +83,6 @@ class SupabaseService {
     await client.storage
         .from(AppConstants.petPhotosBucket)
         .upload(path, File(filePath));
-    return client.storage
-        .from(AppConstants.petPhotosBucket)
-        .getPublicUrl(path);
+    return client.storage.from(AppConstants.petPhotosBucket).getPublicUrl(path);
   }
 }

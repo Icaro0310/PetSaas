@@ -7,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../config/routes.dart';
 import '../../config/theme.dart';
+import '../../core/services/clerk_web_auth.dart';
 import '../../core/services/supabase_service.dart';
 import '../../providers/app_providers.dart';
 
@@ -52,8 +53,10 @@ class ProfilePage extends ConsumerWidget {
           if (profile?.phone != null) ...[
             const SizedBox(height: 4),
             Center(
-              child: Text(profile!.phone!,
-                  style: const TextStyle(color: AppTheme.textMuted)),
+              child: Text(
+                profile!.phone!,
+                style: const TextStyle(color: AppTheme.textMuted),
+              ),
             ),
           ],
           const SizedBox(height: 24),
@@ -85,9 +88,11 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: 12),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.notifications_none,
-                  color: AppTheme.secondary),
-              title: const Text('Notificacoes'),
+              leading: const Icon(
+                Icons.notifications_none,
+                color: AppTheme.secondary,
+              ),
+              title: const Text('Notificações'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(AppRoutes.notifications),
             ),
@@ -95,27 +100,35 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () async {
-              await ClerkAuth.of(context).signOut();
+              if (kIsWeb) {
+                await ClerkWebAuth.signOut();
+              } else {
+                await ClerkAuth.of(context).signOut();
+              }
+              SupabaseService.updateAuthData(null);
               if (context.mounted) context.go(AppRoutes.login);
             },
             icon: const Icon(Icons.logout, color: AppTheme.danger),
-            label: const Text('Sair',
-                style: TextStyle(color: AppTheme.danger)),
+            label: const Text('Sair', style: TextStyle(color: AppTheme.danger)),
           ),
           const SizedBox(height: 12),
           TextButton.icon(
             onPressed: () => _confirmDeleteAccount(context),
             icon: const Icon(Icons.delete_forever, color: AppTheme.danger),
-            label: const Text('Excluir conta (LGPD)',
-                style: TextStyle(color: AppTheme.danger)),
+            label: const Text(
+              'Eliminar conta',
+              style: TextStyle(color: AppTheme.danger),
+            ),
           ),
           if (kDebugMode) ...[
             const SizedBox(height: 24),
             const Divider(),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text('Diagnostico (debug only)',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              child: Text(
+                'Diagnostico (debug only)',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
             ),
             OutlinedButton.icon(
               onPressed: () async {
@@ -129,9 +142,10 @@ class ProfilePage extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                          'Evento enviado. NOTA: em debug mode o beforeSend '
-                          'filtra eventos automaticos. Para testar erros reais, '
-                          'faça build em release mode.'),
+                        'Evento enviado. NOTA: em debug mode o beforeSend '
+                        'filtra eventos automaticos. Para testar erros reais, '
+                        'faça build em release mode.',
+                      ),
                     ),
                   );
                 }
@@ -149,11 +163,10 @@ class ProfilePage extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir conta'),
+        title: const Text('Eliminar conta'),
         content: const Text(
-          'Esta acao e IRREVERSIVEL. Todos os seus dados (pets, medicacoes, '
-          'historico, cuidadores, notificacoes) serao permanentemente apagados. '
-          'Deseja continuar?',
+          'Esta ação é irreversível. Os perfis dos animais, os registos de '
+          'medicação e o acesso de cuidadores serão eliminados. Quer continuar?',
         ),
         actions: [
           TextButton(
@@ -163,7 +176,7 @@ class ProfilePage extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: AppTheme.danger),
-            child: const Text('Excluir definitivamente'),
+            child: const Text('Eliminar definitivamente'),
           ),
         ],
       ),
@@ -178,15 +191,19 @@ class ProfilePage extends ConsumerWidget {
         'delete-user-account',
         body: {'user_id': userId},
       );
-      if (context.mounted) {
+      if (!context.mounted) return;
+      if (kIsWeb) {
+        await ClerkWebAuth.signOut();
+      } else {
         await ClerkAuth.of(context).signOut();
-        context.go(AppRoutes.login);
       }
+      if (!context.mounted) return;
+      SupabaseService.updateAuthData(null);
+      context.go(AppRoutes.login);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao excluir conta: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Erro ao excluir conta: $e')));
       }
     }
   }

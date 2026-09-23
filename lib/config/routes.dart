@@ -56,6 +56,7 @@ class AppRoutes {
   static GoRouter buildRouter() {
     return GoRouter(
       initialLocation: pets,
+      refreshListenable: SupabaseService.authChanges,
       redirect: (context, state) async {
         final path = state.uri.path;
         final isPublic =
@@ -80,7 +81,9 @@ class AppRoutes {
         GoRoute(path: login, builder: (_, __) => const LoginPage()),
         GoRoute(path: onboarding, builder: (_, __) => const OnboardingPage()),
         GoRoute(
-            path: profileSetup, builder: (_, __) => const ProfileSetupPage()),
+          path: profileSetup,
+          builder: (_, __) => const ProfileSetupPage(),
+        ),
         GoRoute(path: pets, builder: (_, __) => const PetsListPage()),
         GoRoute(path: petNew, builder: (_, __) => const PetFormPage()),
         GoRoute(
@@ -111,7 +114,8 @@ class AppRoutes {
         ),
         GoRoute(
           path: '$qr/:petId',
-          builder: (_, state) => QrCodePage(petId: state.pathParameters['petId']!),
+          builder: (_, state) =>
+              QrCodePage(petId: state.pathParameters['petId']!),
         ),
         GoRoute(
           path: '$caregivers/:petId',
@@ -145,10 +149,7 @@ class AppRoutes {
           builder: (_, state) =>
               JoinPage(token: state.uri.queryParameters['token']),
         ),
-        GoRoute(
-          path: scan,
-          builder: (_, __) => const QrScannerPage(),
-        ),
+        GoRoute(path: scan, builder: (_, __) => const QrScannerPage()),
       ],
     );
   }
