@@ -5,14 +5,14 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * Targets the LIVE site by default. Override with env vars:
  *   SITE_URL   - website under test (default: GitHub Pages)
- *   APP_URL    - Flutter web app (default: Netlify)
+ *   APP_URL    - Flutter web app (default: GitHub Pages /PetSaas/app)
  *   SB_URL     - Supabase project URL
  *   SB_ANON_KEY- Supabase publishable/anon key (public by design)
  */
 export const SITE_URL =
   process.env.SITE_URL ?? 'https://icaro0310.github.io/PetSaas';
 export const APP_URL =
-  process.env.APP_URL ?? 'https://moonlit-pothos-c56cd4.netlify.app';
+  process.env.APP_URL ?? 'https://icaro0310.github.io/PetSaas/app';
 export const SB_URL =
   process.env.SB_URL ?? 'https://dotplnbakltelacsxvjz.supabase.co';
 export const SB_ANON_KEY =

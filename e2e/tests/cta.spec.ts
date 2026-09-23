@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { APP_URL } from '../playwright.config';
 
-const APP_HOST = 'moonlit-pothos-c56cd4.netlify.app';
+// App hospedada no GitHub Pages sob o subpath /PetSaas/app
+const APP_LOGIN = `${APP_URL}/login`;
 
 test.describe('CTAs de conta - o site convida a registar-se', () => {
   test('header tem Entrar + Criar conta gratis', async ({ page }, testInfo) => {
@@ -15,8 +16,8 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     const criar = nav.getByRole('link', { name: 'Criar conta gratis' });
     await expect(entrar).toBeVisible();
     await expect(criar).toBeVisible();
-    await expect(entrar).toHaveAttribute('href', new RegExp(`${APP_HOST}/login`));
-    await expect(criar).toHaveAttribute('href', new RegExp(`${APP_HOST}/login`));
+    await expect(entrar).toHaveAttribute('href', APP_LOGIN);
+    await expect(criar).toHaveAttribute('href', APP_LOGIN);
   });
 
   test('hero tem CTA de criacao de conta + login', async ({ page }) => {
@@ -56,14 +57,24 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
       context.waitForEvent('page'),
       criar.click(),
     ]);
-    await popup.waitForLoadState('domcontentloaded');
-    expect(popup.url()).toContain(`${APP_HOST}/login`);
+    // GitHub Pages: /PetSaas/app/login -> 404.html -> ?p= -> replaceState
+    // restaura a URL limpa; esperamos o destino final da SPA.
+    await popup.waitForURL(/\/PetSaas\/app\/login/, { timeout: 30000 });
     await popup.close();
   });
 
-  test('destino /login da app responde 200', async ({ request }) => {
-    const res = await request.get(`${APP_URL}/login`);
+  test('raiz da app responde 200', async ({ request }) => {
+    const res = await request.get(`${APP_URL}/`);
     expect(res.status()).toBe(200);
+  });
+
+  test('rota profunda /app/login resolve via fallback 404', async ({
+    page,
+  }) => {
+    // Acesso direto a rota SPA: Pages serve 404.html que redireciona
+    // para ?p= e a app restaura a URL limpa.
+    await page.goto(`${APP_URL}/login`);
+    await page.waitForURL(/\/PetSaas\/app\/login/, { timeout: 30000 });
   });
 
   test('overlay mobile tem Entrar + Criar conta gratis', async ({

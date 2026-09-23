@@ -66,22 +66,24 @@ jobs:
           SB_DETAIL="${SB_DETAIL} | ${SB_DB_TXT}"
 
           # ============================================================
-          # 2. Netlify (Web hosting)
+          # 2. GitHub Pages (Web hosting: site + app Flutter)
           # ============================================================
-          NETLIFY_URL="https://moonlit-pothos-c56cd4.netlify.app"
-          NETLIFY_HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${NETLIFY_URL}" --max-time 15)
-          NETLIFY_PRIVACY=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${NETLIFY_URL}/privacy.html" --max-time 15)
-          NETLIFY_TERMS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${NETLIFY_URL}/terms.html" --max-time 15)
+          PAGES_URL="https://icaro0310.github.io/PetSaas"
+          PAGES_SITE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${PAGES_URL}/" --max-time 15)
+          PAGES_APP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${PAGES_URL}/app/" --max-time 15)
+          PAGES_PRIVACY=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${PAGES_URL}/privacy.html" --max-time 15)
+          PAGES_TERMS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${PAGES_URL}/terms.html" --max-time 15)
 
-          if [ "$NETLIFY_HTTP" = "200" ] && [ "$NETLIFY_PRIVACY" = "200" ] && [ "$NETLIFY_TERMS" = "200" ]; then
-            NETLIFY_STATUS="ACTIVE"
-            NETLIFY_DETAIL="Site: ${NETLIFY_HTTP}, Privacy: ${NETLIFY_PRIVACY}, Terms: ${NETLIFY_TERMS}"
+          if [ "$PAGES_SITE" = "200" ] && [ "$PAGES_APP" = "200" ] && [ "$PAGES_PRIVACY" = "200" ] && [ "$PAGES_TERMS" = "200" ]; then
+            PAGES_STATUS="ACTIVE"
+            PAGES_DETAIL="Site: ${PAGES_SITE}, App: ${PAGES_APP}, Privacy: ${PAGES_PRIVACY}, Terms: ${PAGES_TERMS}"
           else
-            NETLIFY_STATUS="FAILED"
-            NETLIFY_DETAIL="Site: ${NETLIFY_HTTP}, Privacy: ${NETLIFY_PRIVACY}, Terms: ${NETLIFY_TERMS}"
+            PAGES_STATUS="FAILED"
+            PAGES_DETAIL="Site: ${PAGES_SITE}, App: ${PAGES_APP}, Privacy: ${PAGES_PRIVACY}, Terms: ${PAGES_TERMS}"
           fi
 
           # ============================================================
@@ -144,10 +146,10 @@ jobs:
 
           if [ "$UR_NETLIFY" = "2" ] && [ "$UR_SUPABASE" = "2" ]; then
             UR_STATUS="ACTIVE"
-            UR_DETAIL="Netlify: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
+            UR_DETAIL="Web: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
           else
             UR_STATUS="FAILED"
-            UR_DETAIL="Netlify: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
+            UR_DETAIL="Web: ${UR_NETLIFY_TXT}, Supabase: ${UR_SUPABASE_TXT}"
           fi
 
           # ============================================================
@@ -249,7 +251,7 @@ jobs:
           TOTAL=9
           ACTIVE=0
           FAILED=0
-          for s in "$SB_STATUS" "$NETLIFY_STATUS" "$CLERK_STATUS" "$GH_STATUS" "$UR_STATUS" "$MS_STATUS" "$FB_STATUS" "$SENTRY_STATUS" "$PH_STATUS"; do
+          for s in "$SB_STATUS" "$PAGES_STATUS" "$CLERK_STATUS" "$GH_STATUS" "$UR_STATUS" "$MS_STATUS" "$FB_STATUS" "$SENTRY_STATUS" "$PH_STATUS"; do
             if [ "$s" = "ACTIVE" ]; then ACTIVE=$((ACTIVE+1)); else FAILED=$((FAILED+1)); fi
           done
 
@@ -300,9 +302,9 @@ jobs:
               <td>1</td><td><strong>Supabase</strong><br/><small>DB + Auth + Edge Functions</small></td>
               <td><strong>${SB_STATUS}</strong></td><td><small>${SB_DETAIL}</small></td>
             </tr>
-            <tr style="background: $(row_color "$NETLIFY_STATUS")">
-              <td>2</td><td><strong>Netlify</strong><br/><small>Web hosting + SPA fallback</small></td>
-              <td><strong>${NETLIFY_STATUS}</strong></td><td><small>${NETLIFY_DETAIL}</small></td>
+            <tr style="background: $(row_color "$PAGES_STATUS")">
+              <td>2</td><td><strong>GitHub Pages</strong><br/><small>Web hosting (site + app)</small></td>
+              <td><strong>${PAGES_STATUS}</strong></td><td><small>${PAGES_DETAIL}</small></td>
             </tr>
             <tr style="background: $(row_color "$CLERK_STATUS")">
               <td>3</td><td><strong>Clerk</strong><br/><small>Authentication + JWT</small></td>

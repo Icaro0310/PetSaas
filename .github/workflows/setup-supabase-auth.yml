@@ -17,11 +17,11 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
             -H "Content-Type: application/json" \
             -d '{
-              "site_url": "https://moonlit-pothos-c56cd4.netlify.app/",
+              "site_url": "https://icaro0310.github.io/PetSaas/app/",
               "additional_redirect_urls": [
-                "https://moonlit-pothos-c56cd4.netlify.app/",
-                "https://moonlit-pothos-c56cd4.netlify.app/**",
-                "https://*--moonlit-pothos-c56cd4.netlify.app/**",
+                "https://icaro0310.github.io/PetSaas/",
+                "https://icaro0310.github.io/PetSaas/**",
+                "https://icaro0310.github.io/PetSaas/app/**",
                 "io.supabase.flutter://reset-callback/",
                 "http://localhost:*/**",
                 "http://localhost:*"
