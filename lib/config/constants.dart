@@ -31,10 +31,10 @@ class AppConstants {
   static const String clerkFrontendApiUrl =
       'https://climbing-burro-4910.clerk.accounts.dev';
 
-  // Web deploy
-  // TODO: Quando o dominio custom estiver configurado no Netlify, trocar por:
+  // Web deploy (GitHub Pages - a app vive em /PetSaas/app/)
+  // TODO: Quando o dominio custom estiver configurado, trocar por:
   //   static const String siteUrl = 'https://app.petcare.com/';
-  static const String siteUrl = 'https://moonlit-pothos-c56cd4.netlify.app/';
+  static const String siteUrl = 'https://icaro0310.github.io/PetSaas/app/';
 
   // Redirect usado no magic link
   static const String webRedirectUrl = siteUrl;

@@ -32,6 +32,16 @@
   <title>petcare</title>
   <link rel="manifest" href="manifest.json">
 
+  <!-- SPA redirect (GitHub Pages): o 404.html do site transforma
+       /PetSaas/app/<rota> em /PetSaas/app/?p=<rota>; aqui restauramos
+       a URL limpa antes do bootstrap do Flutter (path URL strategy). -->
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search).get('p');
+      if (p) window.history.replaceState(null, '', p);
+    })();
+  </script>
+
   <!-- Passkeys Web SDK: exigido por passkeys_web (dep. de clerk_flutter).
        Sem este script, o bootstrap da app falha com undefined.init. -->
   <script src="passkeys_bundle.js"></script>

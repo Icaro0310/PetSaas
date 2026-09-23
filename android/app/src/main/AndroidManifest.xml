@@ -37,17 +37,18 @@
             </intent-filter>
 
             <!-- Deep Link: pagina publica do pet via QR Code -->
-            <!-- URL: https://moonlit-pothos-c56cd4.netlify.app/p/<uuid> -->
+            <!-- URL: https://icaro0310.github.io/PetSaas/app/p/<uuid> -->
             <!-- Quando o dominio custom estiver pronto, trocar por app.petcare.com -->
+            <!-- NOTA: autoVerify exige assetlinks.json na RAIZ do dominio
+                 (icaro0310.github.io/.well-known/) - fora do subpath /PetSaas.
+                 Sem repo user-site, os links abrem no browser (fallback OK). -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"/>
-                <data android:host="moonlit-pothos-c56cd4.netlify.app"/>
-                <data android:pathPattern="/p/.*"/>
-                <data android:pathPattern="/join"/>
-                <data android:pathPattern="/scan"/>
+                <data android:host="icaro0310.github.io"/>
+                <data android:pathPrefix="/PetSaas/app"/>
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

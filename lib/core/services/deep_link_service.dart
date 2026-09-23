@@ -8,7 +8,7 @@ class DeepLinkService {
   /// Base URL publica (web). Em producao, substituir pelo dominio real.
   /// TODO: Quando o dominio custom estiver configurado, trocar por:
   ///   static const String webBaseUrl = 'https://app.petcare.com';
-  static const String webBaseUrl = 'https://moonlit-pothos-c56cd4.netlify.app';
+  static const String webBaseUrl = 'https://icaro0310.github.io/PetSaas/app';
 
   static String publicPetUrl(String qrCodeUuid) =>
       '$webBaseUrl/p/$qrCodeUuid';
