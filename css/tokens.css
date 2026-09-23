@@ -1,30 +1,45 @@
-/* PetCare · design tokens — locked pelo brief (docs/PROMPT-SITE-FRAMER.md) */
+/* PetCare · identidade caderno de cuidados · primitivos, semânticos e componentes */
 
 :root {
-  /* Cor — marca */
-  --color-primary: #2E7D32;        /* verde floresta */
-  --color-primary-dark: #1B5E20;   /* verde escuro (CTA final, footer) */
-  --color-primary-soft: #A5D6A7;   /* verde claro (fundos suaves) */
-  --color-accent: #FF8F00;         /* ambar (CTAs secundarios, badges) */
-  --color-accent-soft: #FFF3E0;
+  /* Primitivos */
+  --pine-950: #143D33;
+  --pine-800: #1B5A49;
+  --pine-700: #286A54;
+  --sage-300: #BBD3C0;
+  --sage-100: #E5ECE0;
+  --citron-300: #D9E88D;
+  --citron-400: #C9DA70;
+  --citron-100: #F1F4DE;
+  --oat-50: #F6F3EA;
+  --paper-0: #FFFEFA;
+  --ink-950: #182A23;
+  --ink-700: #3C5147;
+  --ink-600: #536158;
+  --line-200: #D9E0D5;
+  --red-700: #B3261E;
 
-  /* Cor — neutros */
-  --color-paper: #FAFBF6;          /* fundo geral */
-  --color-surface: #FFFFFF;
-  --color-ink: #1E2A1E;            /* texto principal */
-  --color-ink-2: #41503F;          /* texto secundario */
-  --color-ink-3: #4E5D4B;          /* texto terciario (>=4.5:1 em paper) */
-  --color-border: #DCE7D8;         /* hairline esverdeado */
-  --color-primary-tint: #EAF3E9;   /* fundo de card suave */
-  --color-on-dark: #F3F8F1;
-  --color-on-dark-2: #B9D4B6;
-  --color-focus: #1B5E20;
+  /* Semânticos */
+  --color-primary: var(--pine-800);
+  --color-primary-dark: var(--pine-950);
+  --color-primary-soft: var(--sage-300);
+  --color-primary-tint: var(--sage-100);
+  --color-accent: var(--citron-300);
+  --color-accent-hover: var(--citron-400);
+  --color-accent-soft: var(--citron-100);
+  --color-paper: var(--oat-50);
+  --color-surface: var(--paper-0);
+  --color-ink: var(--ink-950);
+  --color-ink-2: var(--ink-700);
+  --color-ink-3: var(--ink-600);
+  --color-border: var(--line-200);
+  --color-on-dark: var(--paper-0);
+  --color-on-dark-2: #D0DFD4;
+  --color-focus: var(--pine-950);
+  --color-danger: var(--red-700);
 
   /* Tipografia */
-  --font-display: "Poppins", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  /* Escala tipografica (4pt-friendly) */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -33,9 +48,9 @@
   --text-2xl: 1.75rem;
   --text-3xl: 2.25rem;
   --text-display-s: 2.75rem;
-  --text-display: 3.5rem;
+  --text-display: 4rem;
 
-  /* Espacamento (base 4px) */
+  /* Espaçamento */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -46,24 +61,32 @@
   --space-8: 4rem;
   --space-9: 6rem;
 
-  /* Raios */
+  /* Forma e elevação */
   --radius-sm: 8px;
   --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-lg: 24px;
   --radius-pill: 9999px;
-
-  /* Elevacao */
-  --shadow-card: 0 1px 2px rgba(30, 42, 30, 0.05), 0 8px 24px rgba(46, 125, 50, 0.08);
-  --shadow-lift: 0 4px 8px rgba(30, 42, 30, 0.07), 0 16px 40px rgba(46, 125, 50, 0.14);
+  --shadow-card: 0 12px 32px rgba(20, 61, 51, 0.09);
+  --shadow-lift: 0 18px 42px rgba(20, 61, 51, 0.15);
 
   /* Movimento */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-fast: 150ms;
+  --dur-fast: 140ms;
   --dur-base: 200ms;
   --dur-slow: 320ms;
 
   /* Layout */
-  --container: 72rem;
+  --container: 76rem;
   --container-narrow: 46rem;
+
+  /* Componentes */
+  --button-bg: var(--color-primary);
+  --button-fg: var(--color-on-dark);
+  --button-accent-bg: var(--color-accent);
+  --button-accent-hover-bg: var(--color-accent-hover);
+  --button-accent-fg: var(--color-ink);
+  --card-bg: var(--color-surface);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-lg);
 }

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PetCare - Gestao de medicamentos e QR Code para pets</title>
-  <meta name="description" content="Saiba exatamente quando seu Pet tomou medicamento e que horas foi passear. QR Code unico na coleira para encontra-lo se se perder. Gratuito.">
+  <title>PetCare | Cuidados partilhados para o seu animal</title>
+  <meta name="description" content="Organize os registos de medicação, convide cuidadores e gere um QR Code de identificação. A app é gratuita.">
   <link rel="canonical" href="https://icaro0310.github.io/PetSaas/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="PetCare - Gestao de medicamentos e QR Code para pets">
-  <meta property="og:description" content="Saiba exatamente quando seu Pet tomou medicamento e que horas foi passear. QR Code unico na coleira para encontra-lo se se perder. Gratuito.">
+  <meta property="og:title" content="PetCare | Cuidados partilhados para o seu animal">
+  <meta property="og:description" content="Organize os registos de medicação, convide cuidadores e gere um QR Code de identificação. A app é gratuita.">
   <meta property="og:url" content="https://icaro0310.github.io/PetSaas/">
   <meta property="og:image" content="https://icaro0310.github.io/PetSaas/assets/og-image.png">
   <meta property="og:locale" content="pt_PT">
@@ -18,7 +18,7 @@
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <script>document.documentElement.classList.add("js")</script>
   <link rel="stylesheet" href="css/site.css">
 
@@ -29,10 +29,10 @@
     "name": "PetCare",
     "applicationCategory": "LifestyleApplication",
     "operatingSystem": "Android, Web",
-    "description": "Gestao de medicamentos e QR Code de identificacao para animais de estimacao.",
-    "url": "https://icaro0310.github.io/PetSaas/app",
+    "description": "Registo de medicação, coordenação de cuidadores e identificação de animais de companhia por QR Code.",
+    "url": "https://icaro0310.github.io/PetSaas/app/",
     "offers": [
-      { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "EUR" }
+      { "@type": "Offer", "name": "Gratuito", "price": "0", "priceCurrency": "EUR" }
     ]
   }
   </script>
@@ -51,9 +51,9 @@
       <nav class="site-nav__links" aria-label="Principal">
         <a class="nav-link" href="#como-funciona">Como funciona</a>
         <a class="nav-link" href="#funcionalidades">Funcionalidades</a>
-        <a class="nav-link" href="pricing.html">Precos</a>
-        <a class="nav-link" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Entrar</a>
-        <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+        <a class="nav-link" href="pricing.html">Preços</a>
+        <a class="nav-link" href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+        <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
       </nav>
 
       <button class="nav-toggle" aria-expanded="false" aria-controls="navOverlay">Menu</button>
@@ -62,13 +62,13 @@
 
   <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Menu">
     <button class="nav-overlay__close" aria-label="Fechar menu">Fechar</button>
-    <a href="./">Inicio</a>
+    <a href="./">Início</a>
     <a href="#como-funciona">Como funciona</a>
     <a href="#funcionalidades">Funcionalidades</a>
-    <a href="pricing.html">Precos</a>
+    <a href="pricing.html">Preços</a>
     <a href="privacy.html">Privacidade</a>
-    <a href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Entrar</a>
-    <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+    <a href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+    <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
   </div>
 
   <main>
@@ -77,12 +77,12 @@
       <svg class="hero__paws" aria-hidden="true" width="100%" height="100%">
         <defs>
           <pattern id="paws" width="180" height="180" patternUnits="userSpaceOnUse">
-            <g fill="#2E7D32" opacity="0.05">
+            <g fill="#D9E88D" opacity="0.08">
               <ellipse cx="40" cy="46" rx="9" ry="7"/>
               <circle cx="26" cy="30" r="4"/><circle cx="38" cy="24" r="4"/>
               <circle cx="50" cy="26" r="4"/><circle cx="58" cy="36" r="4"/>
             </g>
-            <g fill="#2E7D32" opacity="0.05" transform="translate(120,110) rotate(24)">
+            <g fill="#D9E88D" opacity="0.08" transform="translate(120,110) rotate(24)">
               <ellipse cx="40" cy="46" rx="9" ry="7"/>
               <circle cx="26" cy="30" r="4"/><circle cx="38" cy="24" r="4"/>
               <circle cx="50" cy="26" r="4"/><circle cx="58" cy="36" r="4"/>
@@ -94,25 +94,31 @@
 
       <div class="container hero__grid">
         <div>
-          <h1 class="hero__title">Saiba exatamente quando seu Pet tomou medicamento e que horas foi passear. Encontre-o mais rápido, caso ele se perca.</h1>
-          <p class="lead">Gerencie medicações, convide cuidadores e tenha um QR Code único na coleira do seu melhor amigo - Tudo com privacidade total.</p>
+          <h1 class="hero__title">Saiba quem registou cada dose.</h1>
+          <p class="lead">Defina horários, convide cuidadores e crie um QR Code de identificação.</p>
           <div class="hero__cta">
-            <a class="btn btn--primary btn--lg" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
-            <a class="btn btn--ghost btn--lg" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Entrar na minha conta</a>
+            <a class="btn btn--primary btn--lg" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
+            <a class="btn btn--ghost btn--lg" href="https://icaro0310.github.io/PetSaas/app/login">Entrar na minha conta</a>
           </div>
           <p class="hero__note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-            100% gratuito. Sem cartao de credito. Sem limites.
+            Gratuita. Não é necessário cartão de pagamento.
           </p>
         </div>
 
         <div class="hero__media">
-          <figure style="margin:0">
-            <img class="hero__shot" src="assets/app-login.png" alt="Ecra de entrada da app PetCare: logo com pata, campo de email e botao Entrar com email" width="500" height="960">
+          <figure>
+            <img class="hero__shot" src="assets/app-login.png" alt="Ecrã de entrada do PetCare com campo de email e opção de início de sessão" width="500" height="960">
           </figure>
           <figure class="hero__qr">
-            <img src="assets/pet-qr.png" alt="QR Code unico gerado pela app PetCare para a coleira do pet" width="94" height="94">
-            <figcaption>QR unico na coleira</figcaption>
+            <div class="hero__qr-mark" aria-hidden="true">
+              <svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square">
+                <path d="M8 23V8h15M33 8h15v15M48 33v15H33M23 48H8V33" />
+                <circle cx="28" cy="28" r="3" fill="currentColor" stroke="none" />
+              </svg>
+              <span>QR</span>
+            </div>
+            <figcaption>Identificação por QR Code</figcaption>
           </figure>
         </div>
       </div>
@@ -121,30 +127,30 @@
     <!-- Problema / solucao -->
     <section class="section" id="problema">
       <div class="container">
-        <h2>Cuidar de um pet com medicacao nao precisa ser um caos.</h2>
+        <h2>Registos claros para cuidados partilhados.</h2>
         <div class="cards-3">
           <article class="card reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
             </div>
-            <h3>Nunca mais perca uma dose</h3>
-            <p>Agendamentos diarios, semanais ou intervalados. Receba lembretes no seu telemovel e saiba exatamente quando a proxima dose deve ser dada.</p>
+            <h3>Registe cada dose</h3>
+            <p>Defina os horários da medicação e consulte as doses registadas no perfil do animal.</p>
           </article>
 
           <article class="card reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M16 11l2 2 4-4"/></svg>
             </div>
-            <h3>Quem deu? Fica registado</h3>
-            <p>Cuidadores e familiares marcam as doses que administram. Historico completo com nome e hora - adeus a duvida.</p>
+            <h3>Partilhe os cuidados</h3>
+            <p>Convide familiares e cuidadores. O histórico mostra quem registou cada dose.</p>
           </article>
 
           <article class="card reveal">
             <div class="card__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1M17 17h1"/></svg>
             </div>
-            <h3>QR Code na coleira = seguranca extra</h3>
-            <p>Se alguem encontrar o seu pet, basta escanear o QR Code. Recebe um alerta instantaneo com a localizacao - sem expor os seus dados pessoais.</p>
+            <h3>Identificação por QR Code</h3>
+            <p>Quem encontrar o seu animal pode ler o QR Code e enviar-lhe uma mensagem através da página de identificação.</p>
           </article>
         </div>
       </div>
@@ -153,19 +159,19 @@
     <!-- Como funciona -->
     <section class="section section--tight" id="como-funciona">
       <div class="container">
-        <h2>Em 3 passos, o seu pet esta protegido</h2>
+        <h2>Prepare o perfil do seu animal</h2>
         <div class="steps">
           <div class="step reveal">
-            <h3>Crie a sua conta gratis</h3>
-            <p>Registe-se gratuitamente e adicione nome, foto, peso e as medicacoes do seu pet - tudo em menos de 2 minutos.</p>
+            <h3>Crie o perfil</h3>
+            <p>Adicione o animal e os dados que pretende acompanhar na aplicação.</p>
           </div>
           <div class="step reveal">
-            <h3>Gere e imprima o QR Code</h3>
-            <p>A app gera um codigo unico para cada pet. Coloque na coleira, na plaqueta ou imprima uma etiqueta.</p>
+            <h3>Registe a medicação</h3>
+            <p>Defina os horários e consulte os registos de dose na aplicação.</p>
           </div>
           <div class="step reveal">
-            <h3>Convide cuidadores e relaxe</h3>
-            <p>Partilhe um link de convite com quem ajuda nos cuidados. Eles marcam as doses, mas nunca editam ou apagam informacoes importantes.</p>
+            <h3>Partilhe os cuidados</h3>
+            <p>Convide cuidadores e gere o QR Code de identificação do seu animal.</p>
           </div>
         </div>
       </div>
@@ -176,10 +182,10 @@
       <div class="container">
         <div class="cta-strip reveal">
           <div>
-            <h2 style="margin:0">Pronto para comecar?</h2>
-            <p style="margin:6px 0 0;color:var(--color-ink-3)">A app e 100% gratuita - sem cartao, sem limites, sem letras pequenas.</p>
+            <h2>Pronto para começar?</h2>
+            <p>O PetCare é gratuito e não exige cartão de pagamento.</p>
           </div>
-          <a class="btn btn--primary btn--lg" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+          <a class="btn btn--primary btn--lg" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
         </div>
       </div>
     </section>
@@ -187,14 +193,14 @@
     <!-- Funcionalidades -->
     <section class="section feature-band" id="funcionalidades">
       <div class="container">
-        <h2>Tudo o que precisa para cuidar bem</h2>
+        <h2>A informação essencial, à mão</h2>
         <ul class="checklist">
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Registo ilimitado de doses e historico completo</li>
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Notificacoes push para doses pendentes e perdidas</li>
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Pagina publica do pet (via QR Code) sem dados privados</li>
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Suporte a varios pets, cuidadores e tipos de medicacao</li>
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.5-2.3zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Dados seguros com autenticacao por Magic Link (sem passwords)</li>
-          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Funciona no telemovel, tablet e computador (Web)</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Registe as doses e consulte o histórico do seu animal</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Receba notificações sobre os registos de medicação</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Página pública de identificação através do QR Code</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Perfis para vários animais, cuidadores e tipos de medicação</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.5-2.3zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Aceda à sua conta com email e palavra-passe</li>
+          <li><svg viewBox="0 0 24 24" fill="var(--color-primary)" aria-hidden="true"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>Aceda à app na Web e em dispositivos Android</li>
         </ul>
       </div>
     </section>
@@ -202,35 +208,35 @@
     <!-- Newsletter / waitlist -->
     <section class="section section--tight" id="novidades">
       <div class="container">
-        <h2>Fique a par das novidades</h2>
-        <p class="lead">Novas funcionalidades e dicas de cuidado - diretamente no seu email. Sem spam.</p>
+        <h2>Novidades do PetCare</h2>
+        <p class="lead">Deixe o seu endereço de email para receber novidades sobre o PetCare.</p>
         <form class="subscribe" data-subscribe novalidate>
-          <label class="sr-only" for="nl-email" style="position:absolute;left:-9999px">O seu email</label>
-          <input type="email" id="nl-email" name="email" placeholder="oseuemail@exemplo.com" required autocomplete="email">
+          <label class="sr-only" for="nl-email">O seu endereço de email</label>
+          <input type="email" id="nl-email" name="email" placeholder="nome@exemplo.pt" required autocomplete="email">
           <button class="btn btn--primary" type="submit">Subscrever</button>
         </form>
         <p class="subscribe__msg" role="status" aria-live="polite"></p>
       </div>
     </section>
 
-    <!-- Precos (resumo) -->
+    <!-- Preços (resumo) -->
     <section class="section" id="precos">
       <div class="container">
-        <h2 style="text-align:center">Gratuito, com tudo incluido</h2>
+        <h2>PetCare é gratuito</h2>
         <div class="pricing-grid pricing-grid--single">
           <article class="price-card">
-            <p class="price-card__name">Free</p>
-            <p class="price-card__price">EUR 0<small>/mes</small></p>
-            <p class="price-card__sub">Todas as funcionalidades, gratuitas</p>
+            <p class="price-card__name">Grátis</p>
+            <p class="price-card__price">Grátis</p>
+            <p class="price-card__sub">A app é gratuita neste momento.</p>
             <ul>
-              <li>Pets ilimitados</li>
-              <li>Medicacoes ilimitadas</li>
-              <li>Cuidadores ilimitados</li>
-              <li>Historico completo de doses</li>
-              <li>QR Code e pagina publica do pet</li>
-              <li>Notificacoes e lembretes</li>
+              <li>Perfis para vários animais</li>
+              <li>Registo de medicação</li>
+              <li>Convites para cuidadores</li>
+              <li>Histórico de doses</li>
+              <li>QR Code e página pública de identificação</li>
+              <li>Notificações e lembretes</li>
             </ul>
-            <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+            <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
           </article>
 
           <!-- Plano Premium desativado por agora - a app e gratuita.
@@ -251,16 +257,16 @@
           </article>
           -->
         </div>
-        <p class="pricing-note">Gratuito. Nao pedimos cartao de credito.</p>
+        <p class="pricing-note">Gratuito. Não é necessário cartão de pagamento.</p>
       </div>
     </section>
 
     <!-- CTA final -->
     <section class="section cta-final">
       <div class="container">
-        <h2>Pronto para cuidar do seu pet com mais tranquilidade?</h2>
-        <p class="lead">Junte-se a centenas de donos que ja protegem os seus animais com o PetCare - gratuitamente.</p>
-        <a class="btn btn--amber btn--lg" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+        <h2>Comece a organizar os cuidados do seu animal.</h2>
+        <p class="lead">Crie uma conta gratuita para registar a medicação, convidar cuidadores e gerar um QR Code de identificação.</p>
+        <a class="btn btn--amber btn--lg" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
       </div>
     </section>
   </main>
@@ -274,12 +280,11 @@
           </span>
           PetCare
         </a>
-        <nav class="site-footer__links" aria-label="Rodape">
-          <a href="./">Sobre</a>
-          <a href="pricing.html">Precos</a>
-          <a href="privacy.html">Politica de Privacidade</a>
-          <a href="terms.html">Termos de Uso</a>
-          <a href="mailto:legal@petcare.com">Contacto</a>
+        <nav class="site-footer__links" aria-label="Rodapé">
+          <a href="./">Início</a>
+          <a href="pricing.html">Preços</a>
+          <a href="privacy.html">Política de privacidade</a>
+          <a href="terms.html">Termos de utilização</a>
         </nav>
       </div>
       <p class="site-footer__copy">&copy; 2026 PetCare. Todos os direitos reservados.</p>
