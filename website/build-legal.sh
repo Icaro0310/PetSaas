@@ -10,18 +10,18 @@ gen() {
 
   cat > "$out" <<EOF
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <meta name="description" content="${desc}">
   <link rel="canonical" href="${canon}">
-  <meta name="robots" content="index,follow">
+  <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
@@ -35,10 +35,10 @@ gen() {
         PetCare
       </a>
       <nav class="site-nav__links" aria-label="Principal">
-        <a class="nav-link" href="./">Inicio</a>
-        <a class="nav-link" href="pricing.html">Precos</a>
-        <a class="nav-link" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Entrar</a>
-        <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+        <a class="nav-link" href="./">Início</a>
+        <a class="nav-link" href="pricing.html">Preços</a>
+        <a class="nav-link" href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+        <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
       </nav>
       <button class="nav-toggle" aria-expanded="false" aria-controls="navOverlay">Menu</button>
     </div>
@@ -46,12 +46,12 @@ gen() {
 
   <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Menu">
     <button class="nav-overlay__close" aria-label="Fechar menu">Fechar</button>
-    <a href="./">Inicio</a>
-    <a href="pricing.html">Precos</a>
+    <a href="./">Início</a>
+    <a href="pricing.html">Preços</a>
     <a href="privacy.html">Privacidade</a>
     <a href="terms.html">Termos</a>
-    <a href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Entrar</a>
-    <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login" target="_blank" rel="noopener noreferrer">Criar conta gratis</a>
+    <a href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+    <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
   </div>
 
   <main class="section">
@@ -69,12 +69,11 @@ ${body}
           </span>
           PetCare
         </a>
-        <nav class="site-footer__links" aria-label="Rodape">
-          <a href="./">Sobre</a>
-          <a href="pricing.html">Precos</a>
-          <a href="privacy.html">Politica de Privacidade</a>
-          <a href="terms.html">Termos de Uso</a>
-          <a href="mailto:legal@petcare.com">Contacto</a>
+        <nav class="site-footer__links" aria-label="Rodapé">
+          <a href="./">Início</a>
+          <a href="pricing.html">Preços</a>
+          <a href="privacy.html">Política de privacidade</a>
+          <a href="terms.html">Termos de utilização</a>
         </nav>
       </div>
       <p class="site-footer__copy">&copy; 2026 PetCare. Todos os direitos reservados.</p>
@@ -89,11 +88,11 @@ EOF
 }
 
 gen "privacy.html" "privacy.html" \
-  "Politica de Privacidade - PetCare" \
-  "Como o PetCare recolhe, usa e protege os seus dados. Conformidade LGPD, CCPA e GDPR." \
+  "Política de privacidade | PetCare" \
+  "A Política de privacidade do PetCare está em revisão." \
   "https://icaro0310.github.io/PetSaas/privacy.html"
 
 gen "terms.html" "terms.html" \
-  "Termos de Uso - PetCare" \
-  "Condicoes de utilizacao do PetCare. Contas de utilizador, DMCA e arbitragem." \
+  "Termos de utilização | PetCare" \
+  "Os Termos de utilização do PetCare estão em revisão." \
   "https://icaro0310.github.io/PetSaas/terms.html"

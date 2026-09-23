@@ -35,6 +35,7 @@ export default defineConfig({
     ['junit', { outputFile: 'results/junit.xml' }],
   ],
   use: {
+    channel: process.env.E2E_BROWSER_CHANNEL === 'chrome' ? 'chrome' : undefined,
     // trailing slash para paths relativos ('pricing.html') resolverem
     // dentro do subpath do GitHub Pages (/PetSaas/)
     baseURL: SITE_URL.endsWith('/') ? SITE_URL : `${SITE_URL}/`,

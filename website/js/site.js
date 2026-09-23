@@ -6,12 +6,16 @@
   var overlay = document.querySelector(".nav-overlay");
   var closeBtn = document.querySelector(".nav-overlay__close");
 
+  var menuTrigger = null;
+
   function setMenu(open) {
     if (!overlay || !toggle) return;
+    if (open) menuTrigger = document.activeElement;
     overlay.classList.toggle("is-open", open);
     toggle.setAttribute("aria-expanded", String(open));
     document.body.style.overflow = open ? "hidden" : "";
     if (open && closeBtn) closeBtn.focus();
+    if (!open && menuTrigger) menuTrigger.focus();
   }
 
   if (toggle && overlay) {
@@ -21,7 +25,23 @@
       if (e.target.tagName === "A") setMenu(false);
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") setMenu(false);
+      if (!overlay.classList.contains("is-open")) return;
+      if (e.key === "Escape") {
+        setMenu(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      var focusable = overlay.querySelectorAll('a[href], button:not([disabled])');
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -67,14 +87,14 @@
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         input.setAttribute("aria-invalid", "true");
         msg.classList.add("is-error");
-        msg.textContent = "Introduza um email valido.";
+        msg.textContent = "Introduza um endereço de email válido.";
         input.focus();
         return;
       }
 
       button.disabled = true;
       var label = button.textContent;
-      button.textContent = "A subscrever...";
+      button.textContent = "A submeter…";
 
       fetch(SUBSCRIBE_URL, {
         method: "POST",
@@ -84,7 +104,7 @@
         .then(function (res) {
           if (res.ok) {
             msg.classList.add("is-ok");
-            msg.textContent = "Subscricao confirmada. Enviamos um email de boas-vindas - verifique a sua caixa de entrada!";
+            msg.textContent = "A sua subscrição foi registada.";
             form.reset();
             return;
           }
@@ -94,7 +114,7 @@
         })
         .catch(function () {
           msg.classList.add("is-error");
-          msg.textContent = "Nao foi possivel subscrever. Tente novamente mais tarde.";
+          msg.textContent = "Não foi possível registar a subscrição. Tente novamente mais tarde.";
         })
         .finally(function () {
           button.disabled = false;

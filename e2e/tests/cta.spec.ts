@@ -5,7 +5,7 @@ import { APP_URL } from '../playwright.config';
 const APP_LOGIN = `${APP_URL}/login`;
 
 test.describe('CTAs de conta - o site convida a registar-se', () => {
-  test('header tem Entrar + Criar conta gratis', async ({ page }, testInfo) => {
+  test('header tem Entrar + Criar conta grátis', async ({ page }, testInfo) => {
     test.skip(
       testInfo.project.name !== 'desktop',
       'no mobile os links vivem no overlay (teste proprio)'
@@ -13,7 +13,7 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     await page.goto('./');
     const nav = page.locator('.site-nav__links');
     const entrar = nav.getByRole('link', { name: 'Entrar', exact: true });
-    const criar = nav.getByRole('link', { name: 'Criar conta gratis' });
+    const criar = nav.getByRole('link', { name: 'Criar conta grátis' });
     await expect(entrar).toBeVisible();
     await expect(criar).toBeVisible();
     await expect(entrar).toHaveAttribute('href', APP_LOGIN);
@@ -24,17 +24,17 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     await page.goto('./');
     const hero = page.locator('.hero');
     await expect(
-      hero.getByRole('link', { name: 'Criar conta gratis' })
+      hero.getByRole('link', { name: 'Criar conta grátis' })
     ).toBeVisible();
     await expect(
       hero.getByRole('link', { name: 'Entrar na minha conta' })
     ).toBeVisible();
-    await expect(hero).toContainText('100% gratuito');
+    await expect(hero).toContainText('grátis');
   });
 
   test('home tem CTA de conta em pelo menos 4 pontos', async ({ page }) => {
     await page.goto('./');
-    const ctas = page.getByRole('link', { name: 'Criar conta gratis' });
+    const ctas = page.getByRole('link', { name: 'Criar conta grátis' });
     expect(await ctas.count()).toBeGreaterThanOrEqual(4);
   });
 
@@ -42,25 +42,20 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     await page.goto('./');
     const strip = page.locator('.cta-strip');
     await strip.scrollIntoViewIfNeeded();
-    await expect(strip).toContainText('Pronto para comecar?');
+    await expect(strip).toContainText('Pronto para começar?');
     await expect(
-      strip.getByRole('link', { name: 'Criar conta gratis' })
+      strip.getByRole('link', { name: 'Criar conta grátis' })
     ).toBeVisible();
   });
 
-  test('clique no CTA abre a app na pagina de login', async ({ page, context }) => {
+  test('clique no CTA abre a app na página de login', async ({ page }) => {
     await page.goto('./');
     const criar = page
       .locator('.hero')
-      .getByRole('link', { name: 'Criar conta gratis' });
-    const [popup] = await Promise.all([
-      context.waitForEvent('page'),
-      criar.click(),
-    ]);
-    // GitHub Pages: /PetSaas/app/login -> 404.html -> ?p= -> replaceState
-    // restaura a URL limpa; esperamos o destino final da SPA.
-    await popup.waitForURL(/\/PetSaas\/app\/login/, { timeout: 30000 });
-    await popup.close();
+      .getByRole('link', { name: 'Criar conta grátis' });
+    await criar.click();
+    // GitHub Pages: /PetSaas/app/login -> 404.html -> ?p= -> replaceState.
+    await page.waitForURL(/\/PetSaas\/app\/login/, { timeout: 30000 });
   });
 
   test('raiz da app responde 200', async ({ request }) => {
@@ -77,7 +72,7 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     await page.waitForURL(/\/PetSaas\/app\/login/, { timeout: 30000 });
   });
 
-  test('overlay mobile tem Entrar + Criar conta gratis', async ({
+  test('overlay mobile tem Entrar + Criar conta grátis', async ({
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name !== 'mobile', 'overlay so existe no mobile');
@@ -88,7 +83,7 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
       overlay.getByRole('link', { name: 'Entrar', exact: true })
     ).toBeVisible();
     await expect(
-      overlay.getByRole('link', { name: 'Criar conta gratis' })
+      overlay.getByRole('link', { name: 'Criar conta grátis' })
     ).toBeVisible();
   });
 
@@ -108,11 +103,11 @@ test.describe('CTAs de conta - o site convida a registar-se', () => {
     page,
   }) => {
     await page.goto('pricing.html');
-    await expect(page.locator('h1')).toContainText('Gratuito');
+    await expect(page.locator('h1')).toContainText('PetCare é gratuito');
     const card = page.locator('.price-card');
-    await expect(card).toContainText('Pets ilimitados');
+    await expect(card).toContainText('Perfis para vários animais');
     await expect(
-      card.getByRole('link', { name: 'Criar conta gratis' })
+      card.getByRole('link', { name: 'Criar conta grátis' })
     ).toBeVisible();
   });
 });

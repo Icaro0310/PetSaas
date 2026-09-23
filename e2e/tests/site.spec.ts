@@ -62,8 +62,16 @@ test.describe('Site smoke - paginas carregam corretamente', () => {
     }
   });
 
-  test('termos refletem servico gratuito', async ({ page }) => {
-    await page.goto('terms.html');
-    await expect(page.locator('body')).toContainText('Servico gratuito');
+  test('documentos legais estão marcados como rascunho e não são indexados', async ({ page }) => {
+    for (const path of ['terms.html', 'privacy.html']) {
+      await page.goto(path);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        'content',
+        'noindex,nofollow'
+      );
+      const body = await page.locator('body').innerText();
+      expect(body).toContain('Documento em revisão');
+      expect(body).not.toMatch(/SEU_NOME|SEU_ENDERECO|app\.petcare\.com|legal@petcare\.com/i);
+    }
   });
 });

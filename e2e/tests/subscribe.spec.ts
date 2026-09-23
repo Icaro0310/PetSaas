@@ -16,18 +16,18 @@ test.describe('Formulario de subscricao (waitlist -> Supabase)', () => {
     await input.fill('nao-e-um-email');
     await page.locator('[data-subscribe] button[type="submit"]').click();
 
-    await expect(msg).toContainText('email valido');
+    await expect(msg).toContainText('endereço de email válido');
     await expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 
-  test('email valido subscreve com sucesso', async ({ page }) => {
+  test('endereço de email válido subscreve com sucesso', async ({ page }) => {
     const input = page.locator('[data-subscribe] input[type="email"]');
     const msg = page.locator('.subscribe__msg').first();
 
     await input.fill(E2E_EMAIL);
     await page.locator('[data-subscribe] button[type="submit"]').click();
 
-    await expect(msg).toContainText('Subscricao confirmada', {
+    await expect(msg).toContainText('A sua subscrição foi registada', {
       timeout: 15_000,
     });
     await expect(input).toHaveValue('');
@@ -42,7 +42,7 @@ test.describe('Formulario de subscricao (waitlist -> Supabase)', () => {
     await input.fill(E2E_EMAIL); // mesmo email do teste anterior
     await page.locator('[data-subscribe] button[type="submit"]').click();
 
-    await expect(msg).toContainText('Subscricao confirmada', {
+    await expect(msg).toContainText('A sua subscrição foi registada', {
       timeout: 15_000,
     });
   });

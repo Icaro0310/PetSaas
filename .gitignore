@@ -72,3 +72,7 @@ android/build/
 # Graphify knowledge graph output
 graphify-out/
 
+
+# Design skill working directories
+.design-dna/
+.hallmark/

@@ -16,6 +16,20 @@ test.describe('Responsividade', () => {
     }
   });
 
+  test('sem overflow horizontal nos principais breakpoints', async ({ page }) => {
+    await page.goto('./');
+    for (const width of [320, 375, 414, 768, 1024, 1280, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      const dimensions = await page.evaluate(() => ({
+        scroll: document.documentElement.scrollWidth,
+        client: document.documentElement.clientWidth,
+      }));
+      expect(dimensions.scroll, `overflow a ${width}px`).toBeLessThanOrEqual(
+        dimensions.client + 1,
+      );
+    }
+  });
+
   test('mobile: menu overlay abre e fecha', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'mobile', 'apenas viewport mobile');
     await page.goto('./');

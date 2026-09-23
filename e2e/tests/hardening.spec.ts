@@ -14,7 +14,7 @@ test.describe('Robustez UAT - cenarios de falha e acessibilidade', () => {
     await form.locator('input[type="email"]').fill('falha@example.com');
     await button.click();
     await expect(page.locator('.subscribe__msg').first()).toContainText(
-      'Nao foi possivel'
+      'Não foi possível'
     );
     await expect(button).toBeEnabled();
   });
@@ -37,7 +37,7 @@ test.describe('Robustez UAT - cenarios de falha e acessibilidade', () => {
     await button.click();
     await expect(button).toBeDisabled();
     await expect(page.locator('.subscribe__msg').first()).toContainText(
-      'Subscricao confirmada',
+      'A sua subscrição foi registada',
       { timeout: 10000 }
     );
     await expect(button).toBeEnabled();
@@ -58,7 +58,7 @@ test.describe('Robustez UAT - cenarios de falha e acessibilidade', () => {
     await form.locator('input[type="email"]').fill('erro@example.com');
     await form.locator('button[type="submit"]').click();
     await expect(page.locator('.subscribe__msg').first()).toContainText(
-      'Nao foi possivel'
+      'Não foi possível'
     );
   });
 
