@@ -81,7 +81,7 @@ Encarregado de Dados (DPO): legal@petcare.com
 - Firebase / Google (analytics, crashlytics, FCM) - https://policies.google.com/privacy;
 - PostHog (analytics) - https://posthog.com/privacy;
 - Sentry (monitoramento de erros) - https://sentry.io/privacy/;
-- Netlify (hosting web) - https://www.netlify.com/privacy-policy/;
+- GitHub Pages (hosting web) - https://pages.github.com/;
 - MailerSend (envio de emails) - https://www.mailersend.com/privacy-policy.
 
 4.2 Pagamentos: Processados diretamente pelo utilizador (sem armazenamento de dados de cartao no Servico).

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pagina nao encontrada - PetCare</title>
+  <script>
+    // SPA fallback para a app Flutter em /PetSaas/app/: o GitHub Pages
+    // nao tem fallback nativo, entao rotas como /PetSaas/app/login caem
+    // aqui. Redirecionamos para a app com a rota em ?p= - o index.html
+    // da app restaura a URL original via history.replaceState.
+    (function () {
+      var prefix = '/PetSaas/app';
+      var loc = window.location;
+      if (loc.pathname === prefix || loc.pathname.indexOf(prefix + '/') === 0) {
+        var target = loc.pathname + loc.search + loc.hash;
+        window.location.replace(prefix + '/?p=' + encodeURIComponent(target));
+      }
+    })();
+  </script>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; display: flex; min-height: 100vh;
+           align-items: center; justify-content: center; background: #FAFBF6; color: #22301F; margin: 0; }
+    .box { text-align: center; padding: 2rem; }
+    h1 { font-family: Poppins, Inter, sans-serif; font-size: 2rem; margin: 0 0 .5rem; }
+    a { color: #2E7D32; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Pagina nao encontrada</h1>
+    <p>O endereco que procuras nao existe ou foi movido.</p>
+    <p><a href="/PetSaas/">Voltar ao inicio</a></p>
+  </div>
+</body>
+</html>
