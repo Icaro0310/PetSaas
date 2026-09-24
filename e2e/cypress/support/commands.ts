@@ -61,6 +61,22 @@ declare global {
         petId: string,
         email: string,
       ): Chainable<string>;
+      /** Cria um cuidador ativo com permissoes via REST (setup). Devolve o id. */
+      createActiveCaregiverViaApi(
+        petId: string,
+        caregiverId: string,
+        email: string,
+        permissions: string[],
+      ): Chainable<string>;
+      /** Cria um passeio via REST (setup). Devolve o id. */
+      createWalkViaApi(
+        petId: string,
+        opts?: { poop?: boolean; pee?: boolean; notes?: string },
+      ): Chainable<string>;
+      /** Termina a sessao atual e entra como outra conta de teste (Clerk). */
+      signInAs(email: string): Chainable<void>;
+      /** Conta pets cujo nome comeca por prefixo (GET select=id). */
+      countPets(prefix: string): Chainable<number>;
       /** prefers-reduced-motion via CDP (chromium-family apenas). */
       emulateReducedMotion(): Chainable<void>;
     }
@@ -518,6 +534,77 @@ Cypress.Commands.add('createCaregiverViaApi', (petId: string, email: string) => 
       })
       .then((rows) => rows[0].id as string),
   );
+});
+
+Cypress.Commands.add(
+  'createActiveCaregiverViaApi',
+  (
+    petId: string,
+    caregiverId: string,
+    email: string,
+    permissions: string[],
+  ) => {
+    return cy.clerkUserId().then((ownerId) =>
+      cy
+        .sbRest('POST', 'caregivers', '', {
+          pet_id: petId,
+          owner_id: ownerId,
+          caregiver_id: caregiverId,
+          caregiver_email: email,
+          status: 'active',
+          permissions,
+          accepted_at: new Date().toISOString(),
+        })
+        .then((rows) => rows[0].id as string),
+    );
+  },
+);
+
+Cypress.Commands.add(
+  'createWalkViaApi',
+  (
+    petId: string,
+    opts: { poop?: boolean; pee?: boolean; notes?: string } = {},
+  ) => {
+    return cy.clerkUserId().then((userId) =>
+      cy
+        .sbRest('POST', 'walks', '', {
+          pet_id: petId,
+          walked_at: new Date().toISOString(),
+          poop: opts.poop ?? false,
+          pee: opts.pee ?? false,
+          notes: opts.notes ?? null,
+          logged_by: userId,
+        })
+        .then((rows) => rows[0].id as string),
+    );
+  },
+);
+
+Cypress.Commands.add('signInAs', (email: string) => {
+  cy.window()
+    .its('Clerk.client', { timeout: 60_000 })
+    .should('exist')
+    .then(async (win: any) => {
+      if (win.Clerk.user) await win.Clerk.signOut();
+      const res = await signInProgrammatic(win, email, '424242');
+      if ((res as any).err) {
+        throw new Error(
+          `Login E2E como ${email} falhou: ${(res as any).err}. ` +
+            'Cria a conta uma vez via UI da app (codigo 424242).',
+        );
+      }
+      await win.Clerk.setActive({ session: (res as any).session });
+    });
+  cy.reload();
+  cy.enableSemantics();
+  cy.window().its('Clerk.user.id', { timeout: 60_000 }).should('exist');
+});
+
+Cypress.Commands.add('countPets', (prefix: string) => {
+  return cy
+    .sbRest('GET', 'pets', `select=id&name=like.${prefix}*`)
+    .then((rows) => (rows as unknown[]).length);
 });
 
 /* ------------------------------------------------------------------ */
