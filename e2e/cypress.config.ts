@@ -39,7 +39,10 @@ export default defineConfig({
     pageLoadTimeout: 120_000,
     requestTimeout: 30_000,
     responseTimeout: 30_000,
-    retries: { runMode: 2, openMode: 0 },
+    // Self-healing: retries em run (CI/headless) e tambem no modo
+    // interativo (cypress open) — um teste que tropeca num timing
+    // transitorio do Flutter re-tenta automaticamente.
+    retries: { runMode: 2, openMode: 1 },
     env: {
       SITE_URL,
       APP_URL: pick(

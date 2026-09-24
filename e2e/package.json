@@ -4,12 +4,12 @@
   "version": "1.0.0",
   "description": "Cypress (suite principal) + Playwright (fallback) E2E/UAT para o website, app Flutter Web e Edge Functions do PetCare",
   "scripts": {
-    "test": "cypress run",
-    "test:headed": "cypress run --headed",
-    "test:open": "cypress open",
-    "test:app": "cypress run --spec \"cypress/e2e/app/**/*.cy.ts\"",
+    "test": "node scripts/cypress.js run",
+    "test:headed": "node scripts/cypress.js run --headed",
+    "test:open": "node scripts/cypress.js open",
+    "test:app": "node scripts/cypress.js run --spec \"cypress/e2e/app/**/*.cy.ts\"",
     "test:fallback": "playwright test",
-    "test:all": "cypress run && playwright test"
+    "test:all": "node scripts/cypress.js run && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

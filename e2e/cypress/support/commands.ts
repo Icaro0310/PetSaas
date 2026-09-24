@@ -16,6 +16,8 @@ declare global {
     interface Chainable {
       /** Ativa a arvore de semantica (placeholder ou auto-ativa). */
       enableSemantics(): Chainable<void>;
+      /** Espera ate o ClerkJS (bridge) estar inicializado na pagina. */
+      waitForClerk(): Chainable<void>;
       /** Abre a app, autentica (email_code clerk_test) e espera 'Meus pets'. */
       openApp(): Chainable<void>;
       /** Ultimo no flt-semantics cujo texto/aria-label contem o label. */
@@ -47,6 +49,18 @@ declare global {
       createPetViaApi(name: string): Chainable<string>;
       /** Apaga pets de teste por prefixo (isola specs). */
       cleanupTestPets(prefix: string): Chainable<void>;
+      /** Cria uma medicacao diaria via REST (setup). Devolve o id. */
+      createMedicationViaApi(petId: string, name: string): Chainable<string>;
+      /** Cria uma dose pending para hoje via REST (setup). Devolve o id. */
+      createPendingDoseViaApi(
+        petId: string,
+        medicationId: string,
+      ): Chainable<string>;
+      /** Cria um cuidador pending via REST (setup). Devolve o id. */
+      createCaregiverViaApi(
+        petId: string,
+        email: string,
+      ): Chainable<string>;
       /** prefers-reduced-motion via CDP (chromium-family apenas). */
       emulateReducedMotion(): Chainable<void>;
     }
@@ -54,6 +68,33 @@ declare global {
 }
 
 export {};
+
+/* ------------------------------------------------------------------ */
+/* Ritmo legivel (self-healing + observacao humana)                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Em modo headed/interativo cada acao visivel faz uma pausa — suites
+ * corridas a velocidade de maquina sao impossiveis de acompanhar.
+ * Override via env: CYPRESS_SLOW_MO=1200 (0 desliga).
+ */
+const SLOW_MO = Number(
+  Cypress.env('SLOW_MO') ?? (Cypress.browser.isHeaded ? 900 : 0),
+);
+
+if (SLOW_MO > 0) {
+  (['click', 'type', 'clear', 'selectFile', 'check', 'uncheck'] as const).forEach(
+    (cmd) => {
+      Cypress.Commands.overwrite(
+        cmd as 'click',
+        ((orig: (...a: any[]) => Cypress.Chainable, ...args: any[]) =>
+          orig(...args).then((res: unknown) =>
+            cy.wait(SLOW_MO).then(() => res),
+          )) as never,
+      );
+    },
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* Utilitarios internos                                                */
@@ -310,6 +351,10 @@ async function signInProgrammatic(win: any, email: string, code: string) {
   }
 }
 
+Cypress.Commands.add('waitForClerk', () => {
+  cy.window().its('Clerk.client', { timeout: 60_000 }).should('exist');
+});
+
 Cypress.Commands.add('openApp', () => {
   const appUrl = env('APP_URL');
   // Deep links nao funcionam no boot: o redirect do router corre antes do
@@ -416,6 +461,52 @@ Cypress.Commands.add('createPetViaApi', (name: string) => {
 
 Cypress.Commands.add('cleanupTestPets', (prefix: string) => {
   cy.sbRest('DELETE', 'pets', `name=like.${prefix}*`);
+});
+
+Cypress.Commands.add('createMedicationViaApi', (petId: string, name: string) => {
+  return cy
+    .sbRest('POST', 'medications', '', {
+      pet_id: petId,
+      name,
+      dosage: '1 comprimido',
+      frequency_type: 'daily',
+      schedule_times: ['08:00'],
+      start_date: new Date().toISOString().slice(0, 10),
+    })
+    .then((rows) => rows[0].id as string);
+});
+
+Cypress.Commands.add(
+  'createPendingDoseViaApi',
+  (petId: string, medicationId: string) => {
+    // Horario futuro hoje — senao o cron marca 'missed' antes do clique.
+    const in30min = new Date(Date.now() + 30 * 60 * 1000);
+    const endOfToday = new Date();
+    endOfToday.setUTCHours(23, 59, 0, 0);
+    const scheduled =
+      in30min < endOfToday ? in30min.toISOString() : endOfToday.toISOString();
+    return cy
+      .sbRest('POST', 'dose_logs', '', {
+        medication_id: medicationId,
+        pet_id: petId,
+        scheduled_time: scheduled,
+        status: 'pending',
+      })
+      .then((rows) => rows[0].id as string);
+  },
+);
+
+Cypress.Commands.add('createCaregiverViaApi', (petId: string, email: string) => {
+  return cy.clerkUserId().then((ownerId) =>
+    cy
+      .sbRest('POST', 'caregivers', '', {
+        pet_id: petId,
+        owner_id: ownerId,
+        caregiver_email: email,
+        status: 'pending',
+      })
+      .then((rows) => rows[0].id as string),
+  );
 });
 
 /* ------------------------------------------------------------------ */

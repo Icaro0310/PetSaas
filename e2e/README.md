@@ -16,22 +16,50 @@ lhe e impossivel e validar a renderizacao **sem JS**. Esse teste fica em
 `tests-fallback/` (Playwright com `javaScriptEnabled: false`, Chrome do
 sistema — sem `playwright install`). No CI ambos correm como cross-check.
 
-## Suites Cypress
+## Organizacao — um teste por spec
 
-| Ficheiro | Cobertura |
-|----------|-----------|
-| `cypress/e2e/site.cy.ts` | Smoke: paginas 200, title/h1/meta, assets 200, links internos, sem erros JS |
-| `cypress/e2e/cta.cy.ts` | CTAs de conta em todo o site, deep link /app/login, sem texto Premium |
-| `cypress/e2e/subscribe.cy.ts` | Formulario waitlist: validacao, sucesso, dedup |
-| `cypress/e2e/api.cy.ts` | Edge Function: CORS, 405, Zod strict, RLS da waitlist, health |
-| `cypress/e2e/responsive.cy.ts` | Sem overflow horizontal (7 breakpoints), overlay mobile, reduced-motion via CDP |
-| `cypress/e2e/hardening.cy.ts` | Falhas de rede (intercept), Tab/Escape reais, a11y, OG tags, 404, favicon |
-| `cypress/e2e/auth.cy.ts` | Clerk UI — so com `AUTH_APP_URL` (build local) |
-| `cypress/e2e/app/pets.cy.ts` | Form de pet: validacao, criar sem foto, criar com foto (upload real), editar |
-| `cypress/e2e/app/medications.cy.ts` | Medicacao diaria, dose de hoje, "Dar remedio" marca `given` |
-| `cypress/e2e/app/caregivers.cy.ts` | Validacao email, convite, cuidador na lista, remover |
-| `cypress/e2e/app/z_logout.cy.ts` | Perfil (atalhos) + logout volta ao login |
-| `cypress/e2e/app/account.cy.ts` | Eliminar conta — so com `E2E_ALLOW_DELETE_ACCOUNT=1` e conta clerk_test |
+Cada ficheiro `.cy.ts` contem **um unico teste** (`it`), com um cabecalho
+em estilo Gherkin (Funcionalidade / Cenario / Dado / Quando / Entao) em
+portugues neutro — qualquer pessoa consegue ler o que o teste valida sem
+conhecer o codigo.
+
+| Pasta | Testes | Cobertura |
+|---|---|---|
+| `cypress/e2e/01-site/` | 7 | Paginas 200, title/h1/meta, assets, links internos, docs legais, sem erros JS |
+| `cypress/e2e/02-ctas/` | 10 | CTAs de conta, deep link /app/login, sem texto Premium, pricing "gratuito" |
+| `cypress/e2e/03-subscricao/` | 4 | Waitlist: validacao, sucesso, dedup, estado do botao |
+| `cypress/e2e/04-api/` | 8 | Edge Function: CORS, 405, Zod strict, RLS da waitlist, health |
+| `cypress/e2e/05-responsivo/` | 5 | Sem overflow horizontal, breakpoints, overlay mobile, reduced-motion |
+| `cypress/e2e/06-robustez/` | 12 | Falhas de rede, lentidao, 500, Tab/Escape, a11y, 404, favicon, OG |
+| `cypress/e2e/07-auth/` | 3 | Clerk UI — so com `AUTH_APP_URL` (build local) |
+| `cypress/e2e/app/` | 12 | App autenticada: pets, medicacao, doses, cuidadores, perfil, logout |
+
+Exemplo de spec:
+
+```ts
+// Funcionalidade: Gestao de animais
+//   Cenario: Criar um animal sem fotografia
+//     Dado que estou autenticado na aplicacao
+//     Quando crio um animal apenas com o nome
+//     Entao o animal aparece na lista "Meus pets"
+describe('Gestão de animais', () => {
+  it('cria um animal sem fotografia e mostra-o na lista', () => { ... });
+});
+```
+
+## Self-healing e ritmo legivel
+
+- **Retries**: `runMode: 2` (CI/headless) e `openMode: 1` (Cypress App) —
+  um tropeco num timing transitorio do Flutter re-tenta sozinho.
+- **Polling imune a rebuilds**: `findSem`/`tapAndWait`/`openPet` consultam
+  o documento a cada tentativa em vez de reter nos `flt-semantics` que o
+  Flutter derruba e recria em transicoes.
+- **Setup por spec**: dados de teste criados via REST autenticado no
+  `before` — as specs sao independentes e paralelizaveis.
+- **Ritmo humano (`SLOW_MO`)**: em modo headed/interativo cada acao
+  visivel (`click`, `type`, `selectFile`...) faz uma pausa de ~900ms para
+  ser acompanhada visualmente. Override: `CYPRESS_SLOW_MO=1500` ou
+  `CYPRESS_SLOW_MO=0` para desligar. Em headless nao ha pausa (CI rapido).
 
 ## Testes autenticados da app (Flutter Web)
 
@@ -39,12 +67,13 @@ A app e canvas — os testes usam a arvore de semantica do Flutter
 (`flt-semantics`), ativada automaticamente por `cy.enableSemantics()`.
 Text fields aparecem como `<input data-semantics-role="text-field"
 aria-label="...">` dentro do no `flt-semantics` — o `cy.fillField()`
-preenche esse input.
+preenche esse input. Titulos de AppBar sao `<h2>` reais.
 
 Comandos em `cypress/support/commands.ts`: `openApp`, `enableSemantics`,
-`semNode`, `semButton`, `tapButton`, `tapAndWait`, `openPet`, `fillField`,
-`clerkUserId`, `sbRest`, `createPetViaApi`, `cleanupTestPets`,
-`emulateReducedMotion`.
+`waitForClerk`, `semNode`, `semButton`, `tapButton`, `tapAndWait`,
+`openPet`, `fillField`, `clerkUserId`, `sbRest`, `createPetViaApi`,
+`createMedicationViaApi`, `createPendingDoseViaApi`,
+`createCaregiverViaApi`, `cleanupTestPets`, `emulateReducedMotion`.
 
 ### Autenticacao programatica (sem login manual)
 
@@ -68,13 +97,17 @@ E2E_EMAIL=conta@exemplo.com E2E_PASSWORD=senha npm run test:app
 
 ## Correr localmente
 
+Os scripts passam por `scripts/cypress.js`, que remove a variavel global
+`ELECTRON_RUN_AS_NODE` desta maquina (se presente, o Electron do Cypress
+corre como Node e falha com "bad option: --smoke-test").
+
 ```bash
 cd e2e
 npm ci
 
 npm test              # suite Cypress completa (headless)
-npm run test:headed   # suite visivel (Chrome headed)
-npm run test:open     # Cypress App interativo
+npm run test:headed   # suite visivel (Electron headed, ritmo lento)
+npm run test:open     # Cypress App interativo — escolher "E2E" > "Electron"
 npm run test:app      # so a app autenticada
 npm run test:fallback # fallback Playwright (sem JS)
 npm run test:all      # Cypress + fallback (cross-check)
@@ -87,11 +120,11 @@ SITE_URL=http://localhost:8080 npm test
 ```
 
 Variaveis: `SITE_URL`, `APP_URL`, `SB_URL`, `SB_ANON_KEY`,
-`E2E_EMAIL`, `E2E_PASSWORD`, `AUTH_APP_URL`,
+`E2E_EMAIL`, `E2E_PASSWORD`, `AUTH_APP_URL`, `SLOW_MO`,
 `E2E_ALLOW_DELETE_ACCOUNT` (aceitam prefixo `CYPRESS_` ou nome direto).
 
 Dados de teste usam nomes `* E2E *` e cada spec apaga os seus no `after`
-por prefixo (`Rex E2E`, `MedPet E2E`, `CgPet E2E`, `Foto E2E`).
+por prefixo (`Rex E2E`, `MedPet E2E`, `CgVal E2E`, `Foto E2E`, ...).
 
 ### Gaps conhecidos (nao existem na app — nao sao bugs de teste)
 
@@ -104,7 +137,7 @@ por prefixo (`Rex E2E`, `MedPet E2E`, `CgPet E2E`, `Foto E2E`).
 
 `.github/workflows/website-e2e.yml` corre todos os dias as 06:17 UTC
 (mais `workflow_dispatch` e push em `website/**`/`e2e/**`): Cypress no
-Chrome via `cypress-io/github-action`, depois o fallback Playwright no
+Electron via `cypress-io/github-action`, depois o fallback Playwright no
 Chrome do sistema.
 
 Notas:
