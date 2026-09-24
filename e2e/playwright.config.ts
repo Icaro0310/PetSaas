@@ -1,68 +1,25 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 
 /**
- * PetCare website E2E/UAT suite.
+ * Playwright = FALLBACK da suite principal Cypress (cypress.config.ts).
  *
- * Targets the LIVE site by default. Override with env vars:
- *   SITE_URL   - website under test (default: GitHub Pages)
- *   APP_URL    - Flutter web app (default: GitHub Pages /PetSaas/app)
- *   SB_URL     - Supabase project URL
- *   SB_ANON_KEY- Supabase publishable/anon key (public by design)
+ * Cobre apenas o que o Cypress estruturalmente nao consegue fazer:
+ * paginas renderizadas sem JavaScript (o Cypress injeta-se na pagina).
+ *
+ * Corre no Chrome do sistema (channel: 'chrome') — nao precisa de
+ * `playwright install` nem em CI nem local.
  */
 export const SITE_URL =
   process.env.SITE_URL ?? 'https://icaro0310.github.io/PetSaas';
-export const APP_URL =
-  process.env.APP_URL ?? 'https://icaro0310.github.io/PetSaas/app';
-export const SB_URL =
-  process.env.SB_URL ?? 'https://dotplnbakltelacsxvjz.supabase.co';
-export const SB_ANON_KEY =
-  process.env.SB_ANON_KEY ??
-  'sb_publishable__Pp5qzGJ2HlZPPD1NEdPSg_ZCCA9I9x';
-export const SUBSCRIBE_URL = `${SB_URL}/functions/v1/subscribe`;
-export const ALLOWED_ORIGIN = new URL(SITE_URL).origin;
 
 export default defineConfig({
-  testDir: './tests',
-  timeout: 120_000,
-  expect: { timeout: 10_000 },
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
-  reporter: [
-    ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['junit', { outputFile: 'results/junit.xml' }],
-  ],
+  testDir: './tests-fallback',
+  timeout: 60_000,
+  retries: process.env.CI ? 1 : 0,
+  reporter: [['list']],
   use: {
-    channel: process.env.E2E_BROWSER_CHANNEL === 'chrome' ? 'chrome' : undefined,
-    // trailing slash para paths relativos ('pricing.html') resolverem
-    // dentro do subpath do GitHub Pages (/PetSaas/)
+    channel: process.env.PW_CHANNEL ?? 'chrome',
     baseURL: SITE_URL.endsWith('/') ? SITE_URL : `${SITE_URL}/`,
-    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
   },
-  projects: [
-    {
-      name: 'desktop',
-      testIgnore: [/auth\.setup\.ts/, /app[\\/].*\.spec\.ts/],
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
-    },
-    {
-      name: 'mobile',
-      testIgnore: [/auth\.setup\.ts/, /app[\\/].*\.spec\.ts/],
-      use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
-    },
-    {
-      // Cada contexto autentica-se sozinho via openApp (email_code clerk_test).
-      // Sem storageState — o logout num teste nao mata a sessao dos outros.
-      name: 'app',
-      testMatch: /app[\\/].*\.spec\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1440, height: 900 },
-      },
-    },
-  ],
 });

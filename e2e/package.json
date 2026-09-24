@@ -2,15 +2,19 @@
   "name": "petcare-e2e",
   "private": true,
   "version": "1.0.0",
-  "description": "Playwright UAT/E2E suite for the PetCare website and public Edge Functions",
+  "description": "Cypress (suite principal) + Playwright (fallback) E2E/UAT para o website, app Flutter Web e Edge Functions do PetCare",
   "scripts": {
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:app": "playwright test --project=app",
-    "report": "playwright show-report"
+    "test": "cypress run",
+    "test:headed": "cypress run --headed",
+    "test:open": "cypress open",
+    "test:app": "cypress run --spec \"cypress/e2e/app/**/*.cy.ts\"",
+    "test:fallback": "playwright test",
+    "test:all": "cypress run && playwright test"
   },
   "devDependencies": {
-    "@clerk/testing": "^2.2.37",
-    "@playwright/test": "1.63.0"
+    "@playwright/test": "1.63.0",
+    "cypress": "^15.21.1",
+    "cypress-real-events": "^1.15.1",
+    "typescript": "^7.0.2"
   }
 }

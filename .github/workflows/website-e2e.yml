@@ -1,7 +1,9 @@
-name: Website E2E (Playwright)
+name: Website E2E (Cypress)
 
 # Suite UAT diaria contra o site em producao + Edge Functions.
-# Falha => check vermelho no repo + artefactos com report/traces.
+# Cypress e a suite principal; Playwright corre como fallback para os
+# cenarios que o Cypress nao consegue executar (pagina sem JavaScript).
+# Falha => check vermelho no repo + artefactos com screenshots/videos.
 
 on:
   schedule:
@@ -20,42 +22,36 @@ concurrency:
 
 jobs:
   e2e:
-    name: Playwright UAT
+    name: Cypress UAT
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Cypress E2E (suite principal)
+        uses: cypress-io/github-action@v6
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: e2e/package-lock.json
-
-      - name: Install deps
-        working-directory: e2e
-        run: npm ci
-
-      - name: Install Playwright Chromium
-        working-directory: e2e
-        run: npx playwright install --with-deps chromium
-
-      - name: Run E2E suite (live site)
-        working-directory: e2e
-        # Site publico + app autenticada (sign-in programatico com a conta
-        # clerk_test — email_code 424242, sem segredos necessarios).
-        run: npx playwright test --project=desktop --project=mobile --project=app
+          working-directory: e2e
+          browser: chrome
         env:
           SITE_URL: https://icaro0310.github.io/PetSaas
           APP_URL: https://icaro0310.github.io/PetSaas/app
 
-      - name: Upload Playwright report
+      - name: Playwright fallback (sem JavaScript)
+        working-directory: e2e
+        # Cross-check: o fallback usa o Chrome do sistema — sem playwright install.
+        run: npx playwright test
+        env:
+          SITE_URL: https://icaro0310.github.io/PetSaas
+
+      - name: Upload E2E artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: cypress-artifacts
           path: |
-            e2e/playwright-report/
-            e2e/results/
+            e2e/cypress/screenshots/
+            e2e/cypress/videos/
+            e2e/test-results/
           retention-days: 14
           if-no-files-found: ignore
