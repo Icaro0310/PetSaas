@@ -5,6 +5,7 @@ import {
   fillField,
   nodeWithLabel,
   openPet,
+  tapAndWait,
   newSessionPage,
   cleanupTestPets,
   sbRest,
@@ -26,7 +27,7 @@ test.describe.serial('Pets', () => {
 
   test('validacao do formulario (nome e peso)', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Adicionar pet');
+    await tapAndWait(page, 'Adicionar pet', { heading: 'Novo pet' });
     // Submeter vazio -> erro de nome obrigatorio
     await tapButton(page, 'Criar pet');
     await expect(nodeWithLabel(page, 'Nome obrigatorio')).toBeVisible({
@@ -40,7 +41,7 @@ test.describe.serial('Pets', () => {
 
   test('criar pet sem foto', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Adicionar pet');
+    await tapAndWait(page, 'Adicionar pet', { heading: 'Novo pet' });
     await fillField(page, 'Nome *', petName);
     await tapButton(page, 'Criar pet');
     // Volta a lista e o pet aparece
@@ -52,7 +53,7 @@ test.describe.serial('Pets', () => {
 
   test('criar pet com foto', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Adicionar pet');
+    await tapAndWait(page, 'Adicionar pet', { heading: 'Novo pet' });
     const name = `Foto E2E ${stamp}`;
     await fillField(page, 'Nome *', name);
     // PhotoPicker -> bottom sheet -> Galeria -> file chooser
@@ -83,7 +84,7 @@ test.describe.serial('Pets', () => {
   test('editar pet', async ({ page }) => {
     await openApp(page);
     await openPet(page, petName);
-    await tapButton(page, 'Editar');
+    await tapAndWait(page, 'Editar', { text: 'Guardar alteracoes' });
     await fillField(page, 'Nome *', petRenamed);
     await tapButton(page, 'Guardar alteracoes');
     await expect(nodeWithLabel(page, petRenamed)).toBeVisible({

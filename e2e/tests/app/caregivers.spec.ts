@@ -5,6 +5,7 @@ import {
   fillField,
   nodeWithLabel,
   openPet,
+  tapAndWait,
   newSessionPage,
   createPetViaApi,
   cleanupTestPets,
@@ -34,9 +35,9 @@ test.describe.serial('Cuidadores', () => {
   test('validacao de email invalido', async ({ page }) => {
     await openApp(page);
     await openPet(page, petName);
-    await tapButton(page, 'Cuidadores');
+    await tapAndWait(page, 'Cuidadores', { heading: 'Cuidadores' });
     // Lista vazia -> EmptyState com acao "Convidar cuidador"
-    await tapButton(page, 'Convidar cuidador');
+    await tapAndWait(page, 'Convidar cuidador', { text: 'Enviar convite' });
     await fillField(page, 'Email do cuidador', 'nao-e-email');
     await tapButton(page, 'Enviar convite');
     await expect(nodeWithLabel(page, 'Email invalido')).toBeVisible();
@@ -45,8 +46,8 @@ test.describe.serial('Cuidadores', () => {
   test('convidar cuidador', async ({ page }) => {
     await openApp(page);
     await openPet(page, petName);
-    await tapButton(page, 'Cuidadores');
-    await tapButton(page, 'Convidar cuidador');
+    await tapAndWait(page, 'Cuidadores', { heading: 'Cuidadores' });
+    await tapAndWait(page, 'Convidar cuidador', { text: 'Enviar convite' });
     await fillField(page, 'Email do cuidador', cgEmail);
     await tapButton(page, 'Enviar convite');
     await expect(nodeWithLabel(page, 'Convite criado')).toBeVisible({
@@ -57,7 +58,7 @@ test.describe.serial('Cuidadores', () => {
   test('cuidador aparece na lista e e removido', async ({ page }) => {
     await openApp(page);
     await openPet(page, petName);
-    await tapButton(page, 'Cuidadores');
+    await tapAndWait(page, 'Cuidadores', { heading: 'Cuidadores' });
     await expect(nodeWithLabel(page, cgEmail)).toBeVisible({ timeout: 15_000 });
     await tapButton(page, 'Remover cuidador');
     await page.waitForTimeout(1500);

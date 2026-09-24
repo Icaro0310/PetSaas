@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   openApp,
   tapButton,
+  tapAndWait,
   nodeWithLabel,
 } from '../../helpers/app';
 
@@ -9,8 +10,7 @@ import {
 test.describe.serial('Perfil e logout', () => {
   test('pagina de perfil mostra atalhos e acoes', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Perfil e conta');
-    await expect(nodeWithLabel(page, 'Perfil')).toBeVisible();
+    await tapAndWait(page, 'Perfil e conta', { heading: 'Perfil' });
     await expect(nodeWithLabel(page, 'Doses de hoje')).toBeVisible({
       timeout: 15_000,
     });
@@ -21,7 +21,7 @@ test.describe.serial('Perfil e logout', () => {
 
   test('logout volta ao ecra de login', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Perfil e conta');
+    await tapAndWait(page, 'Perfil e conta', { heading: 'Perfil' });
     await tapButton(page, 'Sair');
     // Clerk signOut redireciona para a base da app -> sem sessao -> login
     await expect(nodeWithLabel(page, 'Iniciar sessão')).toBeVisible({

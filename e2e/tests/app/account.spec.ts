@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   openApp,
   tapButton,
+  tapAndWait,
   nodeWithLabel,
   TEST_EMAIL,
 } from '../../helpers/app';
@@ -17,7 +18,7 @@ test.skip(
 test.describe.serial('Eliminar conta', () => {
   test('confirma e remove a conta', async ({ page }) => {
     await openApp(page);
-    await tapButton(page, 'Perfil e conta');
+    await tapAndWait(page, 'Perfil e conta', { heading: 'Perfil' });
     await tapButton(page, 'Eliminar conta');
     await tapButton(page, 'Eliminar definitivamente');
     // Conta eliminada -> sem sessao -> ecra de login

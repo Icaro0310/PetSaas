@@ -5,6 +5,7 @@ import {
   fillField,
   nodeWithLabel,
   openPet,
+  tapAndWait,
   newSessionPage,
   createPetViaApi,
   cleanupTestPets,
@@ -35,8 +36,8 @@ test.describe.serial('Medicacoes e doses', () => {
     await openApp(page);
     // petsProvider e realtime — o pet criado via REST aparece na lista
     await openPet(page, petName);
-    await tapButton(page, 'Medicamentos');
-    await tapButton(page, 'Novo remedio');
+    await tapAndWait(page, 'Medicamentos', { heading: 'Medicamentos' });
+    await tapAndWait(page, 'Novo remedio', { text: 'Guardar remedio' });
     await fillField(page, 'Nome do remedio', medName);
     await fillField(page, 'Dosagem', '1 comprimido');
     // Frequencia default: Diario com horario 08:00
@@ -67,8 +68,8 @@ test.describe.serial('Medicacoes e doses', () => {
       status: 'pending',
     });
     // Perfil -> Doses de hoje (mostra doses de hoje e proximas)
-    await tapButton(page, 'Perfil e conta');
-    await tapButton(page, 'Doses de hoje');
+    await tapAndWait(page, 'Perfil e conta', { heading: 'Perfil' });
+    await tapAndWait(page, 'Doses de hoje', { heading: 'Doses de hoje' });
     await expect(nodeWithLabel(page, medName)).toBeVisible({ timeout: 15_000 });
     // "Dar remedio" e irmao do nome no DOM de semantica — clica o primeiro.
     await page

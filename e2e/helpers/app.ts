@@ -269,6 +269,30 @@ export function tapTarget(page: Page, name: string) {
   );
 }
 
+/**
+ * Toca e espera pelo destino com retry — em transicoes de rota a arvore de
+ * semantica e reconstruida e um clique num no stale e um no-op silencioso
+ * (falha tipica em CI mais lento).
+ */
+export async function tapAndWait(
+  page: Page,
+  tap: string,
+  marker: { heading?: string; text?: string },
+  retries = 3,
+) {
+  const target = marker.heading
+    ? page.getByRole('heading', { name: marker.heading })
+    : nodeWithLabel(page, marker.text!);
+  for (let i = 0; i < retries; i++) {
+    await tapButton(page, tap);
+    try {
+      await expect(target).toBeVisible({ timeout: 12_000 });
+      return;
+    } catch {}
+  }
+  throw new Error(`tap '${tap}' nao chegou a ${JSON.stringify(marker)}`);
+}
+
 /** Obtem o JWT do Clerk (template supabase) dentro da pagina autenticada. */
 export async function supabaseJwt(page: Page): Promise<string> {
   const token = await page.evaluate(async () => {
