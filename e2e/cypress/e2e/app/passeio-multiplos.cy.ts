@@ -19,7 +19,6 @@ describe('Passeios', () => {
   });
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('Walks E2E');
   });
 

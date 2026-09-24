@@ -13,8 +13,21 @@ describe('Cuidadores — sem manage_pets', () => {
   let ownerId = '';
   let petId = '';
 
-  before(() => {
+  before(function () {
     cy.openApp();
+    // A conta de cuidador nao pode ser criada programaticamente (CAPTCHA).
+    // Cria-la uma vez via UI: email petcare.e2e.caregiver+clerk_test@example.com
+    // com codigo 424242 — depois esta spec corre normalmente.
+    cy.accountExists(CG_EMAIL).then((exists) => {
+      if (!exists) {
+        cy.log(
+          'SKIP: cria a conta ' + CG_EMAIL + ' uma vez via UI (codigo 424242)',
+        );
+        this.skip();
+      }
+    });
+    // accountExists terminou a sessao — repor a sessao do dono.
+    cy.signInAs(Cypress.expose('E2E_EMAIL') as string);
     cy.clerkUserId().then((id) => (ownerId = id));
     cy.createPetViaApi(petName).then((id) => (petId = id));
     cy.signInAs(CG_EMAIL);
@@ -29,7 +42,8 @@ describe('Cuidadores — sem manage_pets', () => {
   });
 
   after(() => {
-    cy.openApp();
+    // A sessao fica no cuidador — voltar ao dono para apagar os pets.
+    cy.signInAs(Cypress.expose('E2E_EMAIL') as string);
     cy.cleanupTestPets('CgNeg E2E');
     cy.cleanupTestPets('Negado E2E');
   });

@@ -14,7 +14,6 @@ describe('Gestão de animais', () => {
   const petName = `Foto E2E ${Date.now() % 100000}`;
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('Foto E2E');
   });
 

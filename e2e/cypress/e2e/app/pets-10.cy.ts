@@ -10,7 +10,6 @@ describe('Gestão de animais', () => {
   const names = Array.from({ length: 10 }, (_, i) => `${prefix} ${i + 1}`);
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets(prefix);
   });
 

@@ -11,7 +11,6 @@ describe('Gestão de animais — escala', () => {
   const batch = 250;
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets(prefix);
     cy.countPets(prefix).should('eq', 0);
   });

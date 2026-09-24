@@ -16,7 +16,6 @@ describe('Medicação e doses', () => {
   });
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('MedPet E2E');
   });
 

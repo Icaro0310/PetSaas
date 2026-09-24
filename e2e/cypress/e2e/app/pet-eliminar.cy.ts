@@ -14,7 +14,6 @@ describe('Gestão de animais', () => {
   });
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('Del E2E');
   });
 

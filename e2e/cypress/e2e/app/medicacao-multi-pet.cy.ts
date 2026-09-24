@@ -15,7 +15,6 @@ describe('Medicação e doses', () => {
   });
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('MedA E2E');
     cy.cleanupTestPets('MedB E2E');
   });
@@ -31,9 +30,10 @@ describe('Medicação e doses', () => {
       cy.fillField('Dosagem', '1 comprimido');
       cy.tapButton('Guardar remedio');
       cy.semNode(medName).should('exist');
-      cy.go('back');
-      cy.semNode('Meus pets').should('exist');
-      cy.go('back');
+      // Voltar a lista de pets pelo router Flutter (nao pelo browser).
+      cy.appBack();
+      cy.semNode('Cuidadores').should('exist');
+      cy.appBack();
       cy.semNode('Meus pets').should('exist');
     });
   });

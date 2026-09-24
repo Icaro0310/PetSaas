@@ -34,6 +34,8 @@ declare global {
       ): Chainable<void>;
       /** Abre o detalhe de um pet na lista com retry. */
       openPet(petName: string, marker?: string): Chainable<void>;
+      /** Clica o botao "back" do AppBar Flutter (router interno, nao browser). */
+      appBack(): Chainable<void>;
       /** Preenche um TextFormField Flutter pela label. */
       fillField(label: string, value: string): Chainable<void>;
       /** id do utilizador Clerk autenticado na pagina. */
@@ -75,6 +77,8 @@ declare global {
       ): Chainable<string>;
       /** Termina a sessao atual e entra como outra conta de teste (Clerk). */
       signInAs(email: string): Chainable<void>;
+      /** Verifica se a conta existe no Clerk (para skip condicional). */
+      accountExists(email: string): Chainable<boolean>;
       /** Conta pets cujo nome comeca por prefixo (GET select=id). */
       countPets(prefix: string): Chainable<number>;
       /** prefers-reduced-motion via CDP (chromium-family apenas). */
@@ -264,10 +268,32 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('openPet', (petName: string, marker = 'Cuidadores') => {
-  const attempt = (left: number): Cypress.Chainable<void> =>
-    // A stream realtime pode demorar a emitir — findSem espera o card.
-    findSem(SEM_BUTTONS, petName, { first: true, timeout: 30_000 })
-      .click({ force: true })
+  const attempt = (left: number): Cypress.Chainable<void> => {
+    const deadline = Date.now() + 45_000;
+    // A ListView e lazy: cards fora do ecra nao existem na arvore de
+    // semantica. Faz scroll real (CDP) ate o card aparecer.
+    const findCard = (): Cypress.Chainable<void> =>
+      cy.document().then((doc) => {
+        const $m = matchNodes(Cypress.$(SEM_BUTTONS, doc), petName);
+        if ($m.length) {
+          cy.wrap($m.first() as JQuery<HTMLElement>).click({ force: true });
+          return;
+        }
+        if (Date.now() > deadline) {
+          throw new Error(`nó '${petName}' não encontrado na lista de pets`);
+        }
+        // Flutter 3.47+: o elemento raiz e <flutter-view> (flt-glass-pane
+        // e o nome antigo). O wheel cai no viewport e propaga ao ListView.
+        cy.get('flutter-view, flt-glass-pane')
+          .first()
+          .realMouseWheel({
+            deltaY: 600,
+            scrollBehavior: 'center',
+          });
+        cy.wait(500);
+        return findCard();
+      });
+    return findCard()
       .then(() =>
         poll(
           (doc) => markerInDom(doc, { text: marker }),
@@ -281,39 +307,98 @@ Cypress.Commands.add('openPet', (petName: string, marker = 'Cuidadores') => {
         cy.wait(1000);
         return attempt(left - 1);
       });
+  };
   return attempt(3);
+});
+
+Cypress.Commands.add('appBack', () => {
+  // O back do AppBar e navegacao do router Flutter — cy.go('back') mexe no
+  // historico do browser e sai da app. Sem delegates PT, o tooltip fica
+  // 'Back' (Material EN); com delegates seria 'Voltar'.
+  const deadline = Date.now() + 10_000;
+  const step = (): Cypress.Chainable<void> =>
+    cy.document().then((doc) => {
+      const $m = (Cypress.$(SEM_BUTTONS, doc) as JQuery<HTMLElement>).filter(
+        (_, el) => /^(back|voltar)$/i.test(text(el).trim()),
+      );
+      if ($m.length) {
+        cy.wrap($m.first() as JQuery<HTMLElement>).click({ force: true });
+        return;
+      }
+      if (Date.now() > deadline) {
+        throw new Error('botao back do AppBar não encontrado');
+      }
+      cy.wait(400);
+      return step();
+    });
+  return step();
 });
 
 Cypress.Commands.add('fillField', (label: string, value: string) => {
   const INPUT = 'flt-semantics input[data-semantics-role="text-field"]';
   const deadline = Date.now() + 20_000;
+  const findInput = (doc: Document) =>
+    Cypress.$(INPUT, doc).filter((_, el) =>
+      (el.getAttribute('aria-label') ?? '').includes(label),
+    );
   const step = (): Cypress.Chainable<void> =>
     cy.document().then((doc) => {
       // O aria-label do input conserva a labelText mesmo com valor —
       // ao contrario do nome acessivel do no, que passa a ser o valor.
-      const $inp = Cypress.$(INPUT, doc).filter((_, el) =>
-        (el.getAttribute('aria-label') ?? '').includes(label),
-      );
-      if ($inp.length) {
-        cy.wrap($inp.last() as JQuery<HTMLElement>)
-          .clear({ force: true })
-          .type(value, { force: true });
-        cy.wait(150);
-        return;
+      let $t = findInput(doc);
+      if (!$t.length) {
+        $t = matchNodes(Cypress.$('flt-semantics', doc), label);
       }
-      const $any = matchNodes(Cypress.$('flt-semantics', doc), label);
-      if ($any.length) {
-        cy.wrap($any.last() as JQuery<HTMLElement>).click({ force: true });
+      if (!$t.length) {
+        if (Date.now() > deadline) {
+          throw new Error(`campo '${label}' não encontrado`);
+        }
         cy.wait(400);
-        cy.focused().type(value);
-        cy.wait(150);
-        return;
+        return step();
       }
-      if (Date.now() > deadline) {
-        throw new Error(`campo '${label}' não encontrado`);
-      }
-      cy.wait(400);
-      return step();
+      // O click tem de cair no no flt-semantics (coordenadas do canvas)
+      // para a engine focar o TextField e ativar a TextEditingConnection.
+      // Cada campo expoe DOIS elementos editaveis: o <input> dentro do
+      // no a11y (espelho — escrever aqui nao chega ao controller) e o
+      // host de edicao real, que passa a document.activeElement com o
+      // foco. Rebuilds (setState noutro widget, ex.: checkbox) destroem
+      // o no clicado — por isso o click repete-se ate o campo certo
+      // ganhar foco.
+      const isTargetField = (el: Element | null) =>
+        el?.getAttribute('data-semantics-role') === 'text-field' &&
+        (el.getAttribute('aria-label') ?? '').includes(label);
+      const tryFocus = (left: number): Cypress.Chainable<void> =>
+        cy.document().then((doc2) => {
+          const ae = doc2.activeElement as HTMLElement | null;
+          if (isTargetField(ae)) {
+            cy.wrap(ae as JQuery<HTMLElement>)
+              .clear({ force: true })
+              .type(value, { force: true });
+            return;
+          }
+          if (left <= 0) {
+            // Ultimo recurso: escreve no espelho a11y (melhor que nada).
+            const $fresh = findInput(doc2);
+            if ($fresh.length) {
+              cy.wrap($fresh.last() as JQuery<HTMLElement>)
+                .clear({ force: true })
+                .type(value, { force: true });
+            } else {
+              cy.focused().type(value);
+            }
+            return;
+          }
+          const $cur = findInput(doc2);
+          const $node = $cur.length
+            ? ($cur.last().closest('flt-semantics') as JQuery<HTMLElement>)
+            : null;
+          if ($node?.length) {
+            cy.wrap($node).click({ force: true });
+          }
+          cy.wait(600);
+          return tryFocus(left - 1);
+        });
+      return tryFocus(4);
     });
   return step();
 });
@@ -368,7 +453,8 @@ async function signInProgrammatic(win: any, email: string, code: string) {
       if (att.status === 'complete') return { session: att.createdSessionId };
       return { err: `signUp status ${att.status}` };
     } catch (e2: any) {
-      return { err: `signUp: ${String(e2?.errors ?? e2).slice(0, 300)}` };
+      const detail = JSON.stringify(e2?.errors ?? String(e2)).slice(0, 300);
+      return { err: `signUp: ${detail}` };
     }
   }
 }
@@ -582,23 +668,50 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('signInAs', (email: string) => {
-  cy.window()
-    .its('Clerk.client', { timeout: 60_000 })
-    .should('exist')
-    .then(async (win: any) => {
-      if (win.Clerk.user) await win.Clerk.signOut();
-      const res = await signInProgrammatic(win, email, '424242');
-      if ((res as any).err) {
-        throw new Error(
-          `Login E2E como ${email} falhou: ${(res as any).err}. ` +
-            'Cria a conta uma vez via UI da app (codigo 424242).',
-        );
-      }
-      await win.Clerk.setActive({ session: (res as any).session });
-    });
+  // its('Clerk.client') yielda o client — a window tem de ser pedida de novo.
+  cy.window().its('Clerk.client', { timeout: 60_000 }).should('exist');
+  // Passos separados: cada .then() tem o seu timeout; juntos excediam os 15s.
+  // setActive({session: null}) faz sign-out SEM navegar (signOut() podia
+  // redirecionar e destruir o contexto da pagina — promise nunca resolvia).
+  cy.window().then(async (win: any) => {
+    // Clerk.user pode ser null mesmo com sessao ativa — testa a session.
+    // session.end() termina sem redirect (signOut() navegava a pagina).
+    if (win.Clerk.session) await win.Clerk.session.end();
+  });
+  // signIn/signUp programatico envolve varias chamadas Clerk — o timeout
+  // vai nas opcoes do proprio .then() (defaultCommandTimeout e so 15s).
+  cy.window().then({ timeout: 90_000 }, async (win: any) => {
+    const res = await signInProgrammatic(win, email, '424242');
+    if ((res as any).err) {
+      throw new Error(
+        `Login E2E como ${email} falhou: ${(res as any).err}. ` +
+          'Cria a conta uma vez via UI da app (codigo 424242).',
+      );
+    }
+    win.__E2E_SESSION = (res as any).session;
+  });
+  cy.window().then({ timeout: 30_000 }, async (win: any) => {
+    await win.Clerk.setActive({ session: win.__E2E_SESSION });
+  });
   cy.reload();
   cy.enableSemantics();
   cy.window().its('Clerk.user.id', { timeout: 60_000 }).should('exist');
+});
+
+Cypress.Commands.add('accountExists', (email: string) => {
+  cy.window().its('Clerk.client', { timeout: 60_000 }).should('exist');
+  return cy.window().then({ timeout: 60_000 }, async (win: any) => {
+    try {
+      if (win.Clerk.session) await win.Clerk.session.end();
+      await win.Clerk.client.signIn.create({ identifier: email });
+      return true;
+    } catch (e: any) {
+      const notFound = e?.errors?.some(
+        (x: any) => x.code === 'form_identifier_not_found',
+      );
+      return !notFound;
+    }
+  });
 });
 
 Cypress.Commands.add('countPets', (prefix: string) => {

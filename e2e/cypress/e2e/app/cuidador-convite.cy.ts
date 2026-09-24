@@ -16,7 +16,6 @@ describe('Cuidadores', () => {
   });
 
   after(() => {
-    cy.openApp();
     cy.cleanupTestPets('CgInv E2E');
   });
 
