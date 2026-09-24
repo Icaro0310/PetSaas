@@ -4,12 +4,12 @@ import {
   tapButton,
   fillField,
   nodeWithLabel,
-  hasSession,
+  openPet,
+  newSessionPage,
   createPetViaApi,
   cleanupTestPets,
+  sbRest,
 } from '../../helpers/app';
-
-test.skip(!hasSession(), 'Sem sessao E2E — corre `npm run auth` primeiro');
 
 test.describe.serial('Cuidadores', () => {
   const stamp = Date.now() % 100000;
@@ -18,28 +18,35 @@ test.describe.serial('Cuidadores', () => {
   let petId: string;
 
   test.beforeAll(async ({ browser }) => {
-    const page = await browser.newPage();
+    const { context, page } = await newSessionPage(browser);
     await openApp(page);
     petId = await createPetViaApi(page, petName);
-    await page.close();
+    await context.close();
   });
 
   test.afterAll(async ({ browser }) => {
-    const page = await browser.newPage();
+    const { context, page } = await newSessionPage(browser);
     await openApp(page);
-    await cleanupTestPets(page);
-    await page.close();
+    await cleanupTestPets(page, 'CgPet E2E');
+    await context.close();
   });
 
   test('validacao de email invalido', async ({ page }) => {
-    await openApp(page, `/invite/${petId}`);
+    await openApp(page);
+    await openPet(page, petName);
+    await tapButton(page, 'Cuidadores');
+    // Lista vazia -> EmptyState com acao "Convidar cuidador"
+    await tapButton(page, 'Convidar cuidador');
     await fillField(page, 'Email do cuidador', 'nao-e-email');
     await tapButton(page, 'Enviar convite');
     await expect(nodeWithLabel(page, 'Email invalido')).toBeVisible();
   });
 
   test('convidar cuidador', async ({ page }) => {
-    await openApp(page, `/invite/${petId}`);
+    await openApp(page);
+    await openPet(page, petName);
+    await tapButton(page, 'Cuidadores');
+    await tapButton(page, 'Convidar cuidador');
     await fillField(page, 'Email do cuidador', cgEmail);
     await tapButton(page, 'Enviar convite');
     await expect(nodeWithLabel(page, 'Convite criado')).toBeVisible({
@@ -48,10 +55,19 @@ test.describe.serial('Cuidadores', () => {
   });
 
   test('cuidador aparece na lista e e removido', async ({ page }) => {
-    await openApp(page, `/caregivers/${petId}`);
+    await openApp(page);
+    await openPet(page, petName);
+    await tapButton(page, 'Cuidadores');
     await expect(nodeWithLabel(page, cgEmail)).toBeVisible({ timeout: 15_000 });
     await tapButton(page, 'Remover cuidador');
     await page.waitForTimeout(1500);
-    await expect(nodeWithLabel(page, cgEmail)).toHaveCount(0);
+    // O tile fica com status "removed" — verifica via REST (a linha nao some da lista)
+    const rows = await sbRest(
+      page,
+      'GET',
+      'caregivers',
+      `caregiver_email=eq.${cgEmail}&status=eq.removed&select=id`,
+    );
+    expect(rows.length).toBe(1);
   });
 });

@@ -3,19 +3,21 @@ import {
   openApp,
   tapButton,
   nodeWithLabel,
-  hasSession,
+  TEST_EMAIL,
 } from '../../helpers/app';
 
 // DESTRUTIVO: elimina a conta de teste. So corre com E2E_ALLOW_DELETE_ACCOUNT=1
-// e apenas contra a conta dedicada E2E (nunca a conta pessoal).
+// e APENAS em emails clerk_test — nunca numa conta real.
+const isSacrificial = TEST_EMAIL.endsWith('+clerk_test@example.com');
 test.skip(
-  !hasSession() || process.env.E2E_ALLOW_DELETE_ACCOUNT !== '1',
-  'Delete account requer E2E_ALLOW_DELETE_ACCOUNT=1 e conta de teste dedicada',
+  process.env.E2E_ALLOW_DELETE_ACCOUNT !== '1' || !isSacrificial,
+  'Delete account requer E2E_ALLOW_DELETE_ACCOUNT=1 e email +clerk_test',
 );
 
 test.describe.serial('Eliminar conta', () => {
   test('confirma e remove a conta', async ({ page }) => {
-    await openApp(page, '/profile');
+    await openApp(page);
+    await tapButton(page, 'Perfil e conta');
     await tapButton(page, 'Eliminar conta');
     await tapButton(page, 'Eliminar definitivamente');
     // Conta eliminada -> sem sessao -> ecra de login

@@ -13,7 +13,6 @@ Supabase.
 | `tests/subscribe.spec.ts` | Formulario waitlist: validacao, sucesso, dedup, estado disabled |
 | `tests/api.spec.ts` | Edge Function: CORS, 405, Zod strict, RLS da waitlist, health |
 | `tests/responsive.spec.ts` | Sem overflow horizontal, overlay mobile, reduced-motion |
-| `tests/auth.setup.ts` | Captura a sessao Clerk (manual headed ou testing token) para `.auth/session.json` |
 | `tests/app/pets.spec.ts` | Form de pet: validacao nome/peso, criar sem foto, criar com foto (upload real), editar |
 | `tests/app/medications.spec.ts` | Criar medicacao diaria, dose de hoje visivel, "Dar remedio" marca `given` |
 | `tests/app/caregivers.spec.ts` | Validacao email, convite, cuidador na lista, remover |
@@ -24,35 +23,45 @@ Supabase.
 
 A app e canvas — os testes usam a arvore de semantica do Flutter
 (`flt-semantics`), ativada automaticamente pelos helpers em `helpers/app.ts`.
+Text fields aparecem como `<input data-semantics-role="text-field" aria-label="...">`
+dentro do no `flt-semantics` — o `fillField` preenche esse input.
 
-### 1. Capturar sessao (uma vez, ~7 dias de validade)
+### Autenticacao programatica (sem login manual)
+
+Cada contexto autentica-se sozinho em `openApp()` via
+`Clerk.client.signIn` — **sem storageState nem sessao partilhada**
+(o logout de um teste nao mata os outros).
+
+Conta por omissao: `petcare.e2e+clerk_test@example.com` com `email_code`
+fixo `424242` (emails `+clerk_test` em instancias dev verificam sempre
+com este codigo). O utilizador tem de **existir** — criar uma vez via UI
+da app (o CAPTCHA Turnstile so bloqueia sign-up, nao sign-in), ou desligar
+"Bot sign-up protection" no Clerk dev dashboard para auto-provisionar.
+
+Alternativa com conta real:
 
 ```bash
-cd e2e
-npm run auth        # abre browser visivel; faz login manual (CAPTCHA humano)
+E2E_EMAIL=conta@exemplo.com E2E_PASSWORD=senha npx playwright test --project=app
 ```
 
-Usa uma **conta de teste dedicada** (ex: `teu_email+e2e@gmail.com` ou um
-endereco `*+clerk_test@example.com` com codigo `424242`) — nunca a conta
-pessoal, porque os testes criam dados e ha um teste de eliminar conta.
+(Nunca commitar credenciais — sao env vars.)
 
-Alternativa headless (CI): exporta `CLERK_SECRET_KEY` (sk_test da instancia
-dev), `E2E_EMAIL`, `E2E_PASSWORD` — usa o endpoint de testing tokens.
-
-### 2. Correr a suite da app
+### Correr a suite da app
 
 ```bash
-npm run test:app    # projeto `app` com storageState da sessao
+npm run test:app    # projeto `app`
 ```
 
-Sem sessao, os testes autenticados sao skipped. Dados de teste usam nomes
-`* E2E *` e sao apagados no `afterAll` (delete via REST, respeita RLS).
+Dados de teste usam nomes `* E2E *` e cada spec apaga os seus no `afterAll`
+por prefixo (`Rex E2E`, `MedPet E2E`, `CgPet E2E`) — isolamento entre
+workers paralelos.
 
 ### Gaps conhecidos (nao existem na app — nao sao bugs de teste)
 
 - Sem "remover pet" (nao ha UI/endpoint de delete de pet)
 - Sem "passeios"/walks (feature nunca implementada; removida do marketing)
 - Edicao de perfil nao existe fora do onboarding
+- Cuidador removido fica visivel na lista com estado "Removido" (soft-delete)
 
 ## Correr localmente
 

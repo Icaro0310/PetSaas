@@ -1,12 +1,31 @@
 import { Page, expect } from '@playwright/test';
 import { APP_URL, SB_URL, SB_ANON_KEY } from '../playwright.config';
-import * as fs from 'fs';
-import * as path from 'path';
 
-export const AUTH_FILE = path.join(__dirname, '..', '.auth', 'session.json');
+/**
+ * Conta E2E dedicada. Em instancias Clerk dev, qualquer email terminado em
+ * "+clerk_test@example.com" verifica com o codigo fixo 424242 — permite
+ * sign-in programatico sem storageState nem login manual.
+ * O utilizador tem de existir: criar uma vez via UI da app, ou desligar
+ * "Bot sign-up protection" no Clerk dashboard (dev) para auto-provisionar.
+ */
+/**
+ * Credenciais da conta E2E via env (nunca commitar senhas):
+ *   E2E_EMAIL / E2E_PASSWORD  — conta com password
+ *   (sem env)                 — conta clerk_test com email_code 424242,
+ *                               desde que exista (criar uma vez via UI).
+ */
+export const TEST_EMAIL =
+  process.env.E2E_EMAIL ?? 'petcare.e2e+clerk_test@example.com';
+export const TEST_PASSWORD = process.env.E2E_PASSWORD;
+export const TEST_CODE = '424242';
 
-export function hasSession(): boolean {
-  return fs.existsSync(AUTH_FILE);
+/** Pagina nova num contexto limpo (a sessao e criada por openApp). */
+export async function newSessionPage(
+  browser: import('@playwright/test').Browser,
+) {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  return { context, page };
 }
 
 /**
@@ -16,10 +35,17 @@ export function hasSession(): boolean {
  * textos estaticos ficam em <span> filhos; text fields ganham aria-label.
  */
 export async function waitForApp(page: Page, timeout = 90_000) {
-  await page.waitForSelector('flt-semantics-placeholder', { timeout });
+  // O placeholder so existe se a semantica ainda nao estiver ativa —
+  // o Flutter pode auto-ativa-la (a11y detection / estado persistido).
+  await page.waitForSelector(
+    'flt-semantics-placeholder, flt-semantics',
+    { timeout },
+  );
 }
 
 export async function enableSemantics(page: Page) {
+  // Se a arvore ja existe, nada a fazer.
+  if ((await page.locator('flt-semantics').count()) > 0) return;
   // Clique JS direto: o placeholder e removido do DOM depois de ativar.
   const clicked = await page.evaluate(() => {
     const ph = document.querySelector('flt-semantics-placeholder');
@@ -28,20 +54,130 @@ export async function enableSemantics(page: Page) {
     return true;
   });
   if (!clicked) {
-    throw new Error('flt-semantics-placeholder nao encontrado — app nao arrancou');
+    // Race: a semantica pode ter auto-ativado entre o wait e o evaluate.
+    if ((await page.locator('flt-semantics').count()) > 0) return;
+    throw new Error('semantica nao ativou — app nao arrancou');
   }
   await page.waitForSelector('flt-semantics', { timeout: 30_000 });
 }
 
-export async function openApp(page: Page, route = '/pets') {
-  // Deep link: GitHub Pages devolve 404.html que contem o fallback da app.
-  await page.goto(`${APP_URL}${route}`, { waitUntil: 'domcontentloaded' });
+/**
+ * Sign-in programatico via email_code clerk_test dentro da pagina.
+ * Cria uma sessao real no Clerk (sem CAPTCHA — sign-in nao tem captcha).
+ * Se o utilizador nao existir, tenta sign-up (so funciona com bot
+ * protection desligada no Clerk dev).
+ */
+async function signInProgrammatic(page: Page) {
+  const result = await page.evaluate(
+    async ({ email, code }) => {
+      const C = (window as any).Clerk;
+      const password: string | null = (window as any).__E2E_PASSWORD ?? null;
+      try {
+        const si = await C.client.signIn.create({ identifier: email });
+        if (password) {
+          const att = await si.attemptFirstFactor({
+            strategy: 'password',
+            password,
+          });
+          if (att.status === 'complete') {
+            return { session: att.createdSessionId };
+          }
+          return { err: `signIn(password) status ${att.status}` };
+        }
+        const factor = si.supportedFirstFactors?.find(
+          (f: any) => f.strategy === 'email_code',
+        );
+        if (!factor) {
+          return {
+            err: 'email_code nao suportado: ' +
+              JSON.stringify(si.supportedFirstFactors?.map((f: any) => f.strategy)),
+          };
+        }
+        await si.prepareFirstFactor({
+          strategy: 'email_code',
+          emailAddressId: factor.emailAddressId,
+        });
+        const att = await si.attemptFirstFactor({
+          strategy: 'email_code',
+          code,
+        });
+        if (att.status === 'complete') return { session: att.createdSessionId };
+        return { err: `signIn status ${att.status}` };
+      } catch (e: any) {
+        const notFound = e?.errors?.some(
+          (x: any) => x.code === 'form_identifier_not_found',
+        );
+        if (!notFound) {
+          return {
+            err: JSON.stringify(e?.errors ?? String(e)).slice(0, 400),
+          };
+        }
+        // Utilizador nao existe — tenta sign-up (requer bot protection off).
+        try {
+          const su = await C.client.signUp.create({ emailAddress: email });
+          await su.prepareEmailAddressVerification({ strategy: 'email_code' });
+          const att = await su.attemptEmailAddressVerification({ code });
+          if (att.status === 'complete') return { session: att.createdSessionId };
+          return { err: `signUp status ${att.status}` };
+        } catch (e2: any) {
+          return { err: `signUp: ${String(e2?.errors ?? e2).slice(0, 300)}` };
+        }
+      }
+    },
+    { email: TEST_EMAIL, code: TEST_CODE },
+  );
+  if (result.err) {
+    throw new Error(
+      `Login E2E falhou: ${result.err}. Cria a conta ${TEST_EMAIL} ` +
+        'uma vez via UI da app (codigo 424242) ou desliga "Bot sign-up ' +
+        'protection" no Clerk dashboard.',
+    );
+  }
+  await page.evaluate(async (sid: string) => {
+    await (window as any).Clerk.setActive({ session: sid });
+  }, result.session as string);
+}
+
+/**
+ * Abre a app e espera ficar autenticado na lista de pets.
+ * Deep links nao funcionam: o redirect do router corre antes do Clerk
+ * carregar e colapsa tudo para /pets (ou /onboarding). Por isso a
+ * navegacao para outros ecraos e feita pela UI nos testes.
+ */
+export async function openApp(page: Page) {
+  await page.addInitScript((pw: string | null) => {
+    try {
+      // shared_preferences_web guarda chaves com prefixo flutter.
+      localStorage.setItem('flutter.onboarding_seen', 'true');
+      if (pw) (window as any).__E2E_PASSWORD = pw;
+    } catch {}
+  }, TEST_PASSWORD ?? null);
+  await page.goto(`${APP_URL}/pets`, { waitUntil: 'domcontentloaded' });
   await waitForApp(page);
   await enableSemantics(page);
+  // Espera o ClerkJS (bridge) inicializar.
+  await page.waitForFunction(
+    () => (window as any).Clerk?.client != null,
+    { timeout: 60_000 },
+  );
+  if (!(await page.evaluate(() => (window as any).Clerk?.user?.id != null))) {
+    await signInProgrammatic(page);
+    // Reload: a app arranca ja autenticada e o router estabiliza em /pets.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await waitForApp(page);
+    await enableSemantics(page);
+  }
+  await page.waitForFunction(
+    () => (window as any).Clerk?.user?.id != null,
+    { timeout: 60_000 },
+  );
+  await expect(nodeWithLabel(page, 'Meus pets')).toBeVisible({
+    timeout: 30_000,
+  });
 }
 
 function cssEscape(s: string) {
-  return s.replace(/"/g, '\\"');
+  return s.replace(/[\\"]/g, '\\$&');
 }
 
 /**
@@ -80,21 +216,57 @@ export async function tapButton(page: Page, name: string | RegExp) {
  * <input>/<textarea> real em <flt-text-editing-host> que aceita fill().
  */
 export async function fillField(page: Page, label: string, value: string) {
-  await nodeWithLabel(page, label).click();
-  await page.waitForTimeout(400);
-  const input = page
-    .locator(
-      'flt-text-editing-host input, flt-text-editing-host textarea, ' +
-        'flt-semantics input, flt-semantics textarea',
-    )
-    .last();
+  // A engine mantem um <input aria-label="..."> dentro de cada no de campo.
+  // O aria-label conserva a labelText mesmo quando o campo tem valor —
+  // ao contrario do nome acessivel do no, que passa a ser o valor.
+  const esc = cssEscape(label);
+  const input = page.locator(
+    `flt-semantics input[data-semantics-role="text-field"][aria-label*="${esc}"]`,
+  );
   if ((await input.count()) > 0) {
-    await input.fill(value);
-    await input.dispatchEvent('input');
-  } else {
-    await page.keyboard.type(value);
+    await input.last().fill(value);
+    await page.waitForTimeout(150);
+    return;
   }
+  // Fallback: campo sem input injetado (ex.: dentro de bottom sheet)
+  const box = page.getByRole('textbox', { name: label }).last();
+  if ((await box.count()) > 0) {
+    await box.click();
+  } else {
+    await nodeWithLabel(page, label).click();
+  }
+  await page.waitForTimeout(400);
+  await page.keyboard.type(value);
   await page.waitForTimeout(150);
+}
+
+/**
+ * Abre o detalhe de um pet na lista com retry — a lista pode reconstruir
+ * (stream realtime) entre a resolucao do locator e o clique.
+ */
+export async function openPet(page: Page, petName: string, marker = 'Cuidadores') {
+  const rx = new RegExp(petName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const card = page.getByRole('button', { name: rx }).first();
+  for (let attempt = 0; attempt < 3; attempt++) {
+    // A stream realtime pode demorar a emitir — espera o card aparecer.
+    await card.waitFor({ state: 'visible', timeout: 30_000 });
+    await card.click();
+    try {
+      await expect(tapTarget(page, marker)).toBeVisible({ timeout: 10_000 });
+      return;
+    } catch {
+      await page.waitForTimeout(1000);
+    }
+  }
+  throw new Error(`Nao abriu o detalhe do pet ${petName}`);
+}
+
+/** Locator para um botao/no tappable (usado por tapButton e openPet). */
+export function tapTarget(page: Page, name: string) {
+  return page.locator(
+    `flt-semantics[role="button"]:has-text("${cssEscape(name)}"), ` +
+      `flt-semantics[flt-tappable]:has-text("${cssEscape(name)}")`,
+  );
 }
 
 /** Obtem o JWT do Clerk (template supabase) dentro da pagina autenticada. */
@@ -154,9 +326,13 @@ export async function createPetViaApi(page: Page, name: string) {
   return rows[0].id as string;
 }
 
-/** Apaga todos os pets de teste (cascade limpa medications, dose_logs, caregivers). */
-export async function cleanupTestPets(page: Page) {
-  await sbRest(page, 'DELETE', 'pets', 'name=like.*E2E*');
+/**
+ * Apaga os pets de teste desta spec (cascade limpa medications, dose_logs,
+ * caregivers). O prefixo isola a limpeza entre specs em paralelo — apagar
+ * todos os "E2E" destruiria os pets dos outros workers.
+ */
+export async function cleanupTestPets(page: Page, prefix: string) {
+  await sbRest(page, 'DELETE', 'pets', `name=like.${prefix}*`);
 }
 
 /** PNG 1x1 para upload de foto em testes. */

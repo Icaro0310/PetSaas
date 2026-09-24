@@ -4,13 +4,12 @@ import {
   tapButton,
   fillField,
   nodeWithLabel,
-  hasSession,
+  openPet,
+  newSessionPage,
   cleanupTestPets,
   sbRest,
   PNG_1PX,
 } from '../../helpers/app';
-
-test.skip(!hasSession(), 'Sem sessao E2E — corre `npm run auth` primeiro');
 
 test.describe.serial('Pets', () => {
   const stamp = Date.now() % 100000;
@@ -18,14 +17,16 @@ test.describe.serial('Pets', () => {
   const petRenamed = `Rex E2E ${stamp} Editado`;
 
   test.afterAll(async ({ browser }) => {
-    const page = await browser.newPage();
+    const { context, page } = await newSessionPage(browser);
     await openApp(page);
-    await cleanupTestPets(page);
-    await page.close();
+    await cleanupTestPets(page, 'Rex E2E');
+    await cleanupTestPets(page, 'Foto E2E');
+    await context.close();
   });
 
   test('validacao do formulario (nome e peso)', async ({ page }) => {
-    await openApp(page, '/pet/new');
+    await openApp(page);
+    await tapButton(page, 'Adicionar pet');
     // Submeter vazio -> erro de nome obrigatorio
     await tapButton(page, 'Criar pet');
     await expect(nodeWithLabel(page, 'Nome obrigatorio')).toBeVisible({
@@ -38,7 +39,8 @@ test.describe.serial('Pets', () => {
   });
 
   test('criar pet sem foto', async ({ page }) => {
-    await openApp(page, '/pet/new');
+    await openApp(page);
+    await tapButton(page, 'Adicionar pet');
     await fillField(page, 'Nome *', petName);
     await tapButton(page, 'Criar pet');
     // Volta a lista e o pet aparece
@@ -49,15 +51,18 @@ test.describe.serial('Pets', () => {
   });
 
   test('criar pet com foto', async ({ page }) => {
-    await openApp(page, '/pet/new');
+    await openApp(page);
+    await tapButton(page, 'Adicionar pet');
     const name = `Foto E2E ${stamp}`;
     await fillField(page, 'Nome *', name);
-    // Abre o PhotoPicker (avatar) -> bottom sheet -> Galeria -> file chooser
+    // PhotoPicker -> bottom sheet -> Galeria -> file chooser
     await tapButton(page, 'Selecionar foto');
-    await tapButton(page, 'Galeria');
-    const chooser = await page.waitForEvent('filechooser', {
-      timeout: 10_000,
+    // Regista o wait ANTES do clique — o filechooser dispara no tap.
+    const chooserPromise = page.waitForEvent('filechooser', {
+      timeout: 15_000,
     });
+    await tapButton(page, 'Galeria');
+    const chooser = await chooserPromise;
     await chooser.setFiles({
       name: 'e2e.png',
       mimeType: 'image/png',
@@ -66,14 +71,18 @@ test.describe.serial('Pets', () => {
     await tapButton(page, 'Criar pet');
     await expect(nodeWithLabel(page, name)).toBeVisible({ timeout: 20_000 });
     // photo_url tem de ter sido gravado
-    const rows = await sbRest(page, 'GET', 'pets', `name=eq.${encodeURIComponent(name)}&select=photo_url`);
+    const rows = await sbRest(
+      page,
+      'GET',
+      'pets',
+      `name=eq.${encodeURIComponent(name)}&select=photo_url`,
+    );
     expect(rows[0].photo_url).toBeTruthy();
   });
 
   test('editar pet', async ({ page }) => {
-    await openApp(page, '/pets');
-    await nodeWithLabel(page, petName).first().click();
-    await page.waitForTimeout(1000);
+    await openApp(page);
+    await openPet(page, petName);
     await tapButton(page, 'Editar');
     await fillField(page, 'Nome *', petRenamed);
     await tapButton(page, 'Guardar alteracoes');

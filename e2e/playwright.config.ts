@@ -23,7 +23,7 @@ export const ALLOWED_ORIGIN = new URL(SITE_URL).origin;
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 45_000,
+  timeout: 120_000,
   expect: { timeout: 10_000 },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -55,17 +55,13 @@ export default defineConfig({
       use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
     },
     {
-      name: 'app-setup',
-      testMatch: /auth\.setup\.ts/,
-    },
-    {
+      // Cada contexto autentica-se sozinho via openApp (email_code clerk_test).
+      // Sem storageState — o logout num teste nao mata a sessao dos outros.
       name: 'app',
       testMatch: /app[\\/].*\.spec\.ts/,
-      dependencies: ['app-setup'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1440, height: 900 },
-        storageState: '.auth/session.json',
       },
     },
   ],
