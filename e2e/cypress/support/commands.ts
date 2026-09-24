@@ -89,7 +89,11 @@ if (SLOW_MO > 0) {
         cmd as 'click',
         ((orig: (...a: any[]) => Cypress.Chainable, ...args: any[]) =>
           orig(...args).then((res: unknown) =>
-            cy.wait(SLOW_MO).then(() => res),
+            // Pausa com promessa simples — invocar cy.wait() dentro do
+            // callback de um comando e proibido (promise + cy commands).
+            new Cypress.Promise((resolve) =>
+              setTimeout(() => resolve(res), SLOW_MO),
+            ),
           )) as never,
       );
     },
