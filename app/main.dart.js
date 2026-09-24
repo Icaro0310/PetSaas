@@ -111025,7 +111025,7 @@ A.abD.prototype={}
 A.Ao.prototype={
 I(a){var s=null,r=this.c
 r=r==null?s:"GoException: "+r.a
-return A.jN(!0,A.d_(A.bQ(A.b([B.aaq,B.b_,A.aJ(r==null?"page not found":r,s,s,s,s,s,s,s),B.b_,new A.O1(new A.anw(a),B.aa0,s)],t.p),B.G,B.d2,B.w,0,B.B),s,s),B.a8,!0)}}
+return A.jN(!0,A.d_(A.bQ(A.b([B.aaq,B.b_,A.aJ(r==null?"page not found":r,s,s,s,s,s,s,s),B.b_,new A.O1(new A.anw(a),B.aa_,s)],t.p),B.G,B.d2,B.w,0,B.B),s,s),B.a8,!0)}}
 A.anw.prototype={
 $0(){return A.ld(this.a).nR(0,"/",null)},
 $S:0}
@@ -115083,7 +115083,7 @@ break
 case 6:case 1:return A.r(q,r)
 case 2:return A.q(o.at(-1),r)}})
 return A.t($async$mP,r)},
-I(a){var s,r=this,q=A.hC(null,B.aa2)
+I(a){var s,r=this,q=A.hC(null,B.aa1)
 if(r.x)s=B.cf
 else s=J.eh(r.w)?B.MU:A.b6q(new A.aOn(r,a),J.bA(r.w),B.eV)
 return A.fp(q,s,null)},
@@ -115662,7 +115662,7 @@ n.push(B.aq)
 m=q.ch
 n.push(A.lf(!1,p,!0,A.aso(p,A.aJ(m==null?"Sem fim":""+m.gep()+"/"+q.ch.gdE()+"/"+q.ch.gdm(),p,p,p,p,p,p,p),B.Pn,!1,!1,!1,!1,p,p),p,!0,p,p,p,p,p,p,p,p,p,p,p,new A.aUl(q),p,p,p,p,p,p,p))
 n.push(B.aq)
-n.push(A.bfs(new A.aUm(q),p,B.aa3,q.CW))
+n.push(A.bfs(new A.aUm(q),p,B.aa2,q.CW))
 n.push(B.cq)
 n.push(A.wj(p,"Guardar remedio",q.cx?new A.aUn():q.gaDl()))
 return A.fp(o,A.jN(!0,A.mx(A.XF(p,A.bQ(n,B.Z,B.p,B.w,0,B.B),q.w),B.bt,p,B.a3),B.a8,!0),p)}}
@@ -116137,7 +116137,7 @@ q.push(new A.bf(B.bt,A.bQ(A.b([n,B.ei,A.aJ(m+" - "+l+" - "+A.bcK(s.f),k,k,k,B.bN
 q=A.mx(A.bQ(q,B.G,B.p,B.w,0,B.B),k,k,B.a3)}return A.fp(p,q,k)}}
 A.aym.prototype={
 $1(a){var s=null,r=A.aJ("Eliminar "+this.a.c,s,s,s,s,s,s,s)
-return A.ah0(A.b([A.i6(!1,B.kS,s,s,!0,s,s,new A.ayk(a),s,s),A.b5S(B.a9Z,new A.ayl(a),A.bcx(B.bG,s,s,s,s))],t.p),B.aaZ,r)},
+return A.ah0(A.b([A.i6(!1,B.kS,s,s,!0,s,s,new A.ayk(a),s,s),A.b5S(B.a9Y,new A.ayl(a),A.bcx(B.bG,s,s,s,s))],t.p),B.aaZ,r)},
 $S:122}
 A.ayk.prototype={
 $0(){A.eu(this.a,!1).fd(!1)
@@ -116403,7 +116403,7 @@ q=A.h8(!1,a.x,B.Pl,a0,!1,a0,a0,a0,a0,a0,1,a0,a0,a0,a0,a0,a0,B.T,a0,new A.aVu())
 p=a.db
 o=t.QX
 n=t.p
-o=A.cT(A.b([A.dt(A.beC(B.aa_,p,new A.aVv(a),B.hN,o),1),A.dt(A.beC(B.aaN,p,new A.aVw(a),B.Ab,o),1)],n),B.G,B.p,B.w,0,a0)
+o=A.cT(A.b([A.dt(A.beC(B.a9Z,p,new A.aVv(a),B.hN,o),1),A.dt(A.beC(B.aaN,p,new A.aVw(a),B.Ab,o),1)],n),B.G,B.p,B.w,0,a0)
 p=A.h8(!1,a.y,B.Pa,a0,!1,a0,a0,a0,a0,a0,1,a0,a0,a0,a0,a0,a0,B.T,a0,a0)
 m=a.dx
 m=A.lf(!1,a0,!0,A.aso(a0,A.aJ(m==null?"Selecionar data":""+m.gep()+"/"+a.dx.gdE()+"/"+a.dx.gdm(),a0,a0,a0,a0,a0,a0,a0),B.Pm,!1,!1,!1,!1,a0,a0),a0,!0,a0,a0,a0,a0,a0,a0,a0,a0,a0,a0,a0,a.gaBS(),a0,a0,a0,a0,a0,a0,a0)
@@ -116513,7 +116513,7 @@ A.aVj.prototype={
 $0(){return A.fE(this.b,"/pet/"+this.a.c.a,t.X)},
 $S:0}
 A.BZ.prototype={
-jz(a,b){var s,r,q,p=null,o=A.ig(b.f2($.bnD(),t.xN)),n=A.hC(p,B.aa8),m=B.aD.lI(0.15),l=o==null
+jz(a,b){var s,r,q,p=null,o=A.ig(b.f2($.bnD(),t.xN)),n=A.hC(p,B.aa7),m=B.aD.lI(0.15),l=o==null
 if(l)s=p
 else{s=o.b
 s=s==null?p:s.length!==0}if(s===!0){s=o.b
@@ -116531,9 +116531,9 @@ m.toString
 B.b.J(r,A.b([B.ei,A.d_(A.aJ(m,p,p,p,B.bN,p,p,p),p,p)],q))}r.push(B.cq)
 r.push(A.oJ(A.li(!1,p,p,p,!0,p,p,p,!0,p,B.Oi,p,p,p,p,new A.azX(a),!1,p,p,p,p,p,p,B.G9,p,B.tP,p),p,p))
 r.push(B.aq)
-r.push(A.oJ(A.li(!1,p,p,p,!0,p,p,p,!0,p,B.OB,p,p,p,p,new A.azY(a),!1,p,p,p,p,p,p,B.aa9,p,B.tP,p),p,p))
+r.push(A.oJ(A.li(!1,p,p,p,!0,p,p,p,!0,p,B.OB,p,p,p,p,new A.azY(a),!1,p,p,p,p,p,p,B.aa8,p,B.tP,p),p,p))
 r.push(B.cq)
-r.push(A.axU(B.Oc,B.a9X,new A.azZ(a)))
+r.push(A.axU(B.Oc,B.a9W,new A.azZ(a)))
 r.push(B.aq)
 r.push(A.bfA(B.Ov,B.aar,new A.aA_(this,a)))
 return A.fp(n,A.bdx(r,B.bt),p)},
@@ -116741,7 +116741,7 @@ o=A.b([],p)
 if(r.h(s,j)!=null)o.push(A.bd1(r.h(s,j),B.iw,220,1/0))
 else o.push(A.ey(k,B.tI,B.x,B.eL,k,k,k,220,k,k,k,k,1/0))
 if(q)o.push(A.ey(k,B.G7,B.x,B.bG,k,k,k,k,k,B.eU,k,k,1/0))
-if(l.w)s=A.bQ(A.b([B.tK,B.b_,B.aa4,B.bM,B.aau],p),B.G,B.p,B.w,0,B.B)
+if(l.w)s=A.bQ(A.b([B.tK,B.b_,B.aa3,B.bM,B.aau],p),B.G,B.p,B.w,0,B.B)
 else if(l.r){s=A.xN(k,B.bu,!1,k,!0,B.E,k,A.FE(),l.x,k,k,k,k,k,2,B.Pi,B.a7,!0,k,!0,k,!1,k,B.bX,k,k,k,k,k,k,k,k,1,k,k,!1,"\u2022",k,k,k,k,k,!1,k,k,!1,k,!0,k,B.bt,k,k,k,k,k,k,k,k,k,k,k,k,!0,B.T,k,B.da,k,k,k,k)
 r=A.xN(k,B.bu,!1,k,!0,B.E,k,A.FE(),l.y,k,k,k,k,k,2,B.Pf,B.a7,!0,k,!0,k,!1,k,B.bX,k,k,k,k,k,k,k,k,1,k,k,!1,"\u2022",k,k,k,k,k,!1,k,k,!1,k,!0,k,B.bt,k,k,k,k,k,k,k,k,k,k,k,k,!0,B.T,k,B.da,k,k,k,k)
 n=A.xN(k,B.bu,!1,k,!0,B.E,k,A.FE(),l.z,k,k,k,k,k,2,B.Pc,B.a7,!0,k,!0,k,!1,k,B.bX,k,k,k,k,k,k,k,k,3,k,k,!1,"\u2022",k,k,k,k,k,!1,k,k,!1,k,!0,k,B.bt,k,k,k,k,k,k,k,k,k,k,k,k,!0,B.T,k,B.da,k,k,k,k)
@@ -116888,7 +116888,7 @@ case 2:return A.r(null,r)}})
 return A.t($async$yO,r)},
 jz(a,b){var s=b.f2($.bnO().$1(this.e),t.VC),r=A.ig(s)
 if(r==null)r=A.b([],t.y5)
-return A.fp(A.hC(null,B.aaa),A.UW(s,new A.aLy(this,r,a),new A.aLz(),new A.aLA(),t.pt,t.jK),A.b5V(B.jC,new A.aLB(this,a),"Registar passeio"))}}
+return A.fp(A.hC(null,B.aa9),A.UW(s,new A.aLy(this,r,a),new A.aLz(),new A.aLA(),t.pt,t.jK),A.b5V(B.jC,new A.aLB(this,a),"Registar passeio"))}}
 A.aLu.prototype={
 $1(a){return new A.yS(this.a.e,null)},
 $S:753}
@@ -116943,7 +116943,7 @@ if(p!=null&&p.length!==0)B.b.J(l,A.b([B.oY,A.aJ(p,r,r,r,r,r,r,r)],m))
 return A.oJ(A.li(!1,B.mL,r,r,!0,r,r,r,!0,r,q,r,r,r,r,r,!1,r,r,r,r,A.bQ(l,B.Z,B.p,B.w,0,B.B),r,n,r,A.iq(r,r,B.tJ,r,r,new A.b0q(this,a),r,r,"Eliminar passeio"),r),r,r)}}
 A.b0p.prototype={
 $1(a){var s=null
-return A.ah0(A.b([A.i6(!1,B.kS,s,s,!0,s,s,new A.b0n(a),s,s),A.b5S(B.aaJ,new A.b0o(a),s)],t.p),B.a9R,B.a9Y)},
+return A.ah0(A.b([A.i6(!1,B.kS,s,s,!0,s,s,new A.b0n(a),s,s),A.b5S(B.aaJ,new A.b0o(a),s)],t.p),B.a9R,B.a9X)},
 $S:122}
 A.b0n.prototype={
 $0(){A.eu(this.a,!1).fd(!1)
@@ -117005,8 +117005,8 @@ break
 case 6:case 1:return A.r(q,r)
 case 2:return A.q(o.at(-1),r)}})
 return A.t($async$Gv,r)},
-I(a){var s=this,r=null,q=t.p,p=A.mx(A.bQ(A.b([A.bbz(B.a8,B.nG,new A.b0v(s),B.a9W,s.d),A.bbz(B.a8,B.nG,new A.b0w(s),B.ab_,s.e),A.xN(r,B.bu,!1,r,!0,B.E,r,A.FE(),s.r,r,r,r,r,r,2,B.Po,B.a7,!0,r,!0,r,!1,r,B.bX,r,r,A.b([$.bks()],t.VS),r,B.pa,r,r,r,1,r,r,!1,"\u2022",r,r,r,r,r,!1,r,r,!1,r,!0,r,B.bt,r,r,r,r,r,r,r,r,r,r,r,r,!0,B.T,r,B.da,r,r,r,r),B.bM,A.xN(r,B.bu,!1,r,!0,B.E,r,A.FE(),s.w,r,r,r,r,r,2,B.tW,B.a7,!0,r,!0,r,!1,r,B.bX,r,r,r,r,r,r,r,r,2,r,r,!1,"\u2022",r,r,r,r,r,!1,r,r,!1,r,!0,r,B.bt,r,r,r,r,r,r,r,r,r,r,r,r,!0,B.T,r,B.da,r,r,r,r)],q),B.G,B.p,B.ai,0,B.B),r,r,B.a3),o=s.f,n=A.i6(!1,B.kS,r,r,!0,r,r,o?r:new A.b0x(a),r,r)
-return A.ah0(A.b([n,A.b5S(B.aa5,o?r:s.gaH3(),r)],q),p,B.aaV)}}
+I(a){var s=this,r=null,q=t.p,p=A.mx(A.bQ(A.b([A.bbz(B.a8,B.nG,new A.b0v(s),B.aaa,s.d),A.bbz(B.a8,B.nG,new A.b0w(s),B.ab_,s.e),A.xN(r,B.bu,!1,r,!0,B.E,r,A.FE(),s.r,r,r,r,r,r,2,B.Po,B.a7,!0,r,!0,r,!1,r,B.bX,r,r,A.b([$.bks()],t.VS),r,B.pa,r,r,r,1,r,r,!1,"\u2022",r,r,r,r,r,!1,r,r,!1,r,!0,r,B.bt,r,r,r,r,r,r,r,r,r,r,r,r,!0,B.T,r,B.da,r,r,r,r),B.bM,A.xN(r,B.bu,!1,r,!0,B.E,r,A.FE(),s.w,r,r,r,r,r,2,B.tW,B.a7,!0,r,!0,r,!1,r,B.bX,r,r,r,r,r,r,r,r,2,r,r,!1,"\u2022",r,r,r,r,r,!1,r,r,!1,r,!0,r,B.bt,r,r,r,r,r,r,r,r,r,r,r,r,!0,B.T,r,B.da,r,r,r,r)],q),B.G,B.p,B.ai,0,B.B),r,r,B.a3),o=s.f,n=A.i6(!1,B.kS,r,r,!0,r,r,o?r:new A.b0x(a),r,r)
+return A.ah0(A.b([n,A.b5S(B.aa4,o?r:s.gaH3(),r)],q),p,B.aaV)}}
 A.b0r.prototype={
 $0(){return this.a.f=!0},
 $S:0}
@@ -130057,8 +130057,8 @@ B.K5=new A.v3(null,null,null)
 B.cf=new A.hG(B.U,null,null,B.K5,null)
 B.aaG=new A.aO("Link de convite inv\xe1lido.",null,null,null,null,null,null,null,null,null)
 B.JX=new A.hG(B.U,null,null,B.aaG,null)
-B.aa7=new A.aO("Sem registos neste periodo.",null,null,null,null,null,null,null,null,null)
-B.JY=new A.hG(B.U,null,null,B.aa7,null)
+B.aa6=new A.aO("Sem registos neste periodo.",null,null,null,null,null,null,null,null,null)
+B.JY=new A.hG(B.U,null,null,B.aa6,null)
 B.iD=new A.ii(0,"close")
 B.iE=new A.ii(1,"error")
 B.lX=new A.ii(2,"join")
@@ -131164,8 +131164,8 @@ B.U7=s([B.dG,B.cc,B.dH,B.fC],A.an("C<mM>"))
 B.Uc=s([B.dT,B.dn,B.h6,B.dU],A.an("C<nb>"))
 B.aav=new A.aO("Hoje",null,null,null,null,null,null,null,null,null)
 B.Ij=new A.ih("today",B.aav,t.Zx)
-B.aa1=new A.aO("Semana",null,null,null,null,null,null,null,null,null)
-B.Il=new A.ih("week",B.aa1,t.Zx)
+B.aa0=new A.aO("Semana",null,null,null,null,null,null,null,null,null)
+B.Il=new A.ih("week",B.aa0,t.Zx)
 B.aaD=new A.aO("Mes",null,null,null,null,null,null,null,null,null)
 B.In=new A.ih("month",B.aaD,t.Zx)
 B.Ul=s([B.Ij,B.Il,B.In],A.an("C<ih<i>>"))
@@ -132705,8 +132705,8 @@ B.B=new A.aLj(1,"down")
 B.Of=new A.c5(B.nB,23,B.eJ,null,null)
 B.a43=new A.dc(10,null,null,null)
 B.a7E=new A.H(!0,B.j,null,null,null,null,13,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.aa6=new A.aO("Medica\xe7\xe3o \xb7 cuidadores \xb7 identifica\xe7\xe3o",null,B.a7E,null,null,null,null,null,null,null)
-B.Vs=s([B.Of,B.a43,B.aa6],t.p)
+B.aa5=new A.aO("Medica\xe7\xe3o \xb7 cuidadores \xb7 identifica\xe7\xe3o",null,B.a7E,null,null,null,null,null,null,null)
+B.Vs=s([B.Of,B.a43,B.aa5],t.p)
 B.a1P=new A.Lw(B.aB,B.p,B.ai,B.G,null,B.B,null,0,B.Vs,null)
 B.a1Q=new A.Ly(1333)
 B.op=new A.Ly(2222)
@@ -133425,22 +133425,22 @@ B.a9S=new A.aO("Tudo em dia por aqui!",null,B.bN,null,null,null,null,null,null,n
 B.a9T=new A.aO("Frequencia",null,B.ia,null,null,null,null,null,null,null)
 B.a9U=new A.aO("Copiar link",null,null,null,null,null,null,null,null,null)
 B.a9V=new A.aO("Remover foto",null,null,null,null,null,null,null,null,null)
-B.a9W=new A.aO("Coco",null,null,null,null,null,null,null,null,null)
 B.a7r=new A.H(!0,B.j,null,null,null,null,null,B.bk,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.G7=new A.aO("ESTE PET ESTA PERDIDO",null,B.a7r,B.bA,null,null,null,null,null,null)
 B.G2=new A.H(!0,B.bG,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a9X=new A.aO("Sair",null,B.G2,null,null,null,null,null,null,null)
-B.a9Y=new A.aO("Eliminar passeio",null,null,null,null,null,null,null,null,null)
-B.a9Z=new A.aO("Eliminar pet",null,null,null,null,null,null,null,null,null)
-B.aa_=new A.aO("Cao",null,null,null,null,null,null,null,null,null)
-B.aa0=new A.aO("Go to home page",null,B.FZ,null,null,null,null,null,null,null)
-B.aa2=new A.aO("Cuidador",null,null,null,null,null,null,null,null,null)
-B.aa3=new A.aO("Ativo",null,null,null,null,null,null,null,null,null)
-B.aa4=new A.aO("O dono foi notificado!",null,B.pd,null,null,null,null,null,null,null)
-B.aa5=new A.aO("Registar",null,null,null,null,null,null,null,null,null)
-B.aa8=new A.aO("Perfil",null,null,null,null,null,null,null,null,null)
-B.aa9=new A.aO("Notifica\xe7\xf5es",null,null,null,null,null,null,null,null,null)
-B.aaa=new A.aO("Passeios",null,null,null,null,null,null,null,null,null)
+B.a9W=new A.aO("Sair",null,B.G2,null,null,null,null,null,null,null)
+B.a9X=new A.aO("Eliminar passeio",null,null,null,null,null,null,null,null,null)
+B.a9Y=new A.aO("Eliminar pet",null,null,null,null,null,null,null,null,null)
+B.a9Z=new A.aO("Cao",null,null,null,null,null,null,null,null,null)
+B.aa_=new A.aO("Go to home page",null,B.FZ,null,null,null,null,null,null,null)
+B.aa1=new A.aO("Cuidador",null,null,null,null,null,null,null,null,null)
+B.aa2=new A.aO("Ativo",null,null,null,null,null,null,null,null,null)
+B.aa3=new A.aO("O dono foi notificado!",null,B.pd,null,null,null,null,null,null,null)
+B.aa4=new A.aO("Registar",null,null,null,null,null,null,null,null,null)
+B.aa7=new A.aO("Perfil",null,null,null,null,null,null,null,null,null)
+B.aa8=new A.aO("Notifica\xe7\xf5es",null,null,null,null,null,null,null,null,null)
+B.aa9=new A.aO("Passeios",null,null,null,null,null,null,null,null,null)
+B.aaa=new A.aO("Coc\xf4",null,null,null,null,null,null,null,null,null)
 B.aab=new A.aO("Notificacoes",null,null,null,null,null,null,null,null,null)
 B.aac=new A.aO("Voce cuida deste pet",null,null,null,null,null,null,null,null,null)
 B.aad=new A.aO("Encontrei este pet",null,null,null,null,null,null,null,null,null)
@@ -133865,7 +133865,7 @@ B.cw=new A.mP("")
 B.ag3=new A.aZA(0,"material")
 B.aeY=new A.acN(0,"material")
 B.aeZ=new A.acN(1,"adaptive")
-B.af_=new A.yO("Coco",null)
+B.af_=new A.yO("Coc\xf4",null)
 B.af0=new A.yO("Xixi",null)
 B.af1=new A.yO("Sem necessidades",null)
 B.Ha=new A.F8(0,"first")
