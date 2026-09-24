@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/routes.dart';
 import '../../config/theme.dart';
 import '../../core/models/pet_model.dart';
+import '../../core/services/supabase_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/extensions.dart';
 import '../../providers/app_providers.dart';
@@ -12,6 +13,42 @@ import '../../providers/app_providers.dart';
 class PetDetailPage extends ConsumerWidget {
   final String petId;
   const PetDetailPage({super.key, required this.petId});
+
+  Future<void> _deletePet(BuildContext context, PetModel pet) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Eliminar ${pet.name}'),
+        content: const Text(
+          'Elimina o pet e todos os dados associados '
+          '(medicacoes, doses, passeios, cuidadores).',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.danger,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Eliminar pet'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    try {
+      await SupabaseService.client.from('pets').delete().eq('id', pet.id);
+      if (context.mounted) context.go(AppRoutes.pets);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Erro ao eliminar: $e')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, ref) {
@@ -23,12 +60,18 @@ class PetDetailPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(pet?.name ?? 'Pet'),
         actions: [
-          if (isOwner)
+          if (isOwner) ...[
             IconButton(
               icon: const Icon(Icons.edit),
               tooltip: 'Editar',
               onPressed: () => context.push('${AppRoutes.petEdit}/$petId'),
             ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Eliminar pet',
+              onPressed: pet == null ? null : () => _deletePet(context, pet),
+            ),
+          ],
         ],
       ),
       body: pet == null
@@ -112,6 +155,11 @@ class _ActionGrid extends StatelessWidget {
         icon: Icons.medication,
         label: 'Medicamentos',
         onTap: () => context.push('${AppRoutes.medications}/${pet.id}'),
+      ),
+      _ActionCard(
+        icon: Icons.directions_walk,
+        label: 'Passeios',
+        onTap: () => context.push('${AppRoutes.walks}/${pet.id}'),
       ),
       _ActionCard(
         icon: Icons.history,

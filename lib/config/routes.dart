@@ -12,6 +12,7 @@ import '../modules/medications/medications_list_page.dart';
 import '../modules/medications/medication_form_page.dart';
 import '../modules/medications/today_doses_page.dart';
 import '../modules/medications/dose_history_page.dart';
+import '../modules/walks/walks_page.dart';
 import '../modules/qr_code/qr_code_page.dart';
 import '../modules/qr_code/qr_scanner_page.dart';
 import '../modules/caregivers/caregivers_list_page.dart';
@@ -37,6 +38,7 @@ class AppRoutes {
   static const String medicationNew = '/medication/new';
   static const String today = '/today';
   static const String history = '/history';
+  static const String walks = '/walks';
   static const String qr = '/qr';
   static const String caregivers = '/caregivers';
   static const String invite = '/invite';
@@ -111,6 +113,11 @@ class AppRoutes {
           path: '$history/:petId',
           builder: (_, state) =>
               DoseHistoryPage(petId: state.pathParameters['petId']!),
+        ),
+        GoRoute(
+          path: '$walks/:petId',
+          builder: (_, state) =>
+              WalksPage(petId: state.pathParameters['petId']!),
         ),
         GoRoute(
           path: '$qr/:petId',

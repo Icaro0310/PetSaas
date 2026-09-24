@@ -6,6 +6,7 @@ import '../core/models/medication_model.dart';
 import '../core/models/pet_model.dart';
 import '../core/models/subscription_model.dart';
 import '../core/models/user_model.dart';
+import '../core/models/walk_model.dart';
 import '../core/services/supabase_service.dart';
 import '../core/utils/extensions.dart';
 
@@ -139,6 +140,19 @@ final todayDosesProvider = FutureProvider.autoDispose<List<DoseLogModel>>((
       .map((r) => DoseLogModel.fromJson(r as Map<String, dynamic>))
       .toList();
 });
+
+// ---------- Walks (passeios) ----------
+
+final walksForPetProvider = StreamProvider.autoDispose
+    .family<List<WalkModel>, String>((ref, petId) async* {
+      ref.watch(currentUserIdProvider);
+      yield* SupabaseService.client
+          .from('walks')
+          .stream(primaryKey: ['id'])
+          .eq('pet_id', petId)
+          .order('walked_at', ascending: false)
+          .map((rows) => rows.map(WalkModel.fromJson).toList());
+    });
 
 // ---------- Caregivers ----------
 
