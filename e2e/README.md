@@ -133,6 +133,19 @@ Chrome/Edge.
 Dados de teste usam nomes `* E2E *` e cada spec apaga os seus no `after`
 por prefixo (`Rex E2E`, `MedPet E2E`, `CgVal E2E`, `Foto E2E`, ...).
 
+## Cypress AI Skills (agente)
+
+O toolkit oficial da Cypress esta instalado em `.devin/skills/` (adaptado
+para Devin — upstream: `cypress-io/ai-toolkit`):
+
+| Skill | Uso |
+|---|---|
+| `cypress-author` | Criar/corrigir specs seguindo as convencoes da suite |
+| `cypress-explain` | Explicar/rever specs sem alterar codigo |
+| `cypress-docs` | Respostas grounded na doc oficial (`/llm/*`) |
+| `cypress-tap` | Debug contra uma sessao `cypress open` viva (`node scripts/cypress.js tap ...`) |
+| `cypress-cloud-cli` | Triage de runs Cypress Cloud — requer `cy-cloud` + Cloud (nao configurado) |
+
 ### Gaps conhecidos (nao existem na app — nao sao bugs de teste)
 
 - Sem "remover pet" (nao ha UI/endpoint de delete de pet)
