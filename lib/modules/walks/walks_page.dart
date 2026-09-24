@@ -112,7 +112,7 @@ class _WalkCard extends StatelessWidget {
             Wrap(
               spacing: 6,
               children: [
-                if (walk.poop) const _Tag(label: 'Coco'),
+                if (walk.poop) const _Tag(label: 'Cocô'),
                 if (walk.pee) const _Tag(label: 'Xixi'),
                 if (!walk.poop && !walk.pee)
                   const _Tag(label: 'Sem necessidades'),
@@ -208,7 +208,7 @@ class _WalkFormDialogState extends State<_WalkFormDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CheckboxListTile(
-              title: const Text('Coco'),
+              title: const Text('Cocô'),
               value: _poop,
               onChanged: (v) => setState(() => _poop = v ?? false),
               contentPadding: EdgeInsets.zero,
@@ -221,21 +221,29 @@ class _WalkFormDialogState extends State<_WalkFormDialog> {
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
             ),
-            TextField(
-              controller: _duration,
-              decoration: const InputDecoration(
-                labelText: 'Duracao (min, opcional)',
+            Semantics(
+              label: 'Duracao (min, opcional)',
+              textField: true,
+              child: TextField(
+                controller: _duration,
+                decoration: const InputDecoration(
+                  labelText: 'Duracao (min, opcional)',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: _notes,
-              decoration: const InputDecoration(
-                labelText: 'Notas (opcional)',
+            Semantics(
+              label: 'Notas (opcional)',
+              textField: true,
+              child: TextField(
+                controller: _notes,
+                decoration: const InputDecoration(
+                  labelText: 'Notas (opcional)',
+                ),
+                maxLines: 2,
               ),
-              maxLines: 2,
             ),
           ],
         ),
