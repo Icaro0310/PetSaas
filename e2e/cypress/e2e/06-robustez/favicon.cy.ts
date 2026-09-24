@@ -12,7 +12,7 @@ describe('Site resistente a falhas', () => {
       .invoke('attr', 'href')
       .then((href) => {
         expect(href).to.be.a('string').and.not.be.empty;
-        cy.request(new URL(href!, Cypress.env('SITE_URL') + '/').toString())
+        cy.request(new URL(href!, Cypress.expose('SITE_URL') + '/').toString())
           .its('status')
           .should('eq', 200);
       });

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const APP_LOGIN = () => `${Cypress.env('APP_URL')}/login`;
+const APP_LOGIN = () => `${Cypress.expose('APP_URL')}/login`;
 
 // Funcionalidade: Convites para criar conta
 //   Cenario: O cabecalho convida a entrar ou registar

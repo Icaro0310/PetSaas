@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 const SUBSCRIBE = () =>
-  `${Cypress.env('SB_URL')}/functions/v1/subscribe`;
+  `${Cypress.expose('SB_URL')}/functions/v1/subscribe`;
 
 // Funcionalidade: API de subscricao
 //   Cenario: Um email valido e registado

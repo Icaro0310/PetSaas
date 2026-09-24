@@ -6,7 +6,7 @@
 //     Entao a raiz da aplicacao responde com sucesso (HTTP 200)
 describe('Convites para criar conta', () => {
   it('a raiz da aplicação responde com sucesso', () => {
-    cy.request(`${Cypress.env('APP_URL')}/`)
+    cy.request(`${Cypress.expose('APP_URL')}/`)
       .its('status')
       .should('eq', 200);
   });

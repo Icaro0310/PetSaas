@@ -79,7 +79,7 @@ export {};
  * Override via env: CYPRESS_SLOW_MO=1200 (0 desliga).
  */
 const SLOW_MO = Number(
-  Cypress.env('SLOW_MO') ?? (Cypress.browser.isHeaded ? 900 : 0),
+  Cypress.expose('SLOW_MO') ?? (Cypress.browser.isHeaded ? 900 : 0),
 );
 
 if (SLOW_MO > 0) {
@@ -100,7 +100,9 @@ if (SLOW_MO > 0) {
 /* Utilitarios internos                                                */
 /* ------------------------------------------------------------------ */
 
-const env = (k: string) => Cypress.env(k) as string;
+// Configuracao publica (expose) — valores nao-sensiveis legiveis no
+// browser. Sensiveis como E2E_PASSWORD leem-se via cy.env() (async).
+const cfg = (k: string) => Cypress.expose(k) as string;
 
 const text = (el: Element) =>
   (el.getAttribute('aria-label') ?? '') + ' ' + (el.textContent ?? '');
@@ -356,49 +358,54 @@ Cypress.Commands.add('waitForClerk', () => {
 });
 
 Cypress.Commands.add('openApp', () => {
-  const appUrl = env('APP_URL');
-  // Deep links nao funcionam no boot: o redirect do router corre antes do
-  // Clerk carregar. Navega-se sempre pela UI depois de 'Meus pets'.
-  cy.visit(`${appUrl}/pets`, {
-    // GitHub Pages serve 404.html para rotas SPA — o script de redirect
-    // restaura a URL. Sem failOnStatusCode o visit falhava no 404.
-    failOnStatusCode: false,
-    onBeforeLoad(win: any) {
-      try {
-        // shared_preferences_web guarda chaves com prefixo flutter.
-        win.localStorage.setItem('flutter.onboarding_seen', 'true');
-        const pw = env('E2E_PASSWORD');
-        if (pw) win.__E2E_PASSWORD = pw;
-      } catch {}
-    },
-  });
-  cy.enableSemantics();
-  // ClerkJS (bridge) inicializado.
-  cy.window().its('Clerk.client', { timeout: 60_000 }).should('exist');
-  // Sign-in programatico se necessario — cria sessao real sem CAPTCHA.
-  cy.window()
-    .then(async (win: any) => {
-      if (win.Clerk?.user?.id) return { signed: false };
-      const email = env('E2E_EMAIL');
-      const res = await signInProgrammatic(win, email, '424242');
-      if ((res as any).err) {
-        throw new Error(
-          `Login E2E falhou: ${(res as any).err}. Cria a conta ${email} ` +
-            'uma vez via UI da app (codigo 424242) ou desliga "Bot sign-up ' +
-            'protection" no Clerk dashboard.',
-        );
-      }
-      await win.Clerk.setActive({ session: (res as any).session });
-      return { signed: true };
-    })
-    .then(({ signed }) => {
-      if (!signed) return;
-      // Reload: a app arranca ja autenticada e o router estabiliza em /pets.
-      cy.reload();
-      cy.enableSemantics();
+  const appUrl = cfg('APP_URL');
+  // cy.env(): leitura assincrona (lista de chaves -> objeto) — a
+  // password nao entra no estado do browser ate ser injetada na pagina
+  // para o sign-in do Clerk.
+  cy.env(['E2E_PASSWORD']).then((vars: Record<string, string>) => {
+    const password = vars?.E2E_PASSWORD ?? null;
+    // Deep links nao funcionam no boot: o redirect do router corre antes
+    // do Clerk carregar. Navega-se sempre pela UI depois de 'Meus pets'.
+    cy.visit(`${appUrl}/pets`, {
+      // GitHub Pages serve 404.html para rotas SPA — o script de redirect
+      // restaura a URL. Sem failOnStatusCode o visit falhava no 404.
+      failOnStatusCode: false,
+      onBeforeLoad(win: any) {
+        try {
+          // shared_preferences_web guarda chaves com prefixo flutter.
+          win.localStorage.setItem('flutter.onboarding_seen', 'true');
+          if (password) win.__E2E_PASSWORD = password;
+        } catch {}
+      },
     });
-  cy.window().its('Clerk.user.id', { timeout: 60_000 }).should('exist');
-  cy.semNode('Meus pets').should('exist');
+    cy.enableSemantics();
+    // ClerkJS (bridge) inicializado.
+    cy.window().its('Clerk.client', { timeout: 60_000 }).should('exist');
+    // Sign-in programatico se necessario — cria sessao real sem CAPTCHA.
+    cy.window()
+      .then(async (win: any) => {
+        if (win.Clerk?.user?.id) return { signed: false };
+        const email = cfg('E2E_EMAIL');
+        const res = await signInProgrammatic(win, email, '424242');
+        if ((res as any).err) {
+          throw new Error(
+            `Login E2E falhou: ${(res as any).err}. Cria a conta ${email} ` +
+              'uma vez via UI da app (codigo 424242) ou desliga "Bot sign-up ' +
+              'protection" no Clerk dashboard.',
+          );
+        }
+        await win.Clerk.setActive({ session: (res as any).session });
+        return { signed: true };
+      })
+      .then(({ signed }) => {
+        if (!signed) return;
+        // Reload: a app arranca ja autenticada e o router estabiliza em /pets.
+        cy.reload();
+        cy.enableSemantics();
+      });
+    cy.window().its('Clerk.user.id', { timeout: 60_000 }).should('exist');
+    cy.semNode('Meus pets').should('exist');
+  });
 });
 
 /* ------------------------------------------------------------------ */
@@ -433,9 +440,9 @@ Cypress.Commands.add(
         cy
           .request({
             method,
-            url: `${env('SB_URL')}/rest/v1/${table}?${query}`,
+            url: `${cfg('SB_URL')}/rest/v1/${table}?${query}`,
             headers: {
-              apikey: env('SB_ANON_KEY'),
+              apikey: cfg('SB_ANON_KEY'),
               Authorization: `Bearer ${jwt}`,
               'Content-Type': 'application/json',
               Prefer: 'return=representation',

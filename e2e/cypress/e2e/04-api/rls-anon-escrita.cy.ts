@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
-const SB = () => Cypress.env('SB_URL') as string;
-const KEY = () => Cypress.env('SB_ANON_KEY') as string;
+const SB = () => Cypress.expose('SB_URL') as string;
+const KEY = () => Cypress.expose('SB_ANON_KEY') as string;
 
 // Funcionalidade: API de subscricao
 //   Cenario: A tabela de emails nao aceita escrita direta anonima

@@ -7,7 +7,7 @@
 describe('API de subscrição', () => {
   it('o endpoint de saúde responde ok', () => {
     cy.request(
-      `${Cypress.env('SB_URL')}/functions/v1/health`,
+      `${Cypress.expose('SB_URL')}/functions/v1/health`,
     ).then((res) => {
       expect(res.body.status).to.eq('ok');
     });

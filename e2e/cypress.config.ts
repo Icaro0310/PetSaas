@@ -43,7 +43,11 @@ export default defineConfig({
     // interativo (cypress open) — um teste que tropeca num timing
     // transitorio do Flutter re-tenta automaticamente.
     retries: { runMode: 2, openMode: 1 },
-    env: {
+    // Cypress 16: Cypress.env() removido.
+    // - expose: configuracao publica, segura de ler no browser
+    //   (URLs e anon key — esta ja e publica no site.js por design).
+    // - env: valores sensiveis lidos apenas via cy.env() (fora do AUT).
+    expose: {
       SITE_URL,
       APP_URL: pick(
         'CYPRESS_APP_URL',
@@ -64,14 +68,18 @@ export default defineConfig({
         process.env.CYPRESS_E2E_EMAIL ??
         process.env.E2E_EMAIL ??
         'petcare.e2e+clerk_test@example.com',
-      E2E_PASSWORD:
-        process.env.CYPRESS_E2E_PASSWORD ?? process.env.E2E_PASSWORD ?? null,
       E2E_ALLOW_DELETE_ACCOUNT:
         process.env.CYPRESS_E2E_ALLOW_DELETE_ACCOUNT ??
         process.env.E2E_ALLOW_DELETE_ACCOUNT ??
         null,
       AUTH_APP_URL:
         process.env.CYPRESS_AUTH_APP_URL ?? process.env.AUTH_APP_URL ?? null,
+      SLOW_MO: process.env.CYPRESS_SLOW_MO ?? process.env.SLOW_MO ?? null,
+    },
+    env: {
+      // Sensivel — nunca exposto ao codigo da pagina.
+      E2E_PASSWORD:
+        process.env.CYPRESS_E2E_PASSWORD ?? process.env.E2E_PASSWORD ?? null,
     },
   },
 });

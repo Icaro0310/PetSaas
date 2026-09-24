@@ -7,7 +7,7 @@
 describe('Site resistente a falhas', () => {
   it('um endereço inexistente devolve a página 404', () => {
     cy.request({
-      url: `${Cypress.env('SITE_URL')}/pagina-que-nao-existe-${Date.now()}`,
+      url: `${Cypress.expose('SITE_URL')}/pagina-que-nao-existe-${Date.now()}`,
       failOnStatusCode: false,
     }).then((res) => {
       expect(res.status).to.eq(404);

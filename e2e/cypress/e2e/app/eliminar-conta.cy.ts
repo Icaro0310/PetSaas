@@ -8,9 +8,9 @@
 //
 // DESTRUTIVO: so corre com E2E_ALLOW_DELETE_ACCOUNT=1 e APENAS em
 // emails clerk_test — nunca numa conta real.
-const email = Cypress.env('E2E_EMAIL') as string;
+const email = Cypress.expose('E2E_EMAIL') as string;
 const allowed =
-  Cypress.env('E2E_ALLOW_DELETE_ACCOUNT') === '1' &&
+  Cypress.expose('E2E_ALLOW_DELETE_ACCOUNT') === '1' &&
   email.endsWith('+clerk_test@example.com');
 
 const describeDelete = allowed ? describe : describe.skip;

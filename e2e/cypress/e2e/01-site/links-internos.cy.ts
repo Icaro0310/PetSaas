@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const SITE_URL = () => Cypress.env('SITE_URL') as string;
+const SITE_URL = () => Cypress.expose('SITE_URL') as string;
 
 // Funcionalidade: Website publico PetCare
 //   Cenario: Os links internos do site funcionam

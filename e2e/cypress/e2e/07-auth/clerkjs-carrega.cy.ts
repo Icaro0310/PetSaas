@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const AUTH_APP_URL = Cypress.env('AUTH_APP_URL') as string | undefined;
+const AUTH_APP_URL = Cypress.expose('AUTH_APP_URL') as string | undefined;
 
 // Funcionalidade: Pagina de login
 //   Cenario: O sistema de autenticacao carrega

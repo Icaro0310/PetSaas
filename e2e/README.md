@@ -123,6 +123,13 @@ Variaveis: `SITE_URL`, `APP_URL`, `SB_URL`, `SB_ANON_KEY`,
 `E2E_EMAIL`, `E2E_PASSWORD`, `AUTH_APP_URL`, `SLOW_MO`,
 `E2E_ALLOW_DELETE_ACCOUNT` (aceitam prefixo `CYPRESS_` ou nome direto).
 
+Cypress 16: `Cypress.env()` foi removido. Valores publicos vivem em
+`expose:` na config e leem-se com `Cypress.expose()` (sincrono);
+`E2E_PASSWORD` fica em `env:` e le-se com `cy.env(['E2E_PASSWORD'])`
+(assincrono, fora do browser). Nota: a v16 marca o browser **Electron
+como deprecated** — funciona hoje mas sera removido; a alternativa e
+Chrome/Edge.
+
 Dados de teste usam nomes `* E2E *` e cada spec apaga os seus no `after`
 por prefixo (`Rex E2E`, `MedPet E2E`, `CgVal E2E`, `Foto E2E`, ...).
 

@@ -4,7 +4,7 @@
 // (dedup) para nao revelar se um email existe na lista.
 const E2E_EMAIL = 'e2e+website@petcare.dev';
 const SUBSCRIBE = () =>
-  `${Cypress.env('SB_URL')}/functions/v1/subscribe`;
+  `${Cypress.expose('SB_URL')}/functions/v1/subscribe`;
 
 // Funcionalidade: Lista de espera
 //   Cenario: Um email repetido nao mostra erro
