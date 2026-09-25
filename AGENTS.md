@@ -128,6 +128,7 @@ Para cada tarefa, executar o ciclo obrigatorio:
 | clerk-webhook | Svix signature verification + service_role + filtra por evento |
 | health | Sem input, apenas status |
 | delete-user-account | Requer auth + IDOR protection (jwtSub === user_id) |
+| petdesk-generate | Clerk JWT + Zod strict + rate limit 5 jobs/dia + IDOR pet_id via RLS + signed URL 1h |
 
 ## Migrations Supabase (ordering)
 
@@ -140,6 +141,8 @@ As migrations sao aplicadas em ordem numerica. Importante:
 | 0008_jwt_rls.sql | Drop/recreate RLS com `auth.jwt()->>'sub'` | Necessario porque Clerk JWT nao popula `auth.uid()` |
 | 0009_pet_found_rate_limit.sql | finder_ip + created_at + accept_invite 7d | Adiciona rate limiting e expiracao de convites |
 | 0010_fix_notify_dose_missed_auth.sql | Cron wrapper sem key hardcoded | Le key de `current_setting('app.supabase_anon_key')` |
+| 0015_walks_and_manage_pets.sql | Tabela `walks` + permissao `manage_pets` p/ cuidadores | Feature Passeios (coco/xixi); policy FOR ALL em pets por caregiver autorizado |
+| 0016_petdesk.sql | `pet_generation_jobs` + bucket `petpacks` privado | PetDeskSaas online; storage select por prefixo `library/` ou `<sub>/` |
 
 **Importante sobre auth.uid() vs auth.jwt():**
 - Migrations 0001-0007 usam `auth.uid()` (Supabase Auth nativo)
