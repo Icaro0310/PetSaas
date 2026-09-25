@@ -40,5 +40,16 @@ jobs:
           supabase functions deploy health --no-verify-jwt
           supabase functions deploy delete-user-account --no-verify-jwt
           supabase functions deploy subscribe --no-verify-jwt
+          supabase functions deploy petdesk-generate --no-verify-jwt
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Upload petpack library (se existir service role)
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Sem SUPABASE_SERVICE_ROLE_KEY — a saltar upload de petpacks"
+            exit 0
+          fi
+          python desktop-pet/tools/upload_petpacks.py
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
