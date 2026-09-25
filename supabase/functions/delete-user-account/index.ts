@@ -18,6 +18,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { z } from 'https://esm.sh/zod@3.23.8'
+import { clerkUserId } from '../_shared/clerk.ts'
 
 const schema = z.object({
   user_id: z.string().min(1).max(255),
@@ -40,9 +41,11 @@ Deno.serve(async (req) => {
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  // Verifica que o JWT corresponde ao user_id pedido
-  const { data: { user } } = await userClient.auth.getUser()
-  if (!user) {
+  // O GoTrue so' aceita HS256 — o Clerk JWT (RS256) verifica-se contra o
+  // JWKS do issuer em vez de auth.getUser().
+  const jwt = authHeader.replace('Bearer ', '')
+  const jwtSub = await clerkUserId(jwt)
+  if (!jwtSub) {
     return new Response('Unauthorized', { status: 401 })
   }
 
@@ -66,7 +69,6 @@ Deno.serve(async (req) => {
 
   // IDOR protection: o user so pode apagar a SUA conta
   // Com Clerk third-party auth, o JWT sub = clerk user id
-  const jwtSub = user.id
   if (jwtSub !== parsed.data.user_id) {
     return new Response('Forbidden: can only delete own account', { status: 403 })
   }

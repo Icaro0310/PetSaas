@@ -20,6 +20,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { z } from 'https://esm.sh/zod@3.23.8'
+import { clerkUserId } from '../_shared/clerk.ts'
 
 const ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/
 const COATS = [
@@ -85,11 +86,12 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_ANON_KEY')!,
     { global: { headers: { Authorization: authHeader } } },
   )
-  const {
-    data: { user },
-  } = await userClient.auth.getUser()
-  if (!user) return json({ error: 'Unauthorized' }, 401)
-  const userId = user.id // clerk sub
+  // O GoTrue so' aceita HS256 — o Clerk JWT (RS256) verifica-se contra o
+  // JWKS do issuer. As queries seguintes usam o userClient (RLS com
+  // auth.jwt()->>'sub' verificado pelo PostgREST).
+  const jwt = authHeader.replace('Bearer ', '')
+  const userId = await clerkUserId(jwt)
+  if (!userId) return json({ error: 'Unauthorized' }, 401)
 
   const admin = createClient(
     Deno.env.get('SUPABASE_URL')!,
