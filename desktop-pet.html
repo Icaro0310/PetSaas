@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetDeskSaas | O teu pet no ambiente de trabalho</title>
+  <meta name="description" content="PetDeskSaas é o companion de desktop do PetCare: um pet animado pixel-art que vive no teu ecrã e sincroniza com a tua conta.">
+  <link rel="canonical" href="https://icaro0310.github.io/PetSaas/desktop-pet.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PetDeskSaas | O teu pet no ambiente de trabalho">
+  <meta property="og:url" content="https://icaro0310.github.io/PetSaas/desktop-pet.html">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="css/site.css">
+  <style>
+    .pd-panel { background: var(--color-surface, #fff); border: 1px solid var(--color-line, #e5e2da); border-radius: var(--radius-lg, 18px); padding: 1.5rem; margin-top: 1.5rem; }
+    .pd-panel label { display: block; font-weight: 600; margin: 0.9rem 0 0.3rem; }
+    .pd-panel input, .pd-panel select { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--color-line, #e5e2da); border-radius: 10px; font: inherit; }
+    .pd-panel .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .pd-msg { min-height: 1.4em; margin-top: 0.8rem; font-size: var(--text-sm); }
+    .pd-msg.is-ok { color: var(--color-primary-dark, #3c6e47); font-weight: 700; }
+    .pd-msg.is-error { color: var(--color-danger, #b3261e); }
+    .pd-jobs { margin-top: 1rem; font-size: var(--text-sm); }
+    .pd-jobs li { list-style: none; padding: 0.45rem 0; border-top: 1px dashed var(--color-line, #e5e2da); }
+    .pd-code { background: #f4f2ec; border-radius: 8px; padding: 0.15rem 0.45rem; font-family: ui-monospace, monospace; font-size: 0.85em; }
+    details.pd-help summary { cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="container site-nav__inner">
+      <a class="brand" href="./">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>
+        </span>
+        PetCare
+      </a>
+      <nav class="site-nav__links" aria-label="Principal">
+        <a class="nav-link" href="./">Início</a>
+        <a class="nav-link" href="pricing.html">Preços</a>
+        <a class="nav-link" href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+        <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
+      </nav>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="navOverlay">Menu</button>
+    </div>
+  </header>
+
+  <div class="nav-overlay" id="navOverlay" role="dialog" aria-modal="true" aria-label="Menu">
+    <button class="nav-overlay__close" aria-label="Fechar menu">Fechar</button>
+    <a href="./">Início</a>
+    <a href="pricing.html">Preços</a>
+    <a href="privacy.html">Privacidade</a>
+    <a href="https://icaro0310.github.io/PetSaas/app/login">Entrar</a>
+    <a class="btn btn--primary" href="https://icaro0310.github.io/PetSaas/app/login">Criar conta grátis</a>
+  </div>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1>PetDeskSaas — o teu pet, sempre no ecrã.</h1>
+        <p class="lead">Um companion de desktop para Windows: um pet animado em pixel-art que passeia pelo ecrã, reage a cliques e ajuda-te a focar com um Pomodoro de 25 minutos. Sincroniza com a tua conta PetCare.</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary btn--lg" href="https://github.com/Icaro0310/PetSaas/releases/download/desktop-v0.1.0/PetDeskSaas%20Setup%200.1.0.exe">Descarregar para Windows</a>
+          <a class="btn btn--ghost btn--lg" href="https://github.com/Icaro0310/PetSaas/releases/tag/desktop-v0.1.0">Versão portátil</a>
+        </div>
+        <p class="hero__note">Gratuito. Windows 10/11. A versão portátil não precisa de instalação.</p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="container">
+        <h2>Como funciona</h2>
+        <div class="steps">
+          <div class="step reveal">
+            <h3>Instala a app</h3>
+            <p>Descarrega o instalador ou a versão portátil. O pet aparece no canto do ecrã — arrasta-o, faz-lhe festas, duplo clique para Pomodoro.</p>
+          </div>
+          <div class="step reveal">
+            <h3>Gera o teu petpack</h3>
+            <p>Abaixo, escolhe a raça e a pelagem mais parecidas com o teu animal — a geração é instantânea a partir da biblioteca.</p>
+          </div>
+          <div class="step reveal">
+            <h3>Importa na app</h3>
+            <p>Na app de desktop, abre o control panel e importa o ficheiro <span class="pd-code">.petpack</span> descarregado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="gerar">
+      <div class="container">
+        <h2>Gera o petpack do teu animal</h2>
+        <p class="lead">Precisas do teu session token do PetCare — o mesmo que usas nas Definições da app de desktop.</p>
+
+        <details class="pd-help">
+          <summary>Onde encontro o meu session token?</summary>
+          <p>Na app PetCare (web), inicia sessão, abre as ferramentas de programador (F12 → consola) e executa <span class="pd-code">Clerk.session.getToken()</span>. O token expira — é usado apenas nesta página e nunca sai do teu browser.</p>
+        </details>
+
+        <div class="pd-panel">
+          <label for="pd-token">Session token (Clerk)</label>
+          <input type="password" id="pd-token" placeholder="eyJhbGciOi…" autocomplete="off">
+
+          <div class="row">
+            <div>
+              <label for="pd-breed">Raça</label>
+              <select id="pd-breed"><option value="">— carrega o token para listar —</option></select>
+            </div>
+            <div>
+              <label for="pd-coat">Pelagem (opcional — recolor)</label>
+              <select id="pd-coat">
+                <option value="">Original</option>
+                <option>caramelo</option><option>chocolate</option>
+                <option>preto</option><option>branco</option>
+                <option>cinza</option><option>creme</option>
+                <option>dourado</option><option>vermelho</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="pd-pet">Associar a um pet teu (opcional)</label>
+          <select id="pd-pet"><option value="">— nenhum —</option></select>
+
+          <p><button class="btn btn--primary" id="pd-go" type="button">Gerar petpack</button></p>
+          <p class="pd-msg" id="pd-msg" role="status" aria-live="polite"></p>
+          <ul class="pd-jobs" id="pd-jobs"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__row">
+        <a class="brand" href="./">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 13.2c-2.6 0-5.4 2.1-5.4 4.5 0 1.5 1 2.5 2.5 2.5 1 0 1.8-.5 2.9-.5s1.9.5 2.9.5c1.5 0 2.5-1 2.5-2.5 0-2.4-2.8-4.5-5.4-4.5zM6.4 8.6c-1.1-.3-2.3.7-2.6 2.2-.3 1.4.3 2.8 1.4 3.1 1.1.3 2.3-.7 2.6-2.2.3-1.4-.3-2.8-1.4-3.1zm11.2 0c-1.1.3-1.7 1.7-1.4 3.1.3 1.5 1.5 2.5 2.6 2.2 1.1-.3 1.7-1.7 1.4-3.1-.3-1.5-1.5-2.5-2.6-2.2zM9.3 3.6c-1.2.2-2 1.6-1.8 3 .2 1.5 1.3 2.5 2.5 2.3 1.2-.2 2-1.6 1.8-3-.2-1.5-1.3-2.5-2.5-2.3zm5.4 0c-1.2-.2-2.3.8-2.5 2.3-.2 1.4.6 2.8 1.8 3 1.2.2 2.3-.8 2.5-2.3.2-1.4-.6-2.8-1.8-3z"/></svg>
+          </span>
+          PetCare
+        </a>
+        <nav class="site-footer__links" aria-label="Rodapé">
+          <a href="./">Início</a>
+          <a href="pricing.html">Preços</a>
+          <a href="privacy.html">Política de privacidade</a>
+          <a href="terms.html">Termos de utilização</a>
+        </nav>
+      </div>
+      <p class="site-footer__copy">&copy; 2026 PetCare. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/site.js" defer></script>
+  <script>
+  (() => {
+    const SB = 'https://dotplnbakltelacsxvjz.supabase.co';
+    const ANON = 'sb_publishable__Pp5qzGJ2HlZPPD1NEdPSg_ZCCA9I9x';
+    const FN = SB + '/functions/v1/petdesk-generate';
+    const $ = (id) => document.getElementById(id);
+    const msg = (t, ok) => { const m = $('pd-msg'); m.textContent = t; m.className = 'pd-msg ' + (ok === true ? 'is-ok' : ok === false ? 'is-error' : ''); };
+    const token = () => $('pd-token').value.trim();
+    const hdr = () => ({ apikey: ANON, authorization: 'Bearer ' + token() });
+
+    async function loadPetsAndBreeds() {
+      if (!token()) return;
+      try {
+        const pets = await (await fetch(SB + '/rest/v1/pets?select=id,name&order=created_at.asc', { headers: hdr() })).json();
+        $('pd-pet').innerHTML = '<option value="">— nenhum —</option>' +
+          (Array.isArray(pets) ? pets.map(p => `<option value="${p.id}">${p.name}</option>`).join('') : '');
+        const list = await (await fetch(SB + '/storage/v1/object/list/petpacks', {
+          method: 'POST', headers: { ...hdr(), 'content-type': 'application/json' },
+          body: JSON.stringify({ prefix: 'library/', limit: 200 }),
+        })).json();
+        const breeds = [...new Set((Array.isArray(list) ? list : [])
+          .map(f => f.name.replace('.petpack', '').split('__')[0]))];
+        $('pd-breed').innerHTML = breeds.map(b => `<option>${b}</option>`).join('')
+          || '<option value="">biblioteca vazia</option>';
+      } catch { /* ignora — o utilizador ainda nao pos o token */ }
+    }
+    $('pd-token').addEventListener('change', loadPetsAndBreeds);
+    $('pd-token').addEventListener('blur', loadPetsAndBreeds);
+
+    $('pd-go').addEventListener('click', async () => {
+      if (!token()) return msg('Cola o teu session token primeiro.', false);
+      const breed = $('pd-breed').value;
+      if (!breed) return msg('Escolhe uma raça.', false);
+      const coat = $('pd-coat').value;
+      const body = { kind: coat ? 'recolor' : 'library', breed_id: breed };
+      if (coat) body.coat = coat;
+      if ($('pd-pet').value) body.pet_id = $('pd-pet').value;
+      msg('A gerar…', null);
+      const res = await fetch(FN, {
+        method: 'POST', headers: { ...hdr(), 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.status === 202) {
+        const st = await (await fetch(FN + '?job_id=' + out.job_id, { headers: hdr() })).json();
+        if (st.petpack_url) {
+          msg('Pronto! A descarregar o teu petpack…', true);
+          const a = document.createElement('a');
+          a.href = st.petpack_url; a.download = breed + (coat ? '__' + coat : '') + '.petpack';
+          a.click();
+          msg('Petpack descarregado — na app desktop: control panel → importar .petpack.', true);
+        } else {
+          msg('Job criado (estado: ' + st.status + ').', null);
+        }
+        refreshJobs();
+      } else {
+        msg(out.error ? JSON.stringify(out.error) : 'Erro ' + res.status, false);
+      }
+    });
+
+    async function refreshJobs() {
+      if (!token()) return;
+      const out = await (await fetch(FN, { headers: hdr() })).json().catch(() => ({}));
+      $('pd-jobs').innerHTML = (out.jobs || []).map(j =>
+        `<li><span class="pd-code">${j.status}</span> ${j.breed_id || ''}${j.coat ? ' · ' + j.coat : ''} — ${new Date(j.created_at).toLocaleString('pt-PT')}</li>`
+      ).join('');
+    }
+  })();
+  </script>
+</body>
+</html>
