@@ -12,8 +12,10 @@ import 'package:share_plus/share_plus.dart';
 import 'qr_download_stub.dart' if (dart.library.html) 'qr_download_web.dart';
 
 import '../../config/theme.dart';
+import '../../core/models/pet_model.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/services/supabase_service.dart';
+import '../../core/utils/pet_face.dart';
 import '../../providers/app_providers.dart';
 import '../../shared/widgets/loading_button.dart';
 
@@ -27,6 +29,7 @@ class QrCodePage extends ConsumerStatefulWidget {
 
 class _QrCodePageState extends ConsumerState<QrCodePage> {
   final _qrKey = GlobalKey();
+  bool _artistic = true;
 
   Future<Uint8List> _capturePng() async {
     final boundary =
@@ -90,6 +93,15 @@ class _QrCodePageState extends ConsumerState<QrCodePage> {
 
     final qrUrl = DeepLinkService.publicPetUrl(pet.qrCodeUuid ?? pet.id);
 
+    // Retrato embutido: foto real do pet > sprite pixel-art da raca > fallback
+    // por especie (caramelo/tabby). EC nivel H tolera ~30% de oclusao.
+    final faceAsset =
+        petFaceAsset(pet.breed) ??
+        (pet.species == PetSpecies.cat ? 'orange-tabby' : 'srd-caramelo');
+    final ImageProvider embedded = pet.photoUrl != null
+        ? NetworkImage(pet.photoUrl!)
+        : AssetImage('assets/pet_faces/$faceAsset.png');
+
     return Scaffold(
       appBar: AppBar(title: const Text('QR Code')),
       body: SingleChildScrollView(
@@ -107,18 +119,84 @@ class _QrCodePageState extends ConsumerState<QrCodePage> {
               textAlign: TextAlign.center,
               style: TextStyle(color: AppTheme.textMuted),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(
+                  value: true,
+                  icon: Icon(Icons.pets),
+                  label: Text('Com o pet'),
+                ),
+                ButtonSegment(
+                  value: false,
+                  icon: Icon(Icons.qr_code_2),
+                  label: Text('Classico'),
+                ),
+              ],
+              selected: {_artistic},
+              onSelectionChanged: (s) =>
+                  setState(() => _artistic = s.first),
+            ),
+            const SizedBox(height: 20),
             RepaintBoundary(
               key: _qrKey,
               child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.all(24),
-                child: QrImageView(
-                  data: qrUrl,
-                  version: QrVersions.auto,
-                  size: 260,
-                  gapless: true,
-                  backgroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 20,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_artistic) ...[
+                      Text(
+                        pet.name.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                          color: AppTheme.primaryDark,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    QrImageView(
+                      data: qrUrl,
+                      version: QrVersions.auto,
+                      size: 260,
+                      gapless: true,
+                      backgroundColor: Colors.white,
+                      errorCorrectionLevel: QrErrorCorrectLevel.H,
+                      embeddedImage: _artistic ? embedded : null,
+                      embeddedImageStyle: const QrEmbeddedImageStyle(
+                        size: Size(64, 64),
+                      ),
+                      eyeStyle: QrEyeStyle(
+                        eyeShape: _artistic
+                            ? QrEyeShape.circle
+                            : QrEyeShape.square,
+                        color: _artistic ? AppTheme.primaryDark : Colors.black,
+                      ),
+                      dataModuleStyle: QrDataModuleStyle(
+                        dataModuleShape: _artistic
+                            ? QrDataModuleShape.circle
+                            : QrDataModuleShape.square,
+                        color: _artistic ? AppTheme.primary : Colors.black,
+                      ),
+                    ),
+                    if (_artistic) ...[
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Estou perdido? Escaneie para avisar meu tutor',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppTheme.textMuted,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
