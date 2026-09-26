@@ -8,9 +8,10 @@
 describe('Convites para criar conta', () => {
   it('a faixa intermédia "Pronto para começar?" tem CTA clicável', () => {
     cy.visit('./');
-    cy.get('.cta-strip').scrollIntoView();
-    cy.get('.cta-strip').should('contain.text', 'Pronto para começar?');
-    cy.get('.cta-strip')
+    // Ha' 2 .cta-strip na pagina (a faixa do PetDesk tambem usa a classe)
+    // — isola pela frase da faixa pretendida.
+    cy.contains('.cta-strip', 'Pronto para começar?').scrollIntoView();
+    cy.contains('.cta-strip', 'Pronto para começar?')
       .contains('a', 'Criar conta grátis')
       .should('be.visible');
   });
