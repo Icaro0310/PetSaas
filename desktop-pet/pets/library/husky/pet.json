@@ -1,0 +1,131 @@
+{
+  "id": "husky",
+  "displayName": "Husky",
+  "species": "dog",
+  "description": "PetDeskSaas library pet - siberian husky, grey and white, blue eyes, pixel art.",
+  "spritesheetPath": "spritesheet.webp",
+  "frameSize": [
+    48,
+    48
+  ],
+  "states": {
+    "idle": {
+      "row": 0,
+      "frames": 12,
+      "fps": 5
+    },
+    "walking": {
+      "row": 1,
+      "frames": 4,
+      "fps": 7
+    },
+    "running": {
+      "row": 2,
+      "frames": 4,
+      "fps": 12
+    },
+    "sleeping": {
+      "row": 3,
+      "frames": 12,
+      "fps": 4
+    },
+    "waving": {
+      "row": 4,
+      "frames": 18,
+      "fps": 8
+    },
+    "petted": {
+      "row": 5,
+      "frames": 12,
+      "fps": 6
+    },
+    "eating": {
+      "row": 6,
+      "frames": 6,
+      "fps": 5
+    },
+    "playing": {
+      "row": 7,
+      "frames": 8,
+      "fps": 7
+    },
+    "thinking": {
+      "row": 8,
+      "frames": 6,
+      "fps": 4
+    },
+    "jumping": {
+      "row": 9,
+      "frames": 8,
+      "fps": 9
+    },
+    "alert": {
+      "row": 10,
+      "frames": 18,
+      "fps": 10
+    },
+    "sad": {
+      "row": 11,
+      "frames": 6,
+      "fps": 4
+    },
+    "grooming": {
+      "row": 12,
+      "frames": 6,
+      "fps": 5
+    }
+  },
+  "reactionMap": {
+    "idle": "idle",
+    "thinking": "thinking",
+    "editing": "walking",
+    "waiting": "idle",
+    "success": "jumping",
+    "error": "sad",
+    "waving": "waving",
+    "jumping": "jumping",
+    "sleeping": "sleeping",
+    "walking": "walking",
+    "running": "running",
+    "petted": "petted",
+    "held": "alert",
+    "falling": "alert",
+    "eating": "eating",
+    "playing": "playing",
+    "alert": "alert",
+    "sad": "sad",
+    "grooming": "grooming"
+  },
+  "speech": {
+    "pt": {
+      "waving": [
+        "Ola!",
+        "Au au!",
+        "Oi, humano!"
+      ],
+      "sleeping": [
+        "Zzz...",
+        "Zzz... au..."
+      ],
+      "petted": [
+        "Que bom!",
+        "Isso, continua."
+      ]
+    },
+    "en": {
+      "waving": [
+        "Hello!",
+        "Woof!",
+        "Hi, human!"
+      ],
+      "sleeping": [
+        "Zzz...",
+        "Zzz... woof..."
+      ],
+      "petted": [
+        "So good!",
+        "Yes, keep going."
+      ]
+    }
+  }
+}
